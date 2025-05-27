@@ -1,0 +1,50 @@
+version: '3'
+
+services:
+  wordpress:
+    image: wordpress:6.4-php8.2-apache
+    restart: unless-stopped
+    ports:
+      - 8000:80
+    volumes:
+      - ./wp-content:/var/www/html/wp-content
+      - ./uploads.ini:/usr/local/etc/php/conf.d/uploads.ini
+    environment:
+      - WORDPRESS_DB_HOST=mysql
+      - WORDPRESS_DB_USER=${MYSQL_USER}
+      - WORDPRESS_DB_PASSWORD=${MYSQL_PASSWORD}
+      - WORDPRESS_DB_NAME=${MYSQL_DATABASE}
+    depends_on:
+      - mysql
+
+  mysql:
+    image: mysql:8.0
+    restart: unless-stopped
+    volumes:
+      - db_data:/var/lib/mysql
+    environment:
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+    command: --default-authentication-plugin=mysql_native_password
+
+  wp-cli:
+    image: wordpress:cli-2.8-php8.2
+    volumes:
+      - ./wp-content:/var/www/html/wp-content
+      - ./:/var/www/html
+    environment:
+      - WORDPRESS_DB_HOST=mysql
+      - WORDPRESS_DB_USER=${MYSQL_USER}
+      - WORDPRESS_DB_PASSWORD=${MYSQL_PASSWORD}
+      - WORDPRESS_DB_NAME=${MYSQL_DATABASE}
+    depends_on:
+      - wordpress
+      - mysql
+    user: "33:33"
+    entrypoint: wp
+    command: --info
+
+volumes:
+  db_data: 
