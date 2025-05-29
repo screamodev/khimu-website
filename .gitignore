@@ -1,23 +1,10 @@
 # Environment variables
 .env
 
-# WordPress content
-wp-content/uploads/
-wp-content/upgrade/
-wp-content/backup-db/
-wp-content/cache/
-wp-content/backups/
-
 # WordPress core files (if using bedrock or similar)
 wp/
 wp-admin/
 wp-includes/
-
-# Plugins and themes
-wp-content/plugins/*
-!wp-content/plugins/.gitkeep
-wp-content/themes/*
-!wp-content/themes/.gitkeep
 
 # Node modules
 node_modules/

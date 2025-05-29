@@ -1,50 +1,42 @@
-version: '3'
-
 services:
   wordpress:
-    image: wordpress:6.4-php8.2-apache
-    restart: unless-stopped
+    image: wordpress:latest
     ports:
-      - 8000:80
-    volumes:
-      - ./wp-content:/var/www/html/wp-content
-      - ./uploads.ini:/usr/local/etc/php/conf.d/uploads.ini
+    - 8080:80
     environment:
-      - WORDPRESS_DB_HOST=mysql
-      - WORDPRESS_DB_USER=${MYSQL_USER}
-      - WORDPRESS_DB_PASSWORD=${MYSQL_PASSWORD}
-      - WORDPRESS_DB_NAME=${MYSQL_DATABASE}
+      WORDPRESS_DB_HOST: db
+      WORDPRESS_DB_USER: wpuser
+      WORDPRESS_DB_PASSWORD: wppass
+      WORDPRESS_DB_NAME: wpdb
+    volumes:
+    - wordpress_data:/var/www/html
+    - ./php.ini:/usr/local/etc/php/conf.d/custom-php.ini
+    - ./wp-content:/var/www/html/wp-content
     depends_on:
-      - mysql
-
-  mysql:
-    image: mysql:8.0
-    restart: unless-stopped
-    volumes:
-      - db_data:/var/lib/mysql
+    - db
+  db:
+    image: mariadb:10.5
+    restart: always
     environment:
-      - MYSQL_DATABASE=${MYSQL_DATABASE}
-      - MYSQL_USER=${MYSQL_USER}
-      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
-      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
-    command: --default-authentication-plugin=mysql_native_password
-
-  wp-cli:
-    image: wordpress:cli-2.8-php8.2
+      MARIADB_DATABASE: wpdb
+      MARIADB_USER: wpuser
+      MARIADB_PASSWORD: wppass
+      MARIADB_ROOT_PASSWORD: rootpass
     volumes:
-      - ./wp-content:/var/www/html/wp-content
-      - ./:/var/www/html
+    - db_data:/var/lib/mysql
+    - ./database/dump.sql:/docker-entrypoint-initdb.d/dump.sql:ro
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    restart: always
+    ports:
+    - 8081:80
     environment:
-      - WORDPRESS_DB_HOST=mysql
-      - WORDPRESS_DB_USER=${MYSQL_USER}
-      - WORDPRESS_DB_PASSWORD=${MYSQL_PASSWORD}
-      - WORDPRESS_DB_NAME=${MYSQL_DATABASE}
+      PMA_HOST: db
+      PMA_USER: wpuser
+      PMA_PASSWORD: wppass
+      UPLOAD_LIMIT: 32M
     depends_on:
-      - wordpress
-      - mysql
-    user: "33:33"
-    entrypoint: wp
-    command: --info
-
+    - db
 volumes:
-  db_data: 
+  wordpress_data: null
+  db_data: null
