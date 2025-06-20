@@ -1,0 +1,268 @@
+# Translation of Plugins - Media Sync - Stable (latest release) in Russian
+# This file is distributed under the same license as the Plugins - Media Sync - Stable (latest release) package.
+msgid ""
+msgstr ""
+"PO-Revision-Date: 2024-06-16 09:59:31+0000\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=3; plural=(n % 10 == 1 && n % 100 != 11) ? 0 : ((n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 12 || n % 100 > 14)) ? 1 : 2);\n"
+"X-Generator: GlotPress/4.0.1\n"
+"Language: ru\n"
+"Project-Id-Version: Plugins - Media Sync - Stable (latest release)\n"
+
+#: includes/MediaSync.class.php:202
+msgid "To reduce additional actions related to file uploads (e.g. generating additional thumbnails)."
+msgstr "Для уменьшения количества дополнительных действий, связанных с загрузкой файлов (например, создание дополнительных миниатюр)."
+
+#: includes/MediaSync.class.php:201
+msgid "If you still get errors, please try disabling other plugins related to files/images."
+msgstr "Если всё ещё выдаются ошибки,, попробуйте отключить другие плагины, связанные с управлением файлами/изображениями."
+
+#: includes/MediaSync.class.php:199
+msgid "A lower value might avoid some limits of your server (e.g. max_execution_time). "
+msgstr "Меньшее значение поможет избежать некоторых ограничений сервера (например, max_execution_time). "
+
+#: includes/MediaSync.class.php:198
+msgid "The number of files to process per network request."
+msgstr "Количество файлов, обрабатываемых по одному сетевому запросу."
+
+#: includes/MediaSync.class.php:194
+msgid "Batch Size:"
+msgstr "Размер партии:"
+
+#: includes/MediaSync.class.php:254
+msgid "Raw import results"
+msgstr "Необработанные результаты импорта"
+
+#: includes/MediaSync.class.php:885
+msgid "Error processing filter media_sync_filter_before_update_metadata for file: %s."
+msgstr "Ошибка обработки фильтра media_sync_filter_before_update_metadata для файла %s."
+
+#: includes/MediaSync.class.php:902
+msgid "Error updating attachment metadata (`wp_postmeta` table) for file: %s."
+msgstr "Ошибка обновления метаданных вложения (таблица `wp_postmeta`) файла: %s."
+
+#: includes/MediaSync.class.php:818
+msgid "Error inserting attachment (`wp_posts` table) for file: %s."
+msgstr "Ошибка добавления вложения (таблица `wp_posts`) файла: %s."
+
+#: includes/MediaSync.class.php:783
+msgid "Error preparing attachment data for file: %s."
+msgstr "Ошибка подготовки данных вложения файла: %s."
+
+#: includes/MediaSync.class.php:736
+msgid "Error getting mime type for file: %s."
+msgstr "Ошибка получения MIME-типа файла: %s."
+
+#: includes/MediaSync.class.php:728
+msgid "Invalid mime type for file: %s."
+msgstr "Недопустимый MIME-тип файла: %s."
+
+#: includes/MediaSync.class.php:853
+msgid "Attachment metadata could not be generated from %s."
+msgstr "Метаданные вложения не могут быть сгенерированы из %s."
+
+#: includes/MediaSync.class.php:846
+msgid "Error generating attachment metadata (`wp_postmeta` table) for file: %s."
+msgstr "Ошибка генерирования метаданных вложения (таблица `wp_postmeta`) файла: %s."
+
+#: includes/MediaSync.class.php:828
+msgid "Attach ID not received for inserted attachment (`wp_posts` table) for file: %s."
+msgstr "Не получен ID вставленного вложения (таблица `wp_posts`) файла: %s."
+
+#: includes/MediaSync.class.php:803
+msgid "File to import not found at path: %s."
+msgstr "Импортируемый файл по адресу %s, не найден."
+
+#: includes/MediaSync.class.php:377
+msgid "Turn on debugging"
+msgstr "Включение режима отладки"
+
+#: includes/MediaSync.class.php:93
+msgid "Scan directory not found. Please check settings."
+msgstr "Директория сканирования не найдена. Проверьте настройки."
+
+#: includes/MediaSync.class.php:439
+msgid "If file timestamp does not match the folder in which it is - it will construct the date/time based on the folder: %s."
+msgstr "Если временная метка файла не соответствует данным папки, в которой он находится - он сгенерирует дату/время на основе данных папки: %s."
+
+#: includes/MediaSync.class.php:437
+msgid "Smart file time"
+msgstr "Интеллектуальное время файла"
+
+#: includes/MediaSync.class.php:432
+msgid "File modification timestamp - when it was last modified."
+msgstr "Временная метка изменения файла - время последнего изменения."
+
+#: includes/MediaSync.class.php:430
+msgid "File time"
+msgstr "Время файла"
+
+#: includes/MediaSync.class.php:425
+msgid "Defaults to what WordPress uses - current time."
+msgstr "По умолчанию WordPress устанавливает текущее время."
+
+#: includes/MediaSync.class.php:423
+msgid "Default"
+msgstr "По умолчанию"
+
+#: includes/MediaSync.class.php:369
+msgid "Preselected / default value for file date"
+msgstr "Предвыбранное/стандартное значение даты файла"
+
+#: includes/MediaSync.class.php:362
+msgid "Show \"Dry Run\" option"
+msgstr "Отображение опции пробного прогона"
+
+#: includes/MediaSync.class.php:355
+msgid "Dry Run"
+msgstr "Пробный прогон"
+
+#: includes/MediaSync.class.php:339
+msgid "Media Sync Settings"
+msgstr "Настройки синхронизации медиафайлов"
+
+#: includes/MediaSync.class.php:188
+msgid "Date/time to set for newly imported files"
+msgstr "Дата/время, устанавливаемые новым импортироваемым файлам"
+
+#: media-sync.php:155 media-sync.php:158
+msgid "Filter by missing file"
+msgstr "Фильтр по отсутствующему файлу"
+
+#: media-sync.php:160
+msgid "With file"
+msgstr "С файлом"
+
+#: media-sync.php:162
+msgid "Without file"
+msgstr "Без файла"
+
+#: includes/MediaSync.class.php:238
+msgid "Filter by type"
+msgstr "Фильтр по типу"
+
+#: includes/MediaSync.class.php:240
+msgid "All files"
+msgstr "Все файлы"
+
+#: includes/MediaSync.class.php:242
+msgid "Only files missing from Media Library"
+msgstr "Только файлы, отсутствующие в библиотеке мультимедиа"
+
+#: includes/MediaSync.class.php:247
+msgid "Filter"
+msgstr "Фильтр"
+
+#: includes/MediaSync.class.php:286
+msgid "No Results"
+msgstr "Безрезультатно"
+
+#: includes/MediaSync.class.php:129
+msgid "Use this to see content of upload dir: %s and import files to Media Library."
+msgstr "Используйте это, чтобы увидеть содержимое каталога загрузки: %s и импортировать файлы в медиатеку."
+
+#: includes/MediaSync.class.php:137
+msgid "Sync - Media Library"
+msgstr "Синхронизация медиатеки"
+
+#: includes/MediaSync.class.php:139
+msgid "Filter Media Library"
+msgstr "Фильтрация медиатеки"
+
+#: includes/MediaSync.class.php:143
+msgid "Use this to see Media Library items that are missing actual files. This takes you to Media Library but with custom filter."
+msgstr "Используйте это, чтобы увидеть элементы библиотеки мультимедиа, за которыми отсутствуют реальные файлы. Это приведет вас к медиатеке, с произвольным фильтром."
+
+#: includes/MediaSync.class.php:121
+msgid "Sync - uploads directory"
+msgstr "Синхронизация - директории загрузки"
+
+#. Plugin Name of the plugin
+#: media-sync.php includes/MediaSync.class.php:97 media-sync.php:35
+#: media-sync.php:52
+msgid "Media Sync"
+msgstr "Media Sync"
+
+#. Plugin URI of the plugin
+#: media-sync.php
+msgid "https://wordpress.org/plugins/media-sync/"
+msgstr "https://wordpress.org/plugins/media-sync/"
+
+#: includes/MediaSync.class.php:460
+msgid "Select All"
+msgstr "Выбрать все"
+
+#: includes/MediaSync.class.php:464 includes/MediaSync.class.php:513
+msgid "File"
+msgstr "Файл"
+
+#: includes/MediaSync.class.php:542
+msgid "item"
+msgstr "элемент"
+
+#: includes/MediaSync.class.php:542
+msgid "items"
+msgstr "элементы"
+
+#: includes/MediaSync.class.php:546
+msgid "Already in"
+msgstr "Уже в"
+
+#: includes/MediaSync.class.php:548
+msgid "In Trash"
+msgstr "В корзине"
+
+#: includes/MediaSync.class.php:109 includes/MediaSync.class.php:168
+msgid "Re-scan"
+msgstr "Повторное сканирование"
+
+#: includes/MediaSync.class.php:125
+msgid "Scan Files"
+msgstr "Сканировать"
+
+#: includes/MediaSync.class.php:173
+msgid "Import Selected"
+msgstr "Импортировать выбранное"
+
+#: includes/MediaSync.class.php:181
+msgid "Dry Run (test without making database changes)"
+msgstr "Холостой прогон (проверка механизма без изменения базы данных)"
+
+#: includes/MediaSync.class.php:219
+msgid "Imported"
+msgstr "Импортировано"
+
+#: includes/MediaSync.class.php:223
+msgid "out of"
+msgstr "из"
+
+#: includes/MediaSync.class.php:228
+msgid "selected items"
+msgstr "выбранных файлов"
+
+#: includes/MediaSync.class.php:51 includes/MediaSync.class.php:572
+msgid "You do not have sufficient permissions to access this page."
+msgstr "У вас недостаточно прав для доступа к этой странице."
+
+#: includes/MediaSync.class.php:105
+msgid "Please backup your database! This plugin makes database changes."
+msgstr "Сделайте резервную копию своей данных! Этот плагин вносит изменения в базу данных."
+
+#: includes/MediaSync.class.php:108
+msgid "Done! Highlighted files were successfully imported. %s to see changes."
+msgstr "Выполнено! Выделенные файлы были успешно импортированы. %s, чтобы увидеть изменения."
+
+#: includes/MediaSync.class.php:232
+msgid "Files already in Media Library will be skipped during import"
+msgstr "Файлы, уже находящиеся в медиатеке, будут пропущены во время импорта."
+
+#: includes/MediaSync.class.php:282
+msgid "Everything seems fine here, there are no files that are not already in your Media Library."
+msgstr "Похоже, здесь всё нормально. Файлов, отсутствующих в медиатеке нет."
+
+#. Description of the plugin
+#: media-sync.php
+msgid "Simple plugin to scan uploads directory and bring files to Media Library."
+msgstr "Простой плагин для сканирования каталога загрузок и переноса файлов в медиатеку."
