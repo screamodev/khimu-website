@@ -378,7 +378,7 @@ if ( ! class_exists( 'Jet_Theme_Core_Templates_Api' ) ) {
 
 			$source = $data['data']['source'];
 
-			if ( ! isset( $this->_sources[ $source ] ) ) {
+			if (!is_scalar($source) || !isset($this->_sources[$source])) {
 				return;
 			}
 

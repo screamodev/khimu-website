@@ -126,3 +126,13 @@ Template Id: prod-29735
 .search-form__submit.btn {
     line-height: 1.1;
 }
+
+.display-flex{
+	display: flex;
+}
+.g-20{
+	gap: 20px;
+}
+.ai-c{
+	align-items: center;
+}

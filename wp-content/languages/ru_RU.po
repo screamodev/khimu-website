@@ -2,7 +2,7 @@
 # This file is distributed under the same license as the WordPress - 6.8.x - Development package.
 msgid ""
 msgstr ""
-"PO-Revision-Date: 2025-05-12 10:49:08+0000\n"
+"PO-Revision-Date: 2025-06-10 14:25:52+0000\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -15307,7 +15307,7 @@ msgstr "Редактировать предыдущий файл"
 #. translators: %s: Maximum allowed file size.
 #: wp-includes/media-template.php:297 wp-admin/includes/media.php:2307
 msgid "Maximum upload file size: %s."
-msgstr "Максимальный размер файла: %s."
+msgstr "Максимальный размер загружаемого файла: %s."
 
 #. translators: Hidden accessibility text.
 #: wp-includes/media-template.php:233
