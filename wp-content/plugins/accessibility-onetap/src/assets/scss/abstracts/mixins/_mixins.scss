@@ -1,0 +1,3216 @@
+@use '../variables/colors' as *;
+@use '../variables/size' as *;
+
+@mixin accessibility_onetap_template_front_end() {
+
+	// Roboto
+	@font-face {
+		font-family: Roboto;
+		font-style: normal;
+		font-weight: 100;
+		src: local("Roboto"), url(../fonts/Roboto/Roboto-Thin.ttf) format("truetype");
+		font-display: swap;
+	}
+
+	@font-face {
+		font-family: Roboto;
+		font-style: normal;
+		font-weight: 300;
+		src: local("Roboto"), url(../fonts/Roboto/Roboto-Light.ttf) format("truetype");
+		font-display: swap;
+	}
+
+	@font-face {
+		font-family: Roboto;
+		font-style: normal;
+		font-weight: 400;
+		src: local("Roboto"), url(../fonts/Roboto/Roboto-Regular.ttf) format("truetype");
+		font-display: swap;
+	}
+
+	@font-face {
+		font-family: Roboto;
+		font-style: normal;
+		font-weight: 500;
+		src: local("Roboto"), url(../fonts/Roboto/Roboto-Medium.ttf) format("truetype");
+		font-display: swap;
+	}
+
+	@font-face {
+		font-family: Roboto;
+		font-style: normal;
+		font-weight: 700;
+		src: local("Roboto"), url(../fonts/Roboto/Roboto-Bold.ttf) format("truetype");
+		font-display: swap;
+	}
+
+	@font-face {
+		font-family: Roboto;
+		font-style: normal;
+		font-weight: 900;
+		src: local("Roboto"), url(../fonts/Roboto/Roboto-Black.ttf) format("truetype");
+		font-display: swap;
+	}
+
+	@font-face {
+		font-family: Roboto;
+		font-style: italic;
+		font-weight: 100;
+		src: local("Roboto"), url(../fonts/Roboto/Roboto-ThinItalic.ttf) format("truetype");
+		font-display: swap;
+	}
+
+	@font-face {
+		font-family: Roboto;
+		font-style: italic;
+		font-weight: 300;
+		src: local("Roboto"), url(../fonts/Roboto/Roboto-LightItalic.ttf) format("truetype");
+		font-display: swap;
+	}
+
+	@font-face {
+		font-family: Roboto;
+		font-style: italic;
+		font-weight: 400;
+		src: local("Roboto"), url(../fonts/Roboto/Roboto-Italic.ttf) format("truetype");
+		font-display: swap;
+	}
+
+	@font-face {
+		font-family: Roboto;
+		font-style: italic;
+		font-weight: 500;
+		src: local("Roboto"), url(../fonts/Roboto/Roboto-MediumItalic.ttf) format("truetype");
+		font-display: swap;
+	}
+
+	@font-face {
+		font-family: Roboto;
+		font-style: italic;
+		font-weight: 700;
+		src: local("Roboto"), url(../fonts/Roboto/Roboto-BoldItalic.ttf) format("truetype");
+		font-display: swap;
+	}
+
+	@font-face {
+		font-family: Roboto;
+		font-style: italic;
+		font-weight: 900;
+		src: local("Roboto"), url(../fonts/Roboto/Roboto-BlackItalic.ttf) format("truetype");
+		font-display: swap;
+	}
+
+	html.onetap-cursor-feature1 {
+		cursor: url(../../assets/images/cursor1.png), default !important;
+	}
+
+	html.onetap-cursor-feature2 {
+		cursor: url(../../assets/images/cursor2.png), default !important;
+	}
+
+	html.onetap-cursor-feature3 {
+		cursor: url(../../assets/images/cursor3.png), default !important;
+	}
+
+	.onetap-container-toggle {
+
+		// Toggle.
+		.onetap-toggle {
+			z-index: 9999999999999999 !important;
+			position: fixed !important;
+			cursor: pointer !important;
+
+			img {
+				height: 60px !important;
+				width: 60px !important;
+				background: $primary-color !important;
+				border-radius: 50% !important;
+			}
+
+			img.design-size1 {
+				padding: 10px !important;
+				width: 50px !important;
+				height: 50px !important;
+			}
+
+			img.design-size2 {
+				padding: 15px !important;
+				width: 65px !important;
+				height: 65px !important;
+			}
+
+			img.design-size3 {
+				padding: 17.5px !important;
+				width: 80px !important;
+				height: 80px !important;
+			}
+
+			img.design-border1 {
+				border: solid 2px #fff;
+				box-shadow: 0 0 0 4px $primary-color;
+			}
+
+			svg {
+				width: 55px !important;
+				fill: #111 !important;
+				border-radius: 100% !important;
+
+				&:hover {
+					box-shadow: 0 0 0 5px #0000000d;
+					border-radius: 100px;
+				}
+			}
+		}
+	}
+
+	nav.onetap-accessibility.onetap-plugin-onetap {
+		box-sizing: border-box !important;
+		padding: 0 !important;
+		margin: 0 !important;
+		text-align: left !important;
+		line-height: 1.7 !important;
+		letter-spacing: 0 !important;
+		font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans", Ubuntu, Cantarell, "Helvetica Neue", Oxygen, "Fira Sans", "Droid Sans", sans-serif !important;
+		font-size: 16px !important;
+		max-width: $width !important;
+		max-height: 100vh !important;
+		overflow: auto !important;
+		position: fixed !important;
+		z-index: 9999999999999999 !important;
+		box-shadow: 2px 8px 60px -2px rgba(0, 0, 0, 0.2) !important;
+		top: 0 !important;
+		-webkit-transition: all 750ms cubic-bezier(0.23, 1, 0.32, 1) !important;
+		-moz-transition: all 750ms cubic-bezier(0.23, 1, 0.32, 1) !important;
+		-o-transition: all 750ms cubic-bezier(0.23, 1, 0.32, 1) !important;
+		transition: all 750ms cubic-bezier(0.23, 1, 0.32, 1) !important;
+
+		h2,
+		h3,
+		p,
+		span,
+		a {
+			font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans", Ubuntu, Cantarell, "Helvetica Neue", Oxygen, "Fira Sans", "Droid Sans", sans-serif !important;
+		}
+
+		a {
+			text-underline-offset: unset !important;
+		}
+
+		img {
+			vertical-align: middle !important;
+			display: inline-block !important;
+		}
+
+		svg {
+			fill: #111 !important;
+		}
+
+		&.onetap-toggle-close {
+			right: -$width !important;
+		}
+
+		header {
+			padding: 0 !important;
+			margin: 0 !important;
+			top: unset !important;
+			text-transform: unset !important;
+			overflow: unset !important;
+			width: auto !important;
+			height: auto !important;
+			z-index: unset !important;
+		}
+
+		section {
+			padding: 0 !important;
+			margin: 0 !important;
+		}	
+
+		.onetap-container {
+			width: 100% !important;
+
+			.onetap-accessibility-settings {
+				background: $second-light-color !important;
+				height: 100vh !important;
+
+				// Header top.
+				header.onetap-header-top {
+					position: relative !important;
+					display: block !important;
+
+					&::before {
+						content: "" !important;
+						background: $primary-color !important;
+						height: 320px !important;
+						width: 100% !important;
+						position: absolute !important;
+						top: 0 !important;
+					}
+
+					// Languages.
+					.onetap-languages {
+						// fix inherit on theme block {fix}.
+						box-sizing: border-box !important;
+
+						line-height: 20px !important;
+						fill: $light-color !important;
+						color: $light-color !important;
+						background-color: rgba(255, 255, 255, 0.1019607843) !important;
+						border-radius: 6px !important;
+						padding: 0.5em 0.75em 0.5em 0.75em !important;
+						min-width: 110.969px !important;
+						left: 29px !important;
+						top: 18px !important;
+						position: absolute !important;
+						display: flex !important;
+						flex-wrap: wrap !important;
+						gap: 10px !important;
+						justify-content: space-between !important;
+						cursor: pointer !important;
+
+						&:hover {
+							background-color: #ffffff38 !important;
+						}
+
+						.onetap-icon {
+							display: flex !important;
+							flex-wrap: wrap !important;
+							align-items: center !important;
+							height: 25px !important;
+							width: 25px !important;
+
+							svg {
+								font-size: 18px !important;
+								line-height: 20px !important;
+								width: 1em !important;
+								height: auto !important;
+								fill: $light-color !important;
+							}
+
+							img {
+								display: none !important;
+							}
+
+							img.onetap-active {
+								display: block !important;
+								width: 100% !important;
+								height: auto !important;
+							}
+						}
+
+						.onetap-text {
+							margin: 0 !important;
+							padding: 0 !important;
+
+							span {
+								margin: 0 !important;
+								font-size: 0.875em !important;
+								line-height: 20px !important;
+								color: $light-color !important;
+							}
+
+							img {
+								transition: all 0.35s !important;
+								height: auto !important;
+								max-width: 100% !important;
+								border: none !important;
+								border-radius: 0 !important;
+								box-shadow: none !important;
+							}
+						}
+
+						&.onetap-active {
+
+							.onetap-text {
+
+								img {
+									transform: rotate(180deg) !important;
+								}
+							}
+						}
+					}
+
+					// List of languages.
+					.onetap-list-of-languages {
+						border-radius: 8px !important;
+						background: $second-light-color !important;
+						position: absolute !important;
+						top: 65px !important;
+						left: 29px !important;
+						min-width: 171px !important;
+						z-index: 9999999999999999 !important;
+
+						ul {
+							margin: 0 !important;
+							padding: 20px !important;
+							list-style: none !important;
+							height: 500px !important;
+							overflow: auto !important;
+
+							li {
+								text-decoration: none !important;
+								color: $dark-color !important;
+								font-size: 15px !important;
+								cursor: pointer !important;
+								line-height: 1.6 !important;
+								margin-bottom: 10px !important;
+								display: flex !important;
+								flex-wrap: wrap !important;
+								flex-direction: row-reverse !important;
+								align-items: center !important;
+								justify-content: start !important;
+								gap: 10px !important;
+
+								&:last-child {
+									margin-bottom: 0 !important;
+								}
+
+								img {
+									width: 23px !important;
+									height: auto !important;
+								}
+							}
+						}
+					}
+
+					// Close.
+					.onetap-close {
+						z-index: 9999999999999999 !important;
+						padding: 8px !important;
+						background: rgba(0, 0, 0, 0.1019607843) !important;
+						border-radius: 5em !important;
+						top: 20px !important;
+						position: fixed !important;
+						font-size: 15px !important;
+						line-height: 1 !important;
+						cursor: pointer !important;
+
+						i {
+							color: $light-color !important;
+						}
+					}
+
+					// Info.
+					.onetap-site-container {
+						position: relative !important;
+						top: 85px !important;
+						margin-bottom: 85px !important;
+
+						.onetap-site-info {
+							min-height: 235px !important;
+
+							.onetap-image {
+								width: 47px !important;
+								height: auto !important;
+								margin: 0 auto !important;
+								margin-bottom: 20px !important;
+
+								svg {
+									width: 47px !important;
+									height: 41px !important;
+								}
+							}
+
+							.onetap-title {
+								margin-bottom: 20px !important;
+								text-align: center !important;
+
+								h2 {
+									color: $light-color !important;
+									padding: 0 !important;
+									margin: 0 !important;
+									font-size: 28px !important;
+									line-height: 32px !important; /* stylelint-disable-line declaration-property-unit-allowed-list */
+									font-weight: 600 !important;
+									text-rendering: optimizespeed !important;
+									word-break: break-word !important;
+									text-align: center !important;
+								}
+							}
+
+							.onetap-desc {
+								margin: -11px 0 0 0 !important;
+
+								p {
+									text-align: center !important;
+									color: $light-color !important;
+									font-weight: 400 !important;
+									font-size: 16px !important;
+									line-height: 1.5 !important;
+
+									a {
+										display: inline-block !important;
+										color: #fff !important;
+										text-decoration: underline !important;
+									}
+								}
+							}
+						}
+					}
+				}
+
+				// Features.
+				.onetap-features-container {
+					padding: 0 25px 0 25px !important;
+					background: $second-light-color !important;
+
+					.onetap-features {
+						background: $light-bg !important;
+						padding: 25px 25px 25px 25px !important;
+						border-radius: 12px 12px 12px 12px !important;
+						display: flex !important;
+						flex-wrap: wrap !important;
+						gap: 18px !important;
+						position: relative !important;
+						z-index: 999 !important;
+
+						.onetap-box-feature {
+							// fix inherit on theme block {fix}.
+							box-sizing: border-box !important;
+
+							width: calc(33.333% - 12px) !important;
+							padding: 1.25em 1.25em 1.25em 1.25em !important;
+							border-style: solid !important;
+							border-width: 1px 1px 1px 1px !important;
+							border-color: $border-color !important;
+							border-radius: 8px 8px 8px 8px !important;
+							min-height: 135px !important;
+							display: flex !important;
+							flex-wrap: wrap !important;
+							flex-direction: column !important;
+							justify-content: center !important;
+							align-items: center !important;
+							transition: background 0.3s, border 0.3s, border-radius 0.3s, box-shadow 0.3s !important;
+							cursor: pointer !important;
+
+							-webkit-user-select: none !important;
+
+							/* Chrome, Safari, and Opera */
+							-moz-user-select: none !important;
+
+							/* Firefox */
+							-ms-user-select: none !important;
+
+							/* Internet Explorer/Edge */
+							user-select: none !important;
+
+							// Icon.
+							.onetap-icon {
+
+								.onetap-icon-animation {
+									font-size: 30px !important;
+									margin-bottom: 15px !important;
+									display: block !important;
+
+									svg {
+										width: 1em !important;
+										height: 1em !important;
+										display: block !important;
+										fill: #111 !important;
+									}
+								}
+							}
+
+							// Title.
+							.onetap-title {
+
+								h3 {
+									font-size: 0.875em !important;
+									font-weight: 500 !important;
+									color: $dark-color !important;
+									margin: 0 0 13px 0 !important;
+									text-align: center !important;
+									line-height: 1.2 !important;
+									word-break: break-word !important;
+								}
+
+								p.onetap-option-levels {
+									display: flex !important;
+									flex-wrap: wrap !important;
+									margin: 0 !important;
+
+									span.onetap-level {
+										height: 4px !important;
+										background: $divider-border-color !important;
+										width: 28.9px !important;
+										border-radius: 8px !important;
+										display: block !important;
+									}
+
+									span.onetap-level.onetap-level2 {
+										margin: 0 2px !important;
+									}
+								}
+							}
+
+							&:hover {
+
+								border-color: $primary-color !important;
+								box-shadow: 0 0 0 1px $primary-color !important;
+
+								// Title.
+								.onetap-title {
+
+									h3 {
+										color: $primary-color !important;
+									}
+								}
+							}
+
+							&.onetap-active {
+
+								// Icon.
+								.onetap-icon {
+
+									.onetap-icon-animation {
+
+										svg {
+											fill: $primary-color !important;
+										}
+									}
+								}
+
+								// Title.
+								.onetap-title {
+
+									h3 {
+										color: $primary-color !important;
+									}
+								}
+							}
+						}
+
+						// level1
+						.onetap-box-feature.onetap-lv1 {
+
+							// Title.
+							.onetap-title {
+
+								p.onetap-option-levels {
+
+									span.onetap-level.onetap-level1 {
+										background: $primary-color !important;
+									}
+								}
+							}
+						}
+
+						// level2
+						.onetap-box-feature.onetap-lv2 {
+
+							// Title.
+							.onetap-title {
+
+								p.onetap-option-levels {
+
+									span.onetap-level.onetap-level1,
+									span.onetap-level.onetap-level2 {
+										background: $primary-color !important;
+									}
+								}
+							}
+						}
+
+						// level3
+						.onetap-box-feature.onetap-lv3 {
+
+							// Title.
+							.onetap-title {
+
+								p.onetap-option-levels {
+
+									span.onetap-level.onetap-level1,
+									span.onetap-level.onetap-level2,
+									span.onetap-level.onetap-level3 {
+										background: $primary-color !important;
+									}
+								}
+							}
+						}
+
+						.onetap-box-feature.onetap-lv1,
+						.onetap-box-feature.onetap-lv2,
+						.onetap-box-feature.onetap-lv3 {
+
+							// Icon.
+							.onetap-icon {
+
+								.onetap-icon-animation {
+
+									svg {
+										fill: $primary-color !important;
+									}
+								}
+							}
+
+							// Title.
+							.onetap-title {
+
+								h3 {
+									color: $primary-color !important;
+								}
+							}
+						}
+					}
+				}
+
+				// Feature general.
+				.onetap-feature-content {
+					padding: 25px 25px 0 25px !important;
+					margin-top: -6em !important;
+
+					// .onetap-features {
+
+					// .onetap-box-feature:nth-child(4),
+					// .onetap-box-feature:nth-child(5),
+					// .onetap-box-feature:nth-child(6) {
+					// 	margin-top: 1px !important;
+
+					// 	// Title.
+					// 	.onetap-title {
+
+					// 		h3 {
+					// 			margin: 0 !important;
+					// 		}
+					// 	}
+					// }
+					// }
+				}
+
+				// Feature container.
+				.onetap-features-container {
+
+					.onetap-features {
+
+						.onetap-remove-margin-title {
+							margin-top: 1px !important;
+
+							// Title.
+							.onetap-title {
+
+								h3 {
+									margin: 0 !important;
+								}
+							}
+						}
+					}
+				}
+
+				// Divider colors.
+				.onetap-divider-container {
+					background: $second-light-color !important;
+					padding: 1em 25px 0 25px !important;
+
+					.onetap-divider {
+						padding-top: 15px !important;
+						padding-bottom: 15px !important;
+
+						.onetap-divider-separator {
+							display: flex !important;
+							flex-wrap: wrap !important;
+							align-items: center !important;
+							margin: 0 !important;
+
+							&::before,
+							&::after {
+								content: "" !important;
+								display: block !important;
+								flex-grow: 1 !important;
+								border-block-start: 1px solid $divider-border-color !important;
+							}
+
+							.onetap-divider__text {
+								color: $divider-text !important;
+								font-size: 0.875em !important;
+								font-weight: 600 !important;
+								text-transform: uppercase !important;
+								line-height: 20px !important;
+								margin: 0 10px !important;
+								flex-shrink: 0 !important;
+								max-width: 95% !important;
+							}
+						}
+					}
+				}
+
+				// Feature colors.
+				.onetap-feature-colors {
+
+					.onetap-features {
+
+						.onetap-box-feature:nth-child(4),
+						.onetap-box-feature:nth-child(5),
+						.onetap-box-feature:nth-child(6) {
+							margin-top: 1px !important;
+						}
+					}
+				}
+
+				// Feature navigation.
+				.onetap-feature-navigation {
+
+					.onetap-features {
+
+						.onetap-box-feature {
+
+							.onetap-title {
+
+								h3 {
+									margin: 0 !important;
+								}
+							}
+						}
+					}
+				}
+
+				// Reset settings.
+				.onetap-reset-settings {
+					background: $second-light-color !important;
+					padding: 20px 25px 25px 25px !important;
+
+					span {
+						font-size: 15px !important;
+						fill: $light-color !important;
+						color: $light-color !important;
+						background: $primary-color !important;
+						padding: 15px 15px 15px 15px !important;
+						border: 1px solid transparent !important;
+						line-height: 1.2 !important;
+						text-align: center !important;
+						cursor: pointer !important;
+						border-radius: 6px !important;
+						display: block !important;
+						font-weight: 600 !important;
+					}
+				}
+
+				// Footer bottom.
+				.onetap-footer-bottom {
+					display: none !important;
+
+					// Accessibility.
+					.onetap-accessibility-container {
+						margin-bottom: 10px !important;
+						padding: 25px 25px 25px 25px !important;
+						border-style: solid !important;
+						border-width: 0 0 1px 0 !important;
+						border-color: $border-color !important;
+						line-height: 1.5 !important;
+						display: none !important;
+
+						ul.onetap-icon-list-items {
+							list-style-type: none !important;
+							margin: 0 !important;
+							padding: 0 !important;
+
+							li.onetap-icon-list-item {
+								display: flex !important;
+								flex-wrap: wrap !important;
+								font-size: inherit !important;
+								align-items: center !important;
+								margin: 0 !important;
+								padding: 0 !important;
+								position: relative !important;
+								list-style-type: none !important;
+
+								.onetap-icon-list-icon {
+									display: flex !important;
+									flex-wrap: wrap !important;
+									position: relative !important;
+									top: 0 !important;
+
+									svg {
+										margin-right: 3.5px !important;
+										width: 14px !important;
+										height: 14px !important;
+										color: $divider-text !important;
+									}
+								}
+
+								.onetap-icon-list-text {
+									padding-left: 5px !important;
+									color: $divider-text !important;
+								}
+							}
+						}
+					}
+
+					// Divider.
+					.onetap-divider-container {
+						background: $light-bg !important;
+						padding: 0 !important;
+					}
+				}
+			}
+		}
+	}
+
+	// Feature Reading line.
+	.onetap-markup-reading-line {
+		display: none !important;
+		background: #000 !important;
+		width: 100% !important;
+		min-width: 100% !important;
+		left: 0 !important;
+		box-sizing: border-box !important;
+		height: 12px !important;
+		border: solid 3px #fff300 !important;
+		border-radius: 5px !important;
+		position: absolute !important;
+		z-index: 999999999 !important;
+		pointer-events: none !important;
+
+		&.onetap-active {
+			display: block !important;
+		}
+	}
+
+	// Feature Highlight.
+	.onetap-highlight {
+		background: #fff300 !important;
+		color: #000 !important;
+	}
+
+	// Feature Reading mask.
+	.onetap-markup-reading-mask {
+		display: none !important;
+		position: fixed !important;
+		left: 0 !important;
+		width: 100% !important;
+		pointer-events: none !important;
+		background: rgba(0, 0, 0, 0.5) !important;
+		z-index: 9999999999999999 !important;
+
+		&.onetap-active {
+			display: block !important;
+		}
+
+		&.onetap-top {
+			top: 0 !important;
+		}
+
+		&.onetap-bottom {
+			bottom: 0 !important;
+		}
+	}
+
+	// Feature Magnifier.
+	.onetap-markup-text-magnifier {
+		color: #fff !important;
+		font-size: 36px !important;
+		position: absolute !important;
+		padding: 16px !important;
+		border-radius: 4px !important;
+		background: #333 !important;
+		line-height: 1.5 !important;
+		z-index: 999999999 !important;
+		word-break: break-word !important;
+		width: -moz-fit-content !important;
+		width: fit-content !important;
+	}
+
+	// Feature highlight titles.
+	body.onetap-highlight-titles {
+
+		h1,
+		h2,
+		h3,
+		h4,
+		h5,
+		h6 {
+			outline-style: solid !important;
+			outline-color: rgba(176, 87, 241, 1) !important;
+			outline-width: 2px !important;
+			outline-offset: 2px !important;
+		}
+
+		nav.onetap-accessibility.onetap-plugin-onetap {
+
+			h1,
+			h2,
+			h3,
+			h4,
+			h5,
+			h6 {
+				outline-style: solid !important;
+				outline-color: unset !important;
+				outline-width: 0 !important;
+				outline-offset: 0 !important;
+			}
+		}
+	}
+
+	// Feature highlight all.
+	body.onetap-highlight-all *:hover {
+		outline-style: solid !important;
+		outline-color: rgba(176, 87, 241, 1) !important;
+		outline-width: 2px !important;
+		outline-offset: 2px !important;
+	}
+
+	body.onetap-highlight-all {
+
+		nav.onetap-accessibility.onetap-plugin-onetap:hover,
+		nav.onetap-accessibility.onetap-plugin-onetap *:hover,
+		.onetap-container-toggle:hover,
+		.onetap-container-toggle *:hover {
+			outline-style: solid !important;
+			outline-color: unset !important;
+			outline-width: 0 !important;
+			outline-offset: 0 !important;
+		}
+	}
+
+	// Hide feature content.
+	body.onetap_hide_content_feature {
+
+		nav.onetap-accessibility.onetap-plugin-onetap {
+
+			.onetap-container {
+
+				.onetap-accessibility-settings {
+
+					.onetap-divider-container {
+
+						.onetap-divider {
+
+							.onetap-divider-content {
+								display: none !important;
+							}
+						}
+					}
+
+					.onetap-feature-content {
+						display: none !important;
+					}
+				}
+			}
+		}
+	}
+
+	// Hide feature content bottom.
+	body.onetap_hide_content_bottom_feature {
+
+		nav.onetap-accessibility.onetap-plugin-onetap {
+
+			.onetap-container {
+
+				.onetap-accessibility-settings {
+
+					.onetap-feature-content-bottom {
+						display: none !important;
+					}
+				}
+			}
+		}
+	}
+
+	// Hide feature colors.
+	body.onetap_hide_colors_feature {
+
+		nav.onetap-accessibility.onetap-plugin-onetap {
+
+			.onetap-container {
+
+				.onetap-accessibility-settings {
+
+					.onetap-divider-container {
+
+						.onetap-divider {
+
+							.onetap-divider-colors {
+								display: none !important;
+							}
+						}
+					}
+
+					.onetap-feature-colors {
+						display: none !important;
+					}
+				}
+			}
+		}
+	}
+
+	// Hide feature orientation.
+	body.onetap_hide_orientation_feature {
+
+		nav.onetap-accessibility.onetap-plugin-onetap {
+
+			.onetap-container {
+
+				.onetap-accessibility-settings {
+
+					.onetap-divider-container {
+
+						.onetap-divider {
+
+							.onetap-divider-orientation {
+								display: none !important;
+							}
+						}
+					}
+
+					.onetap-feature-orientation {
+						display: none !important;
+					}
+				}
+			}
+		}
+	}
+
+	// Hide feature orientation bottom.
+	body.onetap_hide_orientation_bottom_feature {
+
+		nav.onetap-accessibility.onetap-plugin-onetap {
+
+			.onetap-container {
+
+				.onetap-accessibility-settings {
+
+					.onetap-feature-orientation-bottom {
+						display: none !important;
+					}
+				}
+			}
+		}
+	}
+
+	// Bigger text.
+	body.onetap_hide_bigger_text {
+
+		nav.onetap-accessibility.onetap-plugin-onetap {
+
+			.onetap-container {
+
+				.onetap-accessibility-settings {
+
+					.onetap-features-container {
+
+						.onetap-features {
+
+							.onetap-bigger-text {
+								display: none !important;
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
+	// Cursor.
+	body.onetap_hide_cursor {
+
+		nav.onetap-accessibility.onetap-plugin-onetap {
+
+			.onetap-container {
+
+				.onetap-accessibility-settings {
+
+					.onetap-features-container {
+
+						.onetap-features {
+
+							.onetap-cursor {
+								display: none !important;
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
+	// Line height.
+	body.onetap_hide_line_height {
+
+		nav.onetap-accessibility.onetap-plugin-onetap {
+
+			.onetap-container {
+
+				.onetap-accessibility-settings {
+
+					.onetap-features-container {
+
+						.onetap-features {
+
+							.onetap-line-height {
+								display: none !important;
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
+	// Hide images.
+	body.onetap_hide_hide_images {
+
+		nav.onetap-accessibility.onetap-plugin-onetap {
+
+			.onetap-container {
+
+				.onetap-accessibility-settings {
+
+					.onetap-features-container {
+
+						.onetap-features {
+
+							.onetap-hide-images {
+								display: none !important;
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
+	// Readable font.
+	body.onetap_hide_readable_font {
+
+		nav.onetap-accessibility.onetap-plugin-onetap {
+
+			.onetap-container {
+
+				.onetap-accessibility-settings {
+
+					.onetap-features-container {
+
+						.onetap-features {
+
+							.onetap-readable-font {
+								display: none !important;
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
+	// Dyslexic font.
+	body.onetap_hide_dyslexic_font {
+
+		nav.onetap-accessibility.onetap-plugin-onetap {
+
+			.onetap-container {
+
+				.onetap-accessibility-settings {
+
+					.onetap-features-container {
+
+						.onetap-features {
+
+							.onetap-dyslexic-font {
+								display: none !important;
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
+	// Text align.
+	body.onetap_hide_text_align {
+
+		nav.onetap-accessibility.onetap-plugin-onetap {
+
+			.onetap-container {
+
+				.onetap-accessibility-settings {
+
+					.onetap-features-container {
+
+						.onetap-features {
+
+							.onetap-text-align {
+								display: none !important;
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
+	// Text magnifier.
+	body.onetap_hide_text_magnifier {
+
+		nav.onetap-accessibility.onetap-plugin-onetap {
+
+			.onetap-container {
+
+				.onetap-accessibility-settings {
+
+					.onetap-features-container {
+
+						.onetap-features {
+
+							.onetap-text-magnifier {
+								display: none !important;
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
+	// Highlight Titles.
+	body.onetap_hide_highlight_titles {
+
+		nav.onetap-accessibility.onetap-plugin-onetap {
+
+			.onetap-container {
+
+				.onetap-accessibility-settings {
+
+					.onetap-features-container {
+
+						.onetap-features {
+
+							.onetap-highlight-titles {
+								display: none !important;
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
+	// Letter Spacing.
+	body.onetap_hide_letter_spacing {
+
+		nav.onetap-accessibility.onetap-plugin-onetap {
+
+			.onetap-container {
+
+				.onetap-accessibility-settings {
+
+					.onetap-features-container {
+
+						.onetap-features {
+
+							.onetap-letter-spacing {
+								display: none !important;
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
+	// Highlight All.
+	body.onetap_hide_highlight_all {
+
+		nav.onetap-accessibility.onetap-plugin-onetap {
+
+			.onetap-container {
+
+				.onetap-accessibility-settings {
+
+					.onetap-features-container {
+
+						.onetap-features {
+
+							.onetap-highlight-all {
+								display: none !important;
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
+	// Invert colors.
+	body.onetap_hide_invert_colors {
+
+		nav.onetap-accessibility.onetap-plugin-onetap {
+
+			.onetap-container {
+
+				.onetap-accessibility-settings {
+
+					.onetap-features-container {
+
+						.onetap-features {
+
+							.onetap-invert-colors {
+								display: none !important;
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
+	// Brightness.
+	body.onetap_hide_brightness {
+
+		nav.onetap-accessibility.onetap-plugin-onetap {
+
+			.onetap-container {
+
+				.onetap-accessibility-settings {
+
+					.onetap-features-container {
+
+						.onetap-features {
+
+							.onetap-brightness {
+								display: none !important;
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
+	// Contrast.
+	body.onetap_hide_contrast {
+
+		nav.onetap-accessibility.onetap-plugin-onetap {
+
+			.onetap-container {
+
+				.onetap-accessibility-settings {
+
+					.onetap-features-container {
+
+						.onetap-features {
+
+							.onetap-contrast {
+								display: none !important;
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
+	// Grayscale.
+	body.onetap_hide_grayscale {
+
+		nav.onetap-accessibility.onetap-plugin-onetap {
+
+			.onetap-container {
+
+				.onetap-accessibility-settings {
+
+					.onetap-features-container {
+
+						.onetap-features {
+
+							.onetap-grayscale {
+								display: none !important;
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
+	// Saturation.
+	body.onetap_hide_saturnation {
+
+		nav.onetap-accessibility.onetap-plugin-onetap {
+
+			.onetap-container {
+
+				.onetap-accessibility-settings {
+
+					.onetap-features-container {
+
+						.onetap-features {
+
+							.onetap-saturation {
+								display: none !important;
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
+	// Reading line.
+	body.onetap_hide_reading_line {
+
+		nav.onetap-accessibility.onetap-plugin-onetap {
+
+			.onetap-container {
+
+				.onetap-accessibility-settings {
+
+					.onetap-features-container {
+
+						.onetap-features {
+
+							.onetap-reading-line {
+								display: none !important;
+							}
+						}
+
+					}
+				}
+			}
+		}
+	}
+
+	// Highlight links.
+	body.onetap_hide_highlight_links {
+
+		nav.onetap-accessibility.onetap-plugin-onetap {
+
+			.onetap-container {
+
+				.onetap-accessibility-settings {
+
+					.onetap-features-container {
+
+						.onetap-features {
+
+							.onetap-highlight-links {
+								display: none !important;
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
+	// Read page.
+	body.onetap_hide_read_page {
+
+		nav.onetap-accessibility.onetap-plugin-onetap {
+
+			.onetap-container {
+
+				.onetap-accessibility-settings {
+
+					.onetap-features-container {
+
+						.onetap-features {
+
+							.onetap-read-page {
+								display: none !important;
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
+	// Mute sounds.
+	body.onetap_hide_mute_sounds {
+
+		nav.onetap-accessibility.onetap-plugin-onetap {
+
+			.onetap-container {
+
+				.onetap-accessibility-settings {
+
+					.onetap-features-container {
+
+						.onetap-features {
+
+							.onetap-mute-sounds {
+								display: none !important;
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
+	// Reading mask.
+	body.onetap_hide_reading_mask {
+
+		nav.onetap-accessibility.onetap-plugin-onetap {
+
+			.onetap-container {
+
+				.onetap-accessibility-settings {
+
+					.onetap-features-container {
+
+						.onetap-features {
+
+							.onetap-reading-mask {
+								display: none !important;
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
+	// Keyboard Navigation.
+	body.onetap_hide_keyboard_navigation {
+
+		nav.onetap-accessibility.onetap-plugin-onetap {
+
+			.onetap-container {
+
+				.onetap-accessibility-settings {
+
+					.onetap-features-container {
+
+						.onetap-features {
+
+							.onetap-keyboard-navigation {
+								display: none !important;
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
+	// Stop Animations.
+	body.onetap_hide_stop_animations {
+
+		nav.onetap-accessibility.onetap-plugin-onetap {
+
+			.onetap-container {
+
+				.onetap-accessibility-settings {
+
+					.onetap-features-container {
+
+						.onetap-features {
+
+							.onetap-stop-animations {
+								display: none !important;
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
+	@media only screen and (max-width: 576px) {
+
+		nav.onetap-accessibility.onetap-plugin-onetap {
+			width: 100% !important;
+
+			.onetap-container {
+
+				.onetap-accessibility-settings {
+
+					header.onetap-header-top {
+
+						.onetap-languages {
+							left: 10px !important;
+						}
+
+						.onetap-site-container {
+
+							.onetap-site-info {
+
+								.onetap-title {
+
+									h2 {
+										font-size: 1.5em !important;
+									}
+								}
+							}
+						}
+					}
+
+					// Features.
+					.onetap-features-container {
+						padding: 10px !important;
+
+						.onetap-features {
+							padding: 18px !important;
+
+							.onetap-box-feature {
+								width: calc(50% - 9px) !important;
+								padding: 15px !important;
+
+								.onetap-title {
+
+									p.onetap-option-levels {
+										justify-content: center !important;
+
+										span.onetap-level {
+											width: 20px !important;
+										}
+									}
+								}
+							}
+						}
+					}
+
+					// Reset settings.
+					.onetap-reset-settings {
+						padding: 20px 10px 10px 10px !important;
+					}
+				}
+			}
+		}
+	}
+}
+
+@mixin accessibility_onetap_admin_menu() {
+
+	html {
+		scroll-behavior: smooth;
+	}
+
+	#adminmenu {
+
+		a[href="admin.php?page=accessibility-onetap-pro"] {
+			background: $primary-color;
+			box-shadow: none;
+			color: $light-color;
+			font-weight: 600;
+			border-radius: 8px;
+			margin: 3px 10px 0;
+			text-align: center;
+		}
+
+		a[href="admin.php?page=accessibility-onetap-settings"] {
+
+			.wp-menu-image {
+
+				content: url(../images/admin/menu.svg);
+				padding: 7px 0;
+				padding-left: 8px;
+				transition: all .1s ease-in-out;
+				width: 20px;
+				height: 20px;
+
+				img {
+					display: none;
+				}
+			}
+
+			&:hover {
+
+				.wp-menu-image {
+					content: url(../images/admin/menu-hover.svg);
+				}
+			}
+
+		}
+
+		a[href="admin.php?page=accessibility-onetap-settings"].wp-menu-open {
+
+			.wp-menu-image {
+				content: url(../images/admin/menu-active.svg);
+			}
+
+			&:hover {
+
+				.wp-menu-image {
+					content: url(../images/admin/menu-active.svg);
+				}
+			}
+		}		
+
+		.wp-submenu {
+
+			a[href="admin.php?page=accessibility-onetap-pro"]:hover,
+			a[href="admin.php?page=accessibility-onetap-pro"]:focus {
+				background: $primary-color;
+				color: $light-color;
+			}
+		}
+
+	}
+
+	button.save-changes {
+		display: flex;
+		min-width: 113px;
+	}
+
+	body.toplevel_page_accessibility-onetap-settings,
+	body.onetap_page_accessibility-onetap-modules {
+
+		#wpbody {
+			padding-bottom: 550px;
+		}
+
+		#wpcontent {
+			margin-left: 0;
+			padding-left: 160px;
+			background: $admin-menu-bg;
+		}
+
+		.wrap {
+			box-sizing: border-box;
+			margin: 0;
+			padding: 20px 32px;
+			font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans", Ubuntu, Cantarell, "Helvetica Neue", Oxygen, "Fira Sans", "Droid Sans", sans-serif;
+
+			.button:not(.wp-color-result, .wp-picker-default) {
+				fill: $dark-color;
+				color: $dark-color;
+				background: $light-bg;
+				border-style: solid;
+				border-width: 1px 1px 1px 1px;
+				border-color: $border-color;
+				border-radius: 6px;
+				padding: 0.75rem 0.75rem 0.75rem 0.75rem;
+				font-size: 15px;
+				text-align: center;
+				line-height: 1;
+				font-weight: 500;
+				height: 47px;
+				display: flex;
+				flex-wrap: wrap;
+				align-items: center;
+			}
+
+			.button.button-primary {
+				fill: $light-color;
+				color: $light-color;
+				background: $primary-color;
+				border-color: $primary-color;
+			}
+
+			h2 {
+				color: $dark-color;
+				font-size: 1.75rem;
+				font-weight: 500;
+				line-height: 36px;
+				padding: 0;
+				margin: 0;
+				margin-bottom: 20px;
+			}
+
+			p,
+			span:not(.wp-color-result-text) {
+				font-size: 16px;
+				color: $divider-text;
+				margin-bottom: 20px;
+			}
+
+			input,
+			select {
+
+				&:focus {
+					box-shadow: inset 0 0 0 1px $primary-color;
+					outline: 0;
+					border-color: $primary-color !important;
+				}
+
+				option {
+					font-size: 16px;
+				}
+			}
+
+			span.group-title {
+				display: block;
+				color: $dark-color;
+				font-size: 1.25rem;
+				font-weight: 500;
+				line-height: 36px;
+				padding: 0;
+				margin: 0;
+			}
+
+			span.group-description {
+				display: block;
+				font-size: 16px;
+				margin-bottom: 20px;
+			}
+
+			button.save-changes {
+				margin-top: 10px;
+				background: $primary-color;
+				border: none;
+				border-radius: 6px;
+				color: $light-color;
+				font-size: 0.875rem;
+				font-weight: 500;
+				line-height: 24px;
+				padding: 0.5rem 0.75rem 0.5rem 0.75rem;
+				min-height: 40px;
+				cursor: pointer;
+				display: flex;
+				flex-wrap: wrap;
+				justify-content: center;
+				align-items: center;
+
+				&:hover {
+					fill: $primary-hover-color;
+					background: $primary-hover-color;
+					border-color: $primary-hover-color;
+				}
+			}
+
+			header.top {
+				position: relative;
+
+				&::before {
+					content: "";
+					position: absolute;
+					background: $light-bg;
+					width: calc(100% + 64px);
+					left: -32px;
+					top: -20px;
+					height: calc(100% + 20px);
+					height: calc(100% + 123px);
+				}
+
+				.mycontainer {
+					position: relative;
+
+					.myrow1 {
+						display: flex;
+						flex-wrap: wrap;
+						justify-content: space-between;
+						padding-bottom: 64px;
+					}
+
+					.myrow2 {
+
+						.box-button-cta {
+							display: flex;
+							flex-wrap: wrap;
+							gap: 20px;
+							margin-bottom: 32px;
+						}
+					}
+				}
+			}
+
+			.box-button-navigation {
+				position: sticky;
+				top: 32px;
+				background: $light-bg;
+				z-index: 9999999999999999;
+
+				.separator {
+					position: relative;
+
+					&::before,
+					&::after {
+						content: '';
+						background: $light-bg;
+						position: absolute;
+						height: 71px;
+						width: 32px;
+						top: 0;
+					}
+
+					&::before {
+						left: -32px;
+					}
+
+					&::after {
+						right: -32px;
+					}
+				}				
+
+				ul {
+					margin: 0;
+					padding: 0;
+					display: flex;
+					flex-wrap: wrap;
+					align-items: baseline;
+					justify-content: center;
+					gap: 20px;
+					padding-top: 12px;
+					padding-bottom: 12px;
+					border-left: none;
+					border-right: none;
+					position: relative;
+
+					&::before,
+					&::after {
+						content: "";
+						width: calc(100% + 64px);
+						height: 1px;
+						background: $border-color;
+						position: absolute;
+					}
+
+					&::before {
+						top: 0;
+					}
+
+					&::after {
+						bottom: 0;
+					}
+
+					li {
+						margin: 0;
+						padding: 0;
+						list-style: none;
+
+						a {
+							height: 41px;
+						}
+					}
+				}
+			}
+
+			.metabox-holder {
+				padding-top: 0 !important;
+
+				h2 {
+					display: none;
+				}
+
+				table {
+					margin: 0;
+					margin-top: 32px;
+
+					tr {
+
+						th[scope="row"] {
+							display: none;
+						}
+
+						td {
+							padding-left: 0;
+						}
+					}
+				}
+			}
+		}
+	}
+
+	body.toplevel_page_accessibility-onetap-settings {
+
+		.metabox-holder {
+
+			h2 {
+				display: none;
+			}
+
+			table {
+
+				tr {
+
+					th[scope="row"] {
+						display: none;
+					}
+
+					td {
+						padding-top: 0;
+						padding-bottom: 64px;
+
+						.box-setting-option {
+
+							span.site-title {
+								display: block;
+								color: $dark-color;
+								font-size: 1.25rem;
+								font-weight: 500;
+								line-height: 36px;
+								padding: 0;
+								margin: 0;
+							}
+
+							span.site-description {
+								display: block;
+								font-size: 16px;
+								margin-bottom: 20px;
+
+								a {
+									color: $primary-color;
+								}
+							}
+
+							.box-control {
+								border-radius: 1rem 1rem 1rem 1rem;
+								background: $light-bg;
+								padding: 2rem;
+
+								label {
+									font-size: 0.925rem;
+									font-weight: 500;
+									line-height: 28px;
+									color: $label-color;
+									display: block;
+									cursor: pointer;
+									margin-bottom: 0.5rem;
+								}
+
+								select,
+								input:not(.wp-color-picker, .wp-picker-default) {
+									background: $light-bg;
+									border-radius: 8px 8px 8px 8px;
+									width: 100%;
+									max-width: 100%;
+									border: 1px solid $border-color;
+									min-height: 43px;
+									padding: 5px 14px;
+								}
+
+								.wp-picker-active {
+
+									span {
+
+										label {
+											display: inline-block;
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+
+				tr.icons,
+				tr.size,
+				tr.border {
+
+					td {
+						padding-bottom: 0;
+
+						.box-setting-option.icons,
+						.box-setting-option.size,
+						.box-setting-option.border {
+
+							.box-control {
+								padding-top: 0;
+								border-radius: 0;
+
+								.title-label {
+									font-size: 0.925rem;
+									font-weight: 500;
+									line-height: 28px;
+									color: $label-color;
+									display: block;
+									cursor: pointer;
+									margin-bottom: 0.5rem;
+									width: 100%;
+								}
+
+								.boxes {
+									display: flex;
+									flex-wrap: wrap;
+									justify-content: flex-start;
+									gap: 20px;
+
+									.box {
+
+										label {
+											border: 1px solid $border-color;
+											border-radius: 8px;
+											margin: 0;
+											line-height: normal;
+											height: 135px;
+											width: 135px;
+											display: flex;
+											align-items: center;
+											justify-content: center;
+
+											&.checked {
+												border: 1px solid $primary-color;
+												box-shadow: 0 0 0 1px $primary-color;
+											}
+
+											img {
+												height: 30px;
+												width: 30px;
+												padding: 15px;
+												background: $primary-color;
+												border-radius: 50%;
+											}
+
+											input {
+												display: none;
+											}
+										}
+									}
+								}
+
+								button.save-changes {
+									display: none;
+								}
+							}
+						}
+
+						// Icons
+						.box-setting-option.icons {
+
+							.box-control {
+								padding-top: 2rem;
+								border-radius: 1rem 1rem 0 0;
+							}
+						}
+
+						// Size
+						.box-setting-option.size {
+
+							.site-description {
+								margin: 0;
+							}
+
+							.box-control {
+
+								.boxes {
+
+									.box:nth-child(1) {
+
+										img {
+											height: 20px;
+											width: 20px;
+											padding: 10px;
+										}
+									}
+
+									.box:nth-child(2) {
+
+										img {
+											height: 30px;
+											width: 30px;
+											padding: 15px;
+										}
+									}
+
+									.box:nth-child(3) {
+
+										img {
+											height: 35px;
+											width: 35px;
+											padding: 17.5px;
+										}
+									}
+								}
+							}
+						}
+
+						// Border
+						.box-setting-option.border {
+
+							.site-description {
+								margin: 0;
+							}
+
+							.box-control {
+								border-radius: 0 0 1rem 1rem;
+
+								.boxes {
+
+									.box:nth-child(1) {
+
+										img {
+											border: solid 2px $light-color;
+											box-shadow: 0 0 0 4px $primary-color;
+										}
+									}
+								}
+
+								button.save-changes {
+									display: block;
+								}
+							}
+						}
+					}
+				}
+
+				tr.border {
+
+					td {
+						padding-bottom: 64px;
+					}
+				}
+
+				tr.position-top-bottom {
+
+					td {
+						padding-bottom: 0;
+
+						.box-setting-option {
+
+							.box-control {
+								border-radius: 1rem 1rem 0 0;
+								padding-bottom: 8px;
+								padding-right: 0;
+
+								button.save-changes {
+									display: none;
+								}
+							}
+						}
+					}
+				}
+
+				tr.position-left-right {
+
+					td {
+						padding-top: 0;
+						padding-bottom: 0;
+
+						.box-setting-option {
+
+							span.site-title {
+								display: none;
+							}
+
+							span.site-description {
+								display: none;
+							}
+
+							.box-control {
+								padding-top: 0;
+								padding-bottom: 0;
+								border-radius: 0;
+
+								button.save-changes {
+									display: none;
+								}
+							}
+						}
+					}
+				}
+
+				tr.widge-position {
+
+					td {
+						padding-top: 0;
+
+						.box-setting-option {
+							border-radius: 0 0 1rem 1rem;
+
+							span.site-title {
+								display: none;
+							}
+
+							span.site-description {
+								display: none;
+							}
+
+							.box-control {
+								padding-top: 8px;
+								border-radius: 0 0 1rem 1rem;
+
+								button.save-changes {
+									display: block;
+								}
+							}
+						}
+					}
+				}
+
+				tr.position-top-bottom,
+				tr.position-top-bottom-tablet,
+				tr.position-top-bottom-mobile {
+					display: none;
+
+					td {
+						padding-bottom: 0;
+
+						.box-setting-option {
+							border-radius: 1rem 1rem 0 0;
+							background: $light-bg;
+							padding: 2rem;
+							padding-bottom: 0;
+
+							.box-device {
+
+								.boxes {
+									display: flex;
+									flex-wrap: wrap;
+									gap: 14px;
+
+									button {
+										display: flex;
+										flex-wrap: wrap;
+										align-items: center;
+										gap: 5px;
+										background: $light-bg;
+										border-radius: 8px;
+										padding: 12px 16px;
+										border: 1px solid $border-color;
+										line-height: 20px;
+										cursor: pointer;
+
+										img {
+											width: 18px;
+											height: 18px;
+											opacity: 0.6;
+										}
+
+										span {
+											display: flex;
+											align-items: center;
+											font-size: 14px;
+											font-weight: 600;
+											text-align: center;
+											line-height: 20px;
+											margin: 0;
+											color: $divider-text;
+										}
+									}
+
+									button.active {
+										border: 1px solid transparent;
+										background: #eee;
+
+										img {
+											opacity: 1;
+										}
+
+										span {
+											color: $dark-color;
+										}
+									}
+								}
+							}
+
+							.box-control {
+								border-radius: 1rem 1rem 0 0;
+								padding-bottom: 8px;
+								padding-left: 0;
+
+								button.save-changes {
+									display: none;
+								}
+							}
+						}
+					}
+				}
+
+				tr.position-left-right,
+				tr.position-left-right-tablet,
+				tr.position-left-right-mobile {
+					display: none;
+
+					td {
+						padding-top: 0;
+						padding-bottom: 0;
+
+						.box-setting-option {
+
+							span.site-title {
+								display: none;
+							}
+
+							span.site-description {
+								display: none;
+							}
+
+							.box-control {
+								padding-top: 0;
+								padding-bottom: 0;
+								border-radius: 0;
+
+								button.save-changes {
+									display: none;
+								}
+							}
+						}
+					}
+				}
+
+				tr.widge-position,
+				tr.widge-position-tablet,
+				tr.widge-position-mobile {
+					display: none;
+
+					td {
+						padding-top: 0;
+
+						.box-setting-option {
+							border-radius: 0 0 1rem 1rem;
+
+							span.site-title {
+								display: none;
+							}
+
+							span.site-description {
+								display: none;
+							}
+
+							.box-control {
+								padding-top: 8px;
+								border-radius: 0 0 1rem 1rem;
+
+								button.save-changes {
+									display: block;
+								}
+							}
+						}
+					}
+				}
+
+				tr.language {
+
+					td {
+						padding-bottom: 0;
+					}
+				}
+
+				tr.hide-powered-by-onetap {
+
+					td {
+						padding-top: 64px;
+						padding-bottom: 0;
+
+						.box-custom-checkbox {
+							border-radius: 1rem;
+							padding-bottom: 8px;
+							border: none;
+						}
+					}
+				}
+
+				tr.active {
+					display: table-row;
+				}
+
+				tr.license {
+
+					td {
+						padding-top: 64px;
+					}
+				}
+
+				tr.hide-powered-by-onetap {
+
+					td {
+						padding-top: 64px;
+						padding-bottom: 0;
+
+						.box-custom-checkbox {
+							border-radius: 1rem;
+							padding-bottom: 8px;
+							border: none;
+						}
+					}
+				}
+
+			}
+		}
+
+		.wrap {
+
+			.box-custom-checkbox {
+				display: flex;
+				flex-wrap: wrap;
+				align-items: center;
+				justify-content: space-between;
+				background: $light-bg;
+				border-bottom: 1px solid #eee;
+
+				.left {
+					display: flex;
+					flex-wrap: wrap;
+					padding: 32px;
+					width: calc(100% - 150px);
+
+					.icon {
+						font-size: 30px;
+						padding: 10px;
+						border-radius: 8px 8px 8px 8px;
+						background: #eff6ff;
+						fill: $primary-color;
+						color: $primary-color;
+						width: 30px;
+						height: 30px;
+						margin-right: 15px;
+					}
+
+					.text {
+						width: calc(100% - 65px);
+
+						span.title {
+							font-size: 1rem;
+							font-weight: 500;
+							color: $dark-color;
+							margin: 0;
+							display: block;
+						}
+
+						span.desc {
+							font-weight: 400;
+							margin: 0;
+							display: block;
+							margin-top: 7px;
+						}
+					}
+				}
+
+				.right {
+					position: relative;
+					right: 32px;
+
+					.switch {
+						position: relative;
+						display: inline-block;
+						width: 46px;
+						height: 23px;
+
+						input {
+							display: none;
+						}
+					}
+
+					.slider {
+						position: absolute;
+						cursor: pointer;
+						top: 0;
+						left: 0;
+						right: 0;
+						bottom: 0;
+						background: $border-color;
+						-webkit-transition: 0.4s;
+						transition: 0.4s;
+						margin: 0;
+					}
+
+					.slider::before {
+						content: "";
+						position: absolute;
+						height: 17px;
+						width: 18px;
+						left: 3px;
+						bottom: 3px;
+						background: $light-bg;
+						-webkit-transition: 0.4s;
+						transition: 0.4s;
+					}
+
+					input:checked + .slider {
+						background: $primary-color;
+					}
+
+					input:focus + .slider {
+						box-shadow: $primary-color;
+					}
+
+					input:checked + .slider::before {
+						-webkit-transform: translateX(22px);
+						-ms-transform: translateX(22px);
+						transform: translateX(22px);
+					}
+
+					.slider.round {
+						border-radius: 34px;
+					}
+
+					.slider.round::before {
+						border-radius: 50%;
+					}
+
+					.slider-red.round::before {
+						border-radius: 50%;
+					}
+				}
+
+				&.onetap-pro {
+					opacity: 0.6;
+					filter: grayscale(1);
+
+					.left {
+
+						.text {
+							position: relative;
+
+							span.status-pro {
+								font-size: 0.75rem;
+								padding: 0.25rem 0.5rem;
+								color: $light-bg;
+								background: $dark-color;
+								border-radius: 1rem;
+								font-weight: 500;
+								position: absolute;
+							}
+
+							span.title {
+								position: relative;
+								left: 45px;
+							}
+						}
+					}
+
+					.right {
+						position: relative;
+
+						&::before {
+							content: "";
+							position: absolute;
+							top: 0;
+							left: 0;
+							width: 100%;
+							height: 100%;
+							z-index: 9999999999999999;
+						}
+					}
+
+				}
+			}
+		}
+	}
+
+	body.onetap_page_accessibility-onetap-modules {
+
+		.wrap {
+
+			.box-custom-checkbox {
+				display: flex;
+				flex-wrap: wrap;
+				align-items: center;
+				justify-content: space-between;
+				background: $light-bg;
+				border-bottom: 1px solid #eee;
+
+				.left {
+					display: flex;
+					flex-wrap: wrap;
+					padding: 32px;
+					width: calc(100% - 150px);
+
+					.icon {
+						font-size: 30px;
+						padding: 10px;
+						border-radius: 8px 8px 8px 8px;
+						background: #eff6ff;
+						fill: $primary-color;
+						color: $primary-color;
+						width: 30px;
+						height: 30px;
+						margin-right: 15px;
+					}
+
+					.text {
+						width: calc(100% - 65px);
+
+						span.title {
+							font-size: 1rem;
+							font-weight: 500;
+							color: $dark-color;
+							margin: 0;
+							display: block;
+						}
+
+						span.desc {
+							font-weight: 400;
+							margin: 0;
+							display: block;
+							margin-top: 7px;
+						}
+					}
+				}
+
+				.right {
+					position: relative;
+					right: 32px;
+
+					.switch {
+						position: relative;
+						display: inline-block;
+						width: 46px;
+						height: 23px;
+
+						input {
+							display: none;
+						}
+					}
+
+					.slider {
+						position: absolute;
+						cursor: pointer;
+						top: 0;
+						left: 0;
+						right: 0;
+						bottom: 0;
+						background: $border-color;
+						-webkit-transition: 0.4s;
+						transition: 0.4s;
+						margin: 0;
+					}
+
+					.slider::before {
+						content: "";
+						position: absolute;
+						height: 17px;
+						width: 18px;
+						left: 3px;
+						bottom: 3px;
+						background: $light-bg;
+						-webkit-transition: 0.4s;
+						transition: 0.4s;
+					}
+
+					input:checked + .slider {
+						background: $primary-color;
+					}
+
+					input:focus + .slider {
+						box-shadow: $primary-color;
+					}
+
+					input:checked + .slider::before {
+						-webkit-transform: translateX(22px);
+						-ms-transform: translateX(22px);
+						transform: translateX(22px);
+					}
+
+					.slider.round {
+						border-radius: 34px;
+					}
+
+					.slider.round::before {
+						border-radius: 50%;
+					}
+
+					.slider-red.round::before {
+						border-radius: 50%;
+					}
+				}
+
+				&.onetap-pro {
+					opacity: 0.6;
+					filter: grayscale(1);
+
+					.left {
+
+						.text {
+							position: relative;
+
+							span.status-pro {
+								font-size: 0.75rem;
+								padding: 0.25rem 0.5rem;
+								color: $light-bg;
+								background: $dark-color;
+								border-radius: 1rem;
+								font-weight: 500;
+								position: absolute;
+							}
+
+							span.title {
+								position: relative;
+								left: 45px;
+							}
+						}
+					}
+
+					.right {
+						position: relative;
+
+						&::before {
+							content: "";
+							position: absolute;
+							top: 0;
+							left: 0;
+							width: 100%;
+							height: 100%;
+							z-index: 9999999999999999;
+						}
+					}
+
+				}
+			}
+
+			.metabox-holder {
+
+				>div:first-child {
+					display: none !important;
+				}
+
+				>div:last-child {
+					display: block !important;
+				}
+
+				table {
+
+					tr {
+
+						td {
+							padding-top: 0;
+							padding-bottom: 0;
+						}
+					}
+
+					tr:nth-child(4),
+					tr:nth-child(15),
+					tr:nth-child(22) {
+
+						td {
+
+							.box-custom-checkbox {
+								border-radius: 1rem 1rem 0 0;
+							}
+						}
+					}
+
+					tr:nth-child(12),
+					tr:nth-child(19),
+					tr:nth-child(30) {
+
+						td {
+
+							.box-custom-checkbox {
+								border-radius: 0 0 1rem 1rem;
+							}
+						}
+					}
+
+					tr:last-child {
+
+						td {
+
+							.box-custom-checkbox {
+								border-radius: 0 0 1rem 1rem;
+
+								.left {
+
+									.icon {
+
+										button {
+											display: flex;
+											min-width: 113px;
+											position: relative;
+											right: 44px;
+											top: 50px;
+										}
+									}
+								}
+							}
+						}
+					}
+
+					tr.accessibility-profiles-title {
+
+						td {
+							padding-bottom: 0;
+
+							.box-setting-option.icons,
+							.box-setting-option.size,
+							.box-setting-option.border {
+
+								.box-control {
+									padding-top: 0;
+									border-radius: 0;
+
+									.title-label {
+										font-size: 0.925rem;
+										font-weight: 500;
+										line-height: 28px;
+										color: $label-color;
+										display: block;
+										cursor: pointer;
+										margin-bottom: 0.5rem;
+										width: 100%;
+									}
+
+									.boxes {
+										display: flex;
+										flex-wrap: wrap;
+										justify-content: flex-start;
+										gap: 20px;
+
+										.box {
+
+											label {
+												border: 1px solid $border-color;
+												border-radius: 8px;
+												margin: 0;
+												line-height: normal;
+												height: 135px;
+												width: 135px;
+												display: flex;
+												align-items: center;
+												justify-content: center;
+
+												&.checked {
+													border: 1px solid $primary-color;
+													box-shadow: 0 0 0 1px $primary-color;
+												}
+
+												img {
+													height: 30px;
+													width: 30px;
+													padding: 15px;
+													background: $primary-color;
+													border-radius: 50%;
+												}
+
+												input {
+													display: none;
+												}
+											}
+										}
+									}
+
+									button.save-changes {
+										display: none;
+									}
+								}
+							}
+
+							// Icons
+							.box-setting-option.icons {
+
+								.box-control {
+									padding-top: 2rem;
+									border-radius: 1rem 1rem 0 0;
+								}
+							}
+
+							// Size
+							.box-setting-option.size {
+
+								.site-description {
+									margin: 0;
+								}
+
+								.box-control {
+
+									.boxes {
+
+										.box:nth-child(1) {
+
+											img {
+												height: 20px;
+												width: 20px;
+												padding: 10px;
+											}
+										}
+
+										.box:nth-child(2) {
+
+											img {
+												height: 30px;
+												width: 30px;
+												padding: 15px;
+											}
+										}
+
+										.box:nth-child(3) {
+
+											img {
+												height: 35px;
+												width: 35px;
+												padding: 17.5px;
+											}
+										}
+									}
+								}
+							}
+
+							// Border
+							.box-setting-option.border {
+
+								.site-description {
+									margin: 0;
+								}
+
+								.box-control {
+									border-radius: 0 0 1rem 1rem;
+
+									.boxes {
+
+										.box:nth-child(1) {
+
+											img {
+												border: solid 2px $light-color;
+												box-shadow: 0 0 0 4px $primary-color;
+											}
+										}
+									}
+
+									button.save-changes {
+										display: block;
+									}
+								}
+							}
+						}
+					}
+
+					tr.accessibility-profiles {
+
+						td {
+
+							.box-custom-checkbox {
+								border-radius: 1rem;
+								margin-bottom: 64px;
+								border: none;
+							}
+						}
+					}
+
+					tr.content-modules-title-save-changes,
+					tr.color-modules-save-changes,
+					tr.orientation-modules-save-changes {
+
+						td {
+
+							button {
+								margin-top: 20px;
+								margin-bottom: 64px;
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
+	@media only screen and (max-width: 960px) {
+
+		body.onetap_page_accessibility-onetap-modules,
+		body.toplevel_page_accessibility-onetap-settings {
+
+			#wpcontent {
+				padding-left: 32px;
+				padding-left: 36px;
+			}
+		}
+	}
+
+	@media only screen and (max-width: 782px) {
+
+		body.onetap_page_accessibility-onetap-modules,
+		body.toplevel_page_accessibility-onetap-settings {
+
+			#wpcontent {
+				padding-left: 0;
+			}
+
+			.wrap {
+				padding: 20px;
+
+				.button:not(.wp-color-result, .wp-picker-default) {
+					padding: 5px 8px;
+					font-size: 13px;
+					height: auto;
+				}
+
+				header.top {
+
+					&::before {
+						height: calc(100% + 116px);
+					}
+
+					.mycontainer {
+
+						.myrow1 {
+							padding-bottom: 30px;
+						}
+					}
+				}
+
+				.box-button-navigation {
+					position: sticky;
+					top: 33px;
+					background: $light-bg;
+					z-index: 9999999999999999;
+
+					.separator {
+
+						&::before,
+						&::after {
+							height: 64px;
+						}
+					}
+
+					ul {
+						gap: 5px;
+
+						li {
+
+							a {
+								height: auto;
+								margin-bottom: 0;
+							}
+						}
+					}
+				}
+			}
+		}
+
+		body.onetap_page_accessibility-onetap-modules {
+
+			.wrap {
+
+				.box-custom-checkbox {
+
+					.left {
+						padding: 20px;
+					}
+				}
+			}
+		}
+
+		body.toplevel_page_accessibility-onetap-settings {
+
+			.metabox-holder {
+
+				table {
+
+					tr {
+
+						td {
+							padding-bottom: 30px;
+
+							.box-setting-option {
+
+								.box-control {
+									padding: 20px;
+								}
+							}
+						}
+					}
+
+					tr.license {
+
+						td {
+							padding-top: 30px;
+						}
+					}
+				}
+			}
+		}
+	}
+
+	@media only screen and (max-width: 600px) {
+
+		body.onetap_page_accessibility-onetap-modules,
+		body.toplevel_page_accessibility-onetap-settings {
+
+			.wrap {
+
+				.box-button-navigation {
+					top: 0;
+				}
+			}
+		}
+	}	
+
+	@media only screen and (max-width: 474px) {
+
+		body.onetap_page_accessibility-onetap-modules {
+
+			.wrap {
+
+				.box-button-navigation {
+
+					.separator {
+
+						&::before,
+						&::after {
+							height: 108px;
+						}
+					}
+				}
+			}
+		}
+	}
+}

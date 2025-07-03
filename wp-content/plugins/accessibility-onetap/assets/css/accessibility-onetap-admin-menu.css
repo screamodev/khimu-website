@@ -1,0 +1,1220 @@
+html {
+  scroll-behavior: smooth;
+}
+
+#adminmenu a[href="admin.php?page=accessibility-onetap-pro"] {
+  background: #2563eb;
+  box-shadow: none;
+  color: #fff;
+  font-weight: 600;
+  border-radius: 8px;
+  margin: 3px 10px 0;
+  text-align: center;
+}
+#adminmenu a[href="admin.php?page=accessibility-onetap-settings"] .wp-menu-image {
+  content: url(../images/admin/menu.svg);
+  padding: 7px 0;
+  padding-left: 8px;
+  transition: all 0.1s ease-in-out;
+  width: 20px;
+  height: 20px;
+}
+#adminmenu a[href="admin.php?page=accessibility-onetap-settings"] .wp-menu-image img {
+  display: none;
+}
+#adminmenu a[href="admin.php?page=accessibility-onetap-settings"]:hover .wp-menu-image {
+  content: url(../images/admin/menu-hover.svg);
+}
+#adminmenu a[href="admin.php?page=accessibility-onetap-settings"].wp-menu-open .wp-menu-image {
+  content: url(../images/admin/menu-active.svg);
+}
+#adminmenu a[href="admin.php?page=accessibility-onetap-settings"].wp-menu-open:hover .wp-menu-image {
+  content: url(../images/admin/menu-active.svg);
+}
+#adminmenu .wp-submenu a[href="admin.php?page=accessibility-onetap-pro"]:hover,
+#adminmenu .wp-submenu a[href="admin.php?page=accessibility-onetap-pro"]:focus {
+  background: #2563eb;
+  color: #fff;
+}
+
+button.save-changes {
+  display: flex;
+  min-width: 113px;
+}
+
+body.toplevel_page_accessibility-onetap-settings #wpbody,
+body.onetap_page_accessibility-onetap-modules #wpbody {
+  padding-bottom: 550px;
+}
+body.toplevel_page_accessibility-onetap-settings #wpcontent,
+body.onetap_page_accessibility-onetap-modules #wpcontent {
+  margin-left: 0;
+  padding-left: 160px;
+  background: #f7f9fc;
+}
+body.toplevel_page_accessibility-onetap-settings .wrap,
+body.onetap_page_accessibility-onetap-modules .wrap {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 20px 32px;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans", Ubuntu, Cantarell, "Helvetica Neue", Oxygen, "Fira Sans", "Droid Sans", sans-serif;
+}
+body.toplevel_page_accessibility-onetap-settings .wrap .button:not(.wp-color-result, .wp-picker-default),
+body.onetap_page_accessibility-onetap-modules .wrap .button:not(.wp-color-result, .wp-picker-default) {
+  fill: #111;
+  color: #111;
+  background: #fff;
+  border-style: solid;
+  border-width: 1px 1px 1px 1px;
+  border-color: #ddd;
+  border-radius: 6px;
+  padding: 0.75rem 0.75rem 0.75rem 0.75rem;
+  font-size: 15px;
+  text-align: center;
+  line-height: 1;
+  font-weight: 500;
+  height: 47px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+}
+body.toplevel_page_accessibility-onetap-settings .wrap .button.button-primary,
+body.onetap_page_accessibility-onetap-modules .wrap .button.button-primary {
+  fill: #fff;
+  color: #fff;
+  background: #2563eb;
+  border-color: #2563eb;
+}
+body.toplevel_page_accessibility-onetap-settings .wrap h2,
+body.onetap_page_accessibility-onetap-modules .wrap h2 {
+  color: #111;
+  font-size: 1.75rem;
+  font-weight: 500;
+  line-height: 36px;
+  padding: 0;
+  margin: 0;
+  margin-bottom: 20px;
+}
+body.toplevel_page_accessibility-onetap-settings .wrap p,
+body.toplevel_page_accessibility-onetap-settings .wrap span:not(.wp-color-result-text),
+body.onetap_page_accessibility-onetap-modules .wrap p,
+body.onetap_page_accessibility-onetap-modules .wrap span:not(.wp-color-result-text) {
+  font-size: 16px;
+  color: #666c76;
+  margin-bottom: 20px;
+}
+body.toplevel_page_accessibility-onetap-settings .wrap input:focus,
+body.toplevel_page_accessibility-onetap-settings .wrap select:focus,
+body.onetap_page_accessibility-onetap-modules .wrap input:focus,
+body.onetap_page_accessibility-onetap-modules .wrap select:focus {
+  box-shadow: inset 0 0 0 1px #2563eb;
+  outline: 0;
+  border-color: #2563eb !important;
+}
+body.toplevel_page_accessibility-onetap-settings .wrap input option,
+body.toplevel_page_accessibility-onetap-settings .wrap select option,
+body.onetap_page_accessibility-onetap-modules .wrap input option,
+body.onetap_page_accessibility-onetap-modules .wrap select option {
+  font-size: 16px;
+}
+body.toplevel_page_accessibility-onetap-settings .wrap span.group-title,
+body.onetap_page_accessibility-onetap-modules .wrap span.group-title {
+  display: block;
+  color: #111;
+  font-size: 1.25rem;
+  font-weight: 500;
+  line-height: 36px;
+  padding: 0;
+  margin: 0;
+}
+body.toplevel_page_accessibility-onetap-settings .wrap span.group-description,
+body.onetap_page_accessibility-onetap-modules .wrap span.group-description {
+  display: block;
+  font-size: 16px;
+  margin-bottom: 20px;
+}
+body.toplevel_page_accessibility-onetap-settings .wrap button.save-changes,
+body.onetap_page_accessibility-onetap-modules .wrap button.save-changes {
+  margin-top: 10px;
+  background: #2563eb;
+  border: none;
+  border-radius: 6px;
+  color: #fff;
+  font-size: 0.875rem;
+  font-weight: 500;
+  line-height: 24px;
+  padding: 0.5rem 0.75rem 0.5rem 0.75rem;
+  min-height: 40px;
+  cursor: pointer;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+}
+body.toplevel_page_accessibility-onetap-settings .wrap button.save-changes:hover,
+body.onetap_page_accessibility-onetap-modules .wrap button.save-changes:hover {
+  fill: #2057d1;
+  background: #2057d1;
+  border-color: #2057d1;
+}
+body.toplevel_page_accessibility-onetap-settings .wrap header.top,
+body.onetap_page_accessibility-onetap-modules .wrap header.top {
+  position: relative;
+}
+body.toplevel_page_accessibility-onetap-settings .wrap header.top::before,
+body.onetap_page_accessibility-onetap-modules .wrap header.top::before {
+  content: "";
+  position: absolute;
+  background: #fff;
+  width: calc(100% + 64px);
+  left: -32px;
+  top: -20px;
+  height: calc(100% + 20px);
+  height: calc(100% + 123px);
+}
+body.toplevel_page_accessibility-onetap-settings .wrap header.top .mycontainer,
+body.onetap_page_accessibility-onetap-modules .wrap header.top .mycontainer {
+  position: relative;
+}
+body.toplevel_page_accessibility-onetap-settings .wrap header.top .mycontainer .myrow1,
+body.onetap_page_accessibility-onetap-modules .wrap header.top .mycontainer .myrow1 {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  padding-bottom: 64px;
+}
+body.toplevel_page_accessibility-onetap-settings .wrap header.top .mycontainer .myrow2 .box-button-cta,
+body.onetap_page_accessibility-onetap-modules .wrap header.top .mycontainer .myrow2 .box-button-cta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  margin-bottom: 32px;
+}
+body.toplevel_page_accessibility-onetap-settings .wrap .box-button-navigation,
+body.onetap_page_accessibility-onetap-modules .wrap .box-button-navigation {
+  position: sticky;
+  top: 32px;
+  background: #fff;
+  z-index: 10000000000000000;
+}
+body.toplevel_page_accessibility-onetap-settings .wrap .box-button-navigation .separator,
+body.onetap_page_accessibility-onetap-modules .wrap .box-button-navigation .separator {
+  position: relative;
+}
+body.toplevel_page_accessibility-onetap-settings .wrap .box-button-navigation .separator::before, body.toplevel_page_accessibility-onetap-settings .wrap .box-button-navigation .separator::after,
+body.onetap_page_accessibility-onetap-modules .wrap .box-button-navigation .separator::before,
+body.onetap_page_accessibility-onetap-modules .wrap .box-button-navigation .separator::after {
+  content: "";
+  background: #fff;
+  position: absolute;
+  height: 71px;
+  width: 32px;
+  top: 0;
+}
+body.toplevel_page_accessibility-onetap-settings .wrap .box-button-navigation .separator::before,
+body.onetap_page_accessibility-onetap-modules .wrap .box-button-navigation .separator::before {
+  left: -32px;
+}
+body.toplevel_page_accessibility-onetap-settings .wrap .box-button-navigation .separator::after,
+body.onetap_page_accessibility-onetap-modules .wrap .box-button-navigation .separator::after {
+  right: -32px;
+}
+body.toplevel_page_accessibility-onetap-settings .wrap .box-button-navigation ul,
+body.onetap_page_accessibility-onetap-modules .wrap .box-button-navigation ul {
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: center;
+  gap: 20px;
+  padding-top: 12px;
+  padding-bottom: 12px;
+  border-left: none;
+  border-right: none;
+  position: relative;
+}
+body.toplevel_page_accessibility-onetap-settings .wrap .box-button-navigation ul::before, body.toplevel_page_accessibility-onetap-settings .wrap .box-button-navigation ul::after,
+body.onetap_page_accessibility-onetap-modules .wrap .box-button-navigation ul::before,
+body.onetap_page_accessibility-onetap-modules .wrap .box-button-navigation ul::after {
+  content: "";
+  width: calc(100% + 64px);
+  height: 1px;
+  background: #ddd;
+  position: absolute;
+}
+body.toplevel_page_accessibility-onetap-settings .wrap .box-button-navigation ul::before,
+body.onetap_page_accessibility-onetap-modules .wrap .box-button-navigation ul::before {
+  top: 0;
+}
+body.toplevel_page_accessibility-onetap-settings .wrap .box-button-navigation ul::after,
+body.onetap_page_accessibility-onetap-modules .wrap .box-button-navigation ul::after {
+  bottom: 0;
+}
+body.toplevel_page_accessibility-onetap-settings .wrap .box-button-navigation ul li,
+body.onetap_page_accessibility-onetap-modules .wrap .box-button-navigation ul li {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+body.toplevel_page_accessibility-onetap-settings .wrap .box-button-navigation ul li a,
+body.onetap_page_accessibility-onetap-modules .wrap .box-button-navigation ul li a {
+  height: 41px;
+}
+body.toplevel_page_accessibility-onetap-settings .wrap .metabox-holder,
+body.onetap_page_accessibility-onetap-modules .wrap .metabox-holder {
+  padding-top: 0 !important;
+}
+body.toplevel_page_accessibility-onetap-settings .wrap .metabox-holder h2,
+body.onetap_page_accessibility-onetap-modules .wrap .metabox-holder h2 {
+  display: none;
+}
+body.toplevel_page_accessibility-onetap-settings .wrap .metabox-holder table,
+body.onetap_page_accessibility-onetap-modules .wrap .metabox-holder table {
+  margin: 0;
+  margin-top: 32px;
+}
+body.toplevel_page_accessibility-onetap-settings .wrap .metabox-holder table tr th[scope=row],
+body.onetap_page_accessibility-onetap-modules .wrap .metabox-holder table tr th[scope=row] {
+  display: none;
+}
+body.toplevel_page_accessibility-onetap-settings .wrap .metabox-holder table tr td,
+body.onetap_page_accessibility-onetap-modules .wrap .metabox-holder table tr td {
+  padding-left: 0;
+}
+
+body.toplevel_page_accessibility-onetap-settings .metabox-holder h2 {
+  display: none;
+}
+body.toplevel_page_accessibility-onetap-settings .metabox-holder table tr th[scope=row] {
+  display: none;
+}
+body.toplevel_page_accessibility-onetap-settings .metabox-holder table tr td {
+  padding-top: 0;
+  padding-bottom: 64px;
+}
+body.toplevel_page_accessibility-onetap-settings .metabox-holder table tr td .box-setting-option span.site-title {
+  display: block;
+  color: #111;
+  font-size: 1.25rem;
+  font-weight: 500;
+  line-height: 36px;
+  padding: 0;
+  margin: 0;
+}
+body.toplevel_page_accessibility-onetap-settings .metabox-holder table tr td .box-setting-option span.site-description {
+  display: block;
+  font-size: 16px;
+  margin-bottom: 20px;
+}
+body.toplevel_page_accessibility-onetap-settings .metabox-holder table tr td .box-setting-option span.site-description a {
+  color: #2563eb;
+}
+body.toplevel_page_accessibility-onetap-settings .metabox-holder table tr td .box-setting-option .box-control {
+  border-radius: 1rem 1rem 1rem 1rem;
+  background: #fff;
+  padding: 2rem;
+}
+body.toplevel_page_accessibility-onetap-settings .metabox-holder table tr td .box-setting-option .box-control label {
+  font-size: 0.925rem;
+  font-weight: 500;
+  line-height: 28px;
+  color: #1e293b;
+  display: block;
+  cursor: pointer;
+  margin-bottom: 0.5rem;
+}
+body.toplevel_page_accessibility-onetap-settings .metabox-holder table tr td .box-setting-option .box-control select,
+body.toplevel_page_accessibility-onetap-settings .metabox-holder table tr td .box-setting-option .box-control input:not(.wp-color-picker, .wp-picker-default) {
+  background: #fff;
+  border-radius: 8px 8px 8px 8px;
+  width: 100%;
+  max-width: 100%;
+  border: 1px solid #ddd;
+  min-height: 43px;
+  padding: 5px 14px;
+}
+body.toplevel_page_accessibility-onetap-settings .metabox-holder table tr td .box-setting-option .box-control .wp-picker-active span label {
+  display: inline-block;
+}
+body.toplevel_page_accessibility-onetap-settings .metabox-holder table tr.icons td,
+body.toplevel_page_accessibility-onetap-settings .metabox-holder table tr.size td,
+body.toplevel_page_accessibility-onetap-settings .metabox-holder table tr.border td {
+  padding-bottom: 0;
+}
+body.toplevel_page_accessibility-onetap-settings .metabox-holder table tr.icons td .box-setting-option.icons .box-control,
+body.toplevel_page_accessibility-onetap-settings .metabox-holder table tr.icons td .box-setting-option.size .box-control,
+body.toplevel_page_accessibility-onetap-settings .metabox-holder table tr.icons td .box-setting-option.border .box-control,
+body.toplevel_page_accessibility-onetap-settings .metabox-holder table tr.size td .box-setting-option.icons .box-control,
+body.toplevel_page_accessibility-onetap-settings .metabox-holder table tr.size td .box-setting-option.size .box-control,
+body.toplevel_page_accessibility-onetap-settings .metabox-holder table tr.size td .box-setting-option.border .box-control,
+body.toplevel_page_accessibility-onetap-settings .metabox-holder table tr.border td .box-setting-option.icons .box-control,
+body.toplevel_page_accessibility-onetap-settings .metabox-holder table tr.border td .box-setting-option.size .box-control,
+body.toplevel_page_accessibility-onetap-settings .metabox-holder table tr.border td .box-setting-option.border .box-control {
+  padding-top: 0;
+  border-radius: 0;
+}
+body.toplevel_page_accessibility-onetap-settings .metabox-holder table tr.icons td .box-setting-option.icons .box-control .title-label,
+body.toplevel_page_accessibility-onetap-settings .metabox-holder table tr.icons td .box-setting-option.size .box-control .title-label,
+body.toplevel_page_accessibility-onetap-settings .metabox-holder table tr.icons td .box-setting-option.border .box-control .title-label,
+body.toplevel_page_accessibility-onetap-settings .metabox-holder table tr.size td .box-setting-option.icons .box-control .title-label,
+body.toplevel_page_accessibility-onetap-settings .metabox-holder table tr.size td .box-setting-option.size .box-control .title-label,
+body.toplevel_page_accessibility-onetap-settings .metabox-holder table tr.size td .box-setting-option.border .box-control .title-label,
+body.toplevel_page_accessibility-onetap-settings .metabox-holder table tr.border td .box-setting-option.icons .box-control .title-label,
+body.toplevel_page_accessibility-onetap-settings .metabox-holder table tr.border td .box-setting-option.size .box-control .title-label,
+body.toplevel_page_accessibility-onetap-settings .metabox-holder table tr.border td .box-setting-option.border .box-control .title-label {
+  font-size: 0.925rem;
+  font-weight: 500;
+  line-height: 28px;
+  color: #1e293b;
+  display: block;
+  cursor: pointer;
+  margin-bottom: 0.5rem;
+  width: 100%;
+}
+body.toplevel_page_accessibility-onetap-settings .metabox-holder table tr.icons td .box-setting-option.icons .box-control .boxes,
+body.toplevel_page_accessibility-onetap-settings .metabox-holder table tr.icons td .box-setting-option.size .box-control .boxes,
+body.toplevel_page_accessibility-onetap-settings .metabox-holder table tr.icons td .box-setting-option.border .box-control .boxes,
+body.toplevel_page_accessibility-onetap-settings .metabox-holder table tr.size td .box-setting-option.icons .box-control .boxes,
+body.toplevel_page_accessibility-onetap-settings .metabox-holder table tr.size td .box-setting-option.size .box-control .boxes,
+body.toplevel_page_accessibility-onetap-settings .metabox-holder table tr.size td .box-setting-option.border .box-control .boxes,
+body.toplevel_page_accessibility-onetap-settings .metabox-holder table tr.border td .box-setting-option.icons .box-control .boxes,
+body.toplevel_page_accessibility-onetap-settings .metabox-holder table tr.border td .box-setting-option.size .box-control .boxes,
+body.toplevel_page_accessibility-onetap-settings .metabox-holder table tr.border td .box-setting-option.border .box-control .boxes {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  gap: 20px;
+}
+body.toplevel_page_accessibility-onetap-settings .metabox-holder table tr.icons td .box-setting-option.icons .box-control .boxes .box label,
+body.toplevel_page_accessibility-onetap-settings .metabox-holder table tr.icons td .box-setting-option.size .box-control .boxes .box label,
+body.toplevel_page_accessibility-onetap-settings .metabox-holder table tr.icons td .box-setting-option.border .box-control .boxes .box label,
+body.toplevel_page_accessibility-onetap-settings .metabox-holder table tr.size td .box-setting-option.icons .box-control .boxes .box label,
+body.toplevel_page_accessibility-onetap-settings .metabox-holder table tr.size td .box-setting-option.size .box-control .boxes .box label,
+body.toplevel_page_accessibility-onetap-settings .metabox-holder table tr.size td .box-setting-option.border .box-control .boxes .box label,
+body.toplevel_page_accessibility-onetap-settings .metabox-holder table tr.border td .box-setting-option.icons .box-control .boxes .box label,
+body.toplevel_page_accessibility-onetap-settings .metabox-holder table tr.border td .box-setting-option.size .box-control .boxes .box label,
+body.toplevel_page_accessibility-onetap-settings .metabox-holder table tr.border td .box-setting-option.border .box-control .boxes .box label {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  margin: 0;
+  line-height: normal;
+  height: 135px;
+  width: 135px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+body.toplevel_page_accessibility-onetap-settings .metabox-holder table tr.icons td .box-setting-option.icons .box-control .boxes .box label.checked,
+body.toplevel_page_accessibility-onetap-settings .metabox-holder table tr.icons td .box-setting-option.size .box-control .boxes .box label.checked,
+body.toplevel_page_accessibility-onetap-settings .metabox-holder table tr.icons td .box-setting-option.border .box-control .boxes .box label.checked,
+body.toplevel_page_accessibility-onetap-settings .metabox-holder table tr.size td .box-setting-option.icons .box-control .boxes .box label.checked,
+body.toplevel_page_accessibility-onetap-settings .metabox-holder table tr.size td .box-setting-option.size .box-control .boxes .box label.checked,
+body.toplevel_page_accessibility-onetap-settings .metabox-holder table tr.size td .box-setting-option.border .box-control .boxes .box label.checked,
+body.toplevel_page_accessibility-onetap-settings .metabox-holder table tr.border td .box-setting-option.icons .box-control .boxes .box label.checked,
+body.toplevel_page_accessibility-onetap-settings .metabox-holder table tr.border td .box-setting-option.size .box-control .boxes .box label.checked,
+body.toplevel_page_accessibility-onetap-settings .metabox-holder table tr.border td .box-setting-option.border .box-control .boxes .box label.checked {
+  border: 1px solid #2563eb;
+  box-shadow: 0 0 0 1px #2563eb;
+}
+body.toplevel_page_accessibility-onetap-settings .metabox-holder table tr.icons td .box-setting-option.icons .box-control .boxes .box label img,
+body.toplevel_page_accessibility-onetap-settings .metabox-holder table tr.icons td .box-setting-option.size .box-control .boxes .box label img,
+body.toplevel_page_accessibility-onetap-settings .metabox-holder table tr.icons td .box-setting-option.border .box-control .boxes .box label img,
+body.toplevel_page_accessibility-onetap-settings .metabox-holder table tr.size td .box-setting-option.icons .box-control .boxes .box label img,
+body.toplevel_page_accessibility-onetap-settings .metabox-holder table tr.size td .box-setting-option.size .box-control .boxes .box label img,
+body.toplevel_page_accessibility-onetap-settings .metabox-holder table tr.size td .box-setting-option.border .box-control .boxes .box label img,
+body.toplevel_page_accessibility-onetap-settings .metabox-holder table tr.border td .box-setting-option.icons .box-control .boxes .box label img,
+body.toplevel_page_accessibility-onetap-settings .metabox-holder table tr.border td .box-setting-option.size .box-control .boxes .box label img,
+body.toplevel_page_accessibility-onetap-settings .metabox-holder table tr.border td .box-setting-option.border .box-control .boxes .box label img {
+  height: 30px;
+  width: 30px;
+  padding: 15px;
+  background: #2563eb;
+  border-radius: 50%;
+}
+body.toplevel_page_accessibility-onetap-settings .metabox-holder table tr.icons td .box-setting-option.icons .box-control .boxes .box label input,
+body.toplevel_page_accessibility-onetap-settings .metabox-holder table tr.icons td .box-setting-option.size .box-control .boxes .box label input,
+body.toplevel_page_accessibility-onetap-settings .metabox-holder table tr.icons td .box-setting-option.border .box-control .boxes .box label input,
+body.toplevel_page_accessibility-onetap-settings .metabox-holder table tr.size td .box-setting-option.icons .box-control .boxes .box label input,
+body.toplevel_page_accessibility-onetap-settings .metabox-holder table tr.size td .box-setting-option.size .box-control .boxes .box label input,
+body.toplevel_page_accessibility-onetap-settings .metabox-holder table tr.size td .box-setting-option.border .box-control .boxes .box label input,
+body.toplevel_page_accessibility-onetap-settings .metabox-holder table tr.border td .box-setting-option.icons .box-control .boxes .box label input,
+body.toplevel_page_accessibility-onetap-settings .metabox-holder table tr.border td .box-setting-option.size .box-control .boxes .box label input,
+body.toplevel_page_accessibility-onetap-settings .metabox-holder table tr.border td .box-setting-option.border .box-control .boxes .box label input {
+  display: none;
+}
+body.toplevel_page_accessibility-onetap-settings .metabox-holder table tr.icons td .box-setting-option.icons .box-control button.save-changes,
+body.toplevel_page_accessibility-onetap-settings .metabox-holder table tr.icons td .box-setting-option.size .box-control button.save-changes,
+body.toplevel_page_accessibility-onetap-settings .metabox-holder table tr.icons td .box-setting-option.border .box-control button.save-changes,
+body.toplevel_page_accessibility-onetap-settings .metabox-holder table tr.size td .box-setting-option.icons .box-control button.save-changes,
+body.toplevel_page_accessibility-onetap-settings .metabox-holder table tr.size td .box-setting-option.size .box-control button.save-changes,
+body.toplevel_page_accessibility-onetap-settings .metabox-holder table tr.size td .box-setting-option.border .box-control button.save-changes,
+body.toplevel_page_accessibility-onetap-settings .metabox-holder table tr.border td .box-setting-option.icons .box-control button.save-changes,
+body.toplevel_page_accessibility-onetap-settings .metabox-holder table tr.border td .box-setting-option.size .box-control button.save-changes,
+body.toplevel_page_accessibility-onetap-settings .metabox-holder table tr.border td .box-setting-option.border .box-control button.save-changes {
+  display: none;
+}
+body.toplevel_page_accessibility-onetap-settings .metabox-holder table tr.icons td .box-setting-option.icons .box-control,
+body.toplevel_page_accessibility-onetap-settings .metabox-holder table tr.size td .box-setting-option.icons .box-control,
+body.toplevel_page_accessibility-onetap-settings .metabox-holder table tr.border td .box-setting-option.icons .box-control {
+  padding-top: 2rem;
+  border-radius: 1rem 1rem 0 0;
+}
+body.toplevel_page_accessibility-onetap-settings .metabox-holder table tr.icons td .box-setting-option.size .site-description,
+body.toplevel_page_accessibility-onetap-settings .metabox-holder table tr.size td .box-setting-option.size .site-description,
+body.toplevel_page_accessibility-onetap-settings .metabox-holder table tr.border td .box-setting-option.size .site-description {
+  margin: 0;
+}
+body.toplevel_page_accessibility-onetap-settings .metabox-holder table tr.icons td .box-setting-option.size .box-control .boxes .box:nth-child(1) img,
+body.toplevel_page_accessibility-onetap-settings .metabox-holder table tr.size td .box-setting-option.size .box-control .boxes .box:nth-child(1) img,
+body.toplevel_page_accessibility-onetap-settings .metabox-holder table tr.border td .box-setting-option.size .box-control .boxes .box:nth-child(1) img {
+  height: 20px;
+  width: 20px;
+  padding: 10px;
+}
+body.toplevel_page_accessibility-onetap-settings .metabox-holder table tr.icons td .box-setting-option.size .box-control .boxes .box:nth-child(2) img,
+body.toplevel_page_accessibility-onetap-settings .metabox-holder table tr.size td .box-setting-option.size .box-control .boxes .box:nth-child(2) img,
+body.toplevel_page_accessibility-onetap-settings .metabox-holder table tr.border td .box-setting-option.size .box-control .boxes .box:nth-child(2) img {
+  height: 30px;
+  width: 30px;
+  padding: 15px;
+}
+body.toplevel_page_accessibility-onetap-settings .metabox-holder table tr.icons td .box-setting-option.size .box-control .boxes .box:nth-child(3) img,
+body.toplevel_page_accessibility-onetap-settings .metabox-holder table tr.size td .box-setting-option.size .box-control .boxes .box:nth-child(3) img,
+body.toplevel_page_accessibility-onetap-settings .metabox-holder table tr.border td .box-setting-option.size .box-control .boxes .box:nth-child(3) img {
+  height: 35px;
+  width: 35px;
+  padding: 17.5px;
+}
+body.toplevel_page_accessibility-onetap-settings .metabox-holder table tr.icons td .box-setting-option.border .site-description,
+body.toplevel_page_accessibility-onetap-settings .metabox-holder table tr.size td .box-setting-option.border .site-description,
+body.toplevel_page_accessibility-onetap-settings .metabox-holder table tr.border td .box-setting-option.border .site-description {
+  margin: 0;
+}
+body.toplevel_page_accessibility-onetap-settings .metabox-holder table tr.icons td .box-setting-option.border .box-control,
+body.toplevel_page_accessibility-onetap-settings .metabox-holder table tr.size td .box-setting-option.border .box-control,
+body.toplevel_page_accessibility-onetap-settings .metabox-holder table tr.border td .box-setting-option.border .box-control {
+  border-radius: 0 0 1rem 1rem;
+}
+body.toplevel_page_accessibility-onetap-settings .metabox-holder table tr.icons td .box-setting-option.border .box-control .boxes .box:nth-child(1) img,
+body.toplevel_page_accessibility-onetap-settings .metabox-holder table tr.size td .box-setting-option.border .box-control .boxes .box:nth-child(1) img,
+body.toplevel_page_accessibility-onetap-settings .metabox-holder table tr.border td .box-setting-option.border .box-control .boxes .box:nth-child(1) img {
+  border: solid 2px #fff;
+  box-shadow: 0 0 0 4px #2563eb;
+}
+body.toplevel_page_accessibility-onetap-settings .metabox-holder table tr.icons td .box-setting-option.border .box-control button.save-changes,
+body.toplevel_page_accessibility-onetap-settings .metabox-holder table tr.size td .box-setting-option.border .box-control button.save-changes,
+body.toplevel_page_accessibility-onetap-settings .metabox-holder table tr.border td .box-setting-option.border .box-control button.save-changes {
+  display: block;
+}
+body.toplevel_page_accessibility-onetap-settings .metabox-holder table tr.border td {
+  padding-bottom: 64px;
+}
+body.toplevel_page_accessibility-onetap-settings .metabox-holder table tr.position-top-bottom td {
+  padding-bottom: 0;
+}
+body.toplevel_page_accessibility-onetap-settings .metabox-holder table tr.position-top-bottom td .box-setting-option .box-control {
+  border-radius: 1rem 1rem 0 0;
+  padding-bottom: 8px;
+  padding-right: 0;
+}
+body.toplevel_page_accessibility-onetap-settings .metabox-holder table tr.position-top-bottom td .box-setting-option .box-control button.save-changes {
+  display: none;
+}
+body.toplevel_page_accessibility-onetap-settings .metabox-holder table tr.position-left-right td {
+  padding-top: 0;
+  padding-bottom: 0;
+}
+body.toplevel_page_accessibility-onetap-settings .metabox-holder table tr.position-left-right td .box-setting-option span.site-title {
+  display: none;
+}
+body.toplevel_page_accessibility-onetap-settings .metabox-holder table tr.position-left-right td .box-setting-option span.site-description {
+  display: none;
+}
+body.toplevel_page_accessibility-onetap-settings .metabox-holder table tr.position-left-right td .box-setting-option .box-control {
+  padding-top: 0;
+  padding-bottom: 0;
+  border-radius: 0;
+}
+body.toplevel_page_accessibility-onetap-settings .metabox-holder table tr.position-left-right td .box-setting-option .box-control button.save-changes {
+  display: none;
+}
+body.toplevel_page_accessibility-onetap-settings .metabox-holder table tr.widge-position td {
+  padding-top: 0;
+}
+body.toplevel_page_accessibility-onetap-settings .metabox-holder table tr.widge-position td .box-setting-option {
+  border-radius: 0 0 1rem 1rem;
+}
+body.toplevel_page_accessibility-onetap-settings .metabox-holder table tr.widge-position td .box-setting-option span.site-title {
+  display: none;
+}
+body.toplevel_page_accessibility-onetap-settings .metabox-holder table tr.widge-position td .box-setting-option span.site-description {
+  display: none;
+}
+body.toplevel_page_accessibility-onetap-settings .metabox-holder table tr.widge-position td .box-setting-option .box-control {
+  padding-top: 8px;
+  border-radius: 0 0 1rem 1rem;
+}
+body.toplevel_page_accessibility-onetap-settings .metabox-holder table tr.widge-position td .box-setting-option .box-control button.save-changes {
+  display: block;
+}
+body.toplevel_page_accessibility-onetap-settings .metabox-holder table tr.position-top-bottom,
+body.toplevel_page_accessibility-onetap-settings .metabox-holder table tr.position-top-bottom-tablet,
+body.toplevel_page_accessibility-onetap-settings .metabox-holder table tr.position-top-bottom-mobile {
+  display: none;
+}
+body.toplevel_page_accessibility-onetap-settings .metabox-holder table tr.position-top-bottom td,
+body.toplevel_page_accessibility-onetap-settings .metabox-holder table tr.position-top-bottom-tablet td,
+body.toplevel_page_accessibility-onetap-settings .metabox-holder table tr.position-top-bottom-mobile td {
+  padding-bottom: 0;
+}
+body.toplevel_page_accessibility-onetap-settings .metabox-holder table tr.position-top-bottom td .box-setting-option,
+body.toplevel_page_accessibility-onetap-settings .metabox-holder table tr.position-top-bottom-tablet td .box-setting-option,
+body.toplevel_page_accessibility-onetap-settings .metabox-holder table tr.position-top-bottom-mobile td .box-setting-option {
+  border-radius: 1rem 1rem 0 0;
+  background: #fff;
+  padding: 2rem;
+  padding-bottom: 0;
+}
+body.toplevel_page_accessibility-onetap-settings .metabox-holder table tr.position-top-bottom td .box-setting-option .box-device .boxes,
+body.toplevel_page_accessibility-onetap-settings .metabox-holder table tr.position-top-bottom-tablet td .box-setting-option .box-device .boxes,
+body.toplevel_page_accessibility-onetap-settings .metabox-holder table tr.position-top-bottom-mobile td .box-setting-option .box-device .boxes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+}
+body.toplevel_page_accessibility-onetap-settings .metabox-holder table tr.position-top-bottom td .box-setting-option .box-device .boxes button,
+body.toplevel_page_accessibility-onetap-settings .metabox-holder table tr.position-top-bottom-tablet td .box-setting-option .box-device .boxes button,
+body.toplevel_page_accessibility-onetap-settings .metabox-holder table tr.position-top-bottom-mobile td .box-setting-option .box-device .boxes button {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 5px;
+  background: #fff;
+  border-radius: 8px;
+  padding: 12px 16px;
+  border: 1px solid #ddd;
+  line-height: 20px;
+  cursor: pointer;
+}
+body.toplevel_page_accessibility-onetap-settings .metabox-holder table tr.position-top-bottom td .box-setting-option .box-device .boxes button img,
+body.toplevel_page_accessibility-onetap-settings .metabox-holder table tr.position-top-bottom-tablet td .box-setting-option .box-device .boxes button img,
+body.toplevel_page_accessibility-onetap-settings .metabox-holder table tr.position-top-bottom-mobile td .box-setting-option .box-device .boxes button img {
+  width: 18px;
+  height: 18px;
+  opacity: 0.6;
+}
+body.toplevel_page_accessibility-onetap-settings .metabox-holder table tr.position-top-bottom td .box-setting-option .box-device .boxes button span,
+body.toplevel_page_accessibility-onetap-settings .metabox-holder table tr.position-top-bottom-tablet td .box-setting-option .box-device .boxes button span,
+body.toplevel_page_accessibility-onetap-settings .metabox-holder table tr.position-top-bottom-mobile td .box-setting-option .box-device .boxes button span {
+  display: flex;
+  align-items: center;
+  font-size: 14px;
+  font-weight: 600;
+  text-align: center;
+  line-height: 20px;
+  margin: 0;
+  color: #666c76;
+}
+body.toplevel_page_accessibility-onetap-settings .metabox-holder table tr.position-top-bottom td .box-setting-option .box-device .boxes button.active,
+body.toplevel_page_accessibility-onetap-settings .metabox-holder table tr.position-top-bottom-tablet td .box-setting-option .box-device .boxes button.active,
+body.toplevel_page_accessibility-onetap-settings .metabox-holder table tr.position-top-bottom-mobile td .box-setting-option .box-device .boxes button.active {
+  border: 1px solid transparent;
+  background: #eee;
+}
+body.toplevel_page_accessibility-onetap-settings .metabox-holder table tr.position-top-bottom td .box-setting-option .box-device .boxes button.active img,
+body.toplevel_page_accessibility-onetap-settings .metabox-holder table tr.position-top-bottom-tablet td .box-setting-option .box-device .boxes button.active img,
+body.toplevel_page_accessibility-onetap-settings .metabox-holder table tr.position-top-bottom-mobile td .box-setting-option .box-device .boxes button.active img {
+  opacity: 1;
+}
+body.toplevel_page_accessibility-onetap-settings .metabox-holder table tr.position-top-bottom td .box-setting-option .box-device .boxes button.active span,
+body.toplevel_page_accessibility-onetap-settings .metabox-holder table tr.position-top-bottom-tablet td .box-setting-option .box-device .boxes button.active span,
+body.toplevel_page_accessibility-onetap-settings .metabox-holder table tr.position-top-bottom-mobile td .box-setting-option .box-device .boxes button.active span {
+  color: #111;
+}
+body.toplevel_page_accessibility-onetap-settings .metabox-holder table tr.position-top-bottom td .box-setting-option .box-control,
+body.toplevel_page_accessibility-onetap-settings .metabox-holder table tr.position-top-bottom-tablet td .box-setting-option .box-control,
+body.toplevel_page_accessibility-onetap-settings .metabox-holder table tr.position-top-bottom-mobile td .box-setting-option .box-control {
+  border-radius: 1rem 1rem 0 0;
+  padding-bottom: 8px;
+  padding-left: 0;
+}
+body.toplevel_page_accessibility-onetap-settings .metabox-holder table tr.position-top-bottom td .box-setting-option .box-control button.save-changes,
+body.toplevel_page_accessibility-onetap-settings .metabox-holder table tr.position-top-bottom-tablet td .box-setting-option .box-control button.save-changes,
+body.toplevel_page_accessibility-onetap-settings .metabox-holder table tr.position-top-bottom-mobile td .box-setting-option .box-control button.save-changes {
+  display: none;
+}
+body.toplevel_page_accessibility-onetap-settings .metabox-holder table tr.position-left-right,
+body.toplevel_page_accessibility-onetap-settings .metabox-holder table tr.position-left-right-tablet,
+body.toplevel_page_accessibility-onetap-settings .metabox-holder table tr.position-left-right-mobile {
+  display: none;
+}
+body.toplevel_page_accessibility-onetap-settings .metabox-holder table tr.position-left-right td,
+body.toplevel_page_accessibility-onetap-settings .metabox-holder table tr.position-left-right-tablet td,
+body.toplevel_page_accessibility-onetap-settings .metabox-holder table tr.position-left-right-mobile td {
+  padding-top: 0;
+  padding-bottom: 0;
+}
+body.toplevel_page_accessibility-onetap-settings .metabox-holder table tr.position-left-right td .box-setting-option span.site-title,
+body.toplevel_page_accessibility-onetap-settings .metabox-holder table tr.position-left-right-tablet td .box-setting-option span.site-title,
+body.toplevel_page_accessibility-onetap-settings .metabox-holder table tr.position-left-right-mobile td .box-setting-option span.site-title {
+  display: none;
+}
+body.toplevel_page_accessibility-onetap-settings .metabox-holder table tr.position-left-right td .box-setting-option span.site-description,
+body.toplevel_page_accessibility-onetap-settings .metabox-holder table tr.position-left-right-tablet td .box-setting-option span.site-description,
+body.toplevel_page_accessibility-onetap-settings .metabox-holder table tr.position-left-right-mobile td .box-setting-option span.site-description {
+  display: none;
+}
+body.toplevel_page_accessibility-onetap-settings .metabox-holder table tr.position-left-right td .box-setting-option .box-control,
+body.toplevel_page_accessibility-onetap-settings .metabox-holder table tr.position-left-right-tablet td .box-setting-option .box-control,
+body.toplevel_page_accessibility-onetap-settings .metabox-holder table tr.position-left-right-mobile td .box-setting-option .box-control {
+  padding-top: 0;
+  padding-bottom: 0;
+  border-radius: 0;
+}
+body.toplevel_page_accessibility-onetap-settings .metabox-holder table tr.position-left-right td .box-setting-option .box-control button.save-changes,
+body.toplevel_page_accessibility-onetap-settings .metabox-holder table tr.position-left-right-tablet td .box-setting-option .box-control button.save-changes,
+body.toplevel_page_accessibility-onetap-settings .metabox-holder table tr.position-left-right-mobile td .box-setting-option .box-control button.save-changes {
+  display: none;
+}
+body.toplevel_page_accessibility-onetap-settings .metabox-holder table tr.widge-position,
+body.toplevel_page_accessibility-onetap-settings .metabox-holder table tr.widge-position-tablet,
+body.toplevel_page_accessibility-onetap-settings .metabox-holder table tr.widge-position-mobile {
+  display: none;
+}
+body.toplevel_page_accessibility-onetap-settings .metabox-holder table tr.widge-position td,
+body.toplevel_page_accessibility-onetap-settings .metabox-holder table tr.widge-position-tablet td,
+body.toplevel_page_accessibility-onetap-settings .metabox-holder table tr.widge-position-mobile td {
+  padding-top: 0;
+}
+body.toplevel_page_accessibility-onetap-settings .metabox-holder table tr.widge-position td .box-setting-option,
+body.toplevel_page_accessibility-onetap-settings .metabox-holder table tr.widge-position-tablet td .box-setting-option,
+body.toplevel_page_accessibility-onetap-settings .metabox-holder table tr.widge-position-mobile td .box-setting-option {
+  border-radius: 0 0 1rem 1rem;
+}
+body.toplevel_page_accessibility-onetap-settings .metabox-holder table tr.widge-position td .box-setting-option span.site-title,
+body.toplevel_page_accessibility-onetap-settings .metabox-holder table tr.widge-position-tablet td .box-setting-option span.site-title,
+body.toplevel_page_accessibility-onetap-settings .metabox-holder table tr.widge-position-mobile td .box-setting-option span.site-title {
+  display: none;
+}
+body.toplevel_page_accessibility-onetap-settings .metabox-holder table tr.widge-position td .box-setting-option span.site-description,
+body.toplevel_page_accessibility-onetap-settings .metabox-holder table tr.widge-position-tablet td .box-setting-option span.site-description,
+body.toplevel_page_accessibility-onetap-settings .metabox-holder table tr.widge-position-mobile td .box-setting-option span.site-description {
+  display: none;
+}
+body.toplevel_page_accessibility-onetap-settings .metabox-holder table tr.widge-position td .box-setting-option .box-control,
+body.toplevel_page_accessibility-onetap-settings .metabox-holder table tr.widge-position-tablet td .box-setting-option .box-control,
+body.toplevel_page_accessibility-onetap-settings .metabox-holder table tr.widge-position-mobile td .box-setting-option .box-control {
+  padding-top: 8px;
+  border-radius: 0 0 1rem 1rem;
+}
+body.toplevel_page_accessibility-onetap-settings .metabox-holder table tr.widge-position td .box-setting-option .box-control button.save-changes,
+body.toplevel_page_accessibility-onetap-settings .metabox-holder table tr.widge-position-tablet td .box-setting-option .box-control button.save-changes,
+body.toplevel_page_accessibility-onetap-settings .metabox-holder table tr.widge-position-mobile td .box-setting-option .box-control button.save-changes {
+  display: block;
+}
+body.toplevel_page_accessibility-onetap-settings .metabox-holder table tr.language td {
+  padding-bottom: 0;
+}
+body.toplevel_page_accessibility-onetap-settings .metabox-holder table tr.hide-powered-by-onetap td {
+  padding-top: 64px;
+  padding-bottom: 0;
+}
+body.toplevel_page_accessibility-onetap-settings .metabox-holder table tr.hide-powered-by-onetap td .box-custom-checkbox {
+  border-radius: 1rem;
+  padding-bottom: 8px;
+  border: none;
+}
+body.toplevel_page_accessibility-onetap-settings .metabox-holder table tr.active {
+  display: table-row;
+}
+body.toplevel_page_accessibility-onetap-settings .metabox-holder table tr.license td {
+  padding-top: 64px;
+}
+body.toplevel_page_accessibility-onetap-settings .metabox-holder table tr.hide-powered-by-onetap td {
+  padding-top: 64px;
+  padding-bottom: 0;
+}
+body.toplevel_page_accessibility-onetap-settings .metabox-holder table tr.hide-powered-by-onetap td .box-custom-checkbox {
+  border-radius: 1rem;
+  padding-bottom: 8px;
+  border: none;
+}
+body.toplevel_page_accessibility-onetap-settings .wrap .box-custom-checkbox {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  background: #fff;
+  border-bottom: 1px solid #eee;
+}
+body.toplevel_page_accessibility-onetap-settings .wrap .box-custom-checkbox .left {
+  display: flex;
+  flex-wrap: wrap;
+  padding: 32px;
+  width: calc(100% - 150px);
+}
+body.toplevel_page_accessibility-onetap-settings .wrap .box-custom-checkbox .left .icon {
+  font-size: 30px;
+  padding: 10px;
+  border-radius: 8px 8px 8px 8px;
+  background: #eff6ff;
+  fill: #2563eb;
+  color: #2563eb;
+  width: 30px;
+  height: 30px;
+  margin-right: 15px;
+}
+body.toplevel_page_accessibility-onetap-settings .wrap .box-custom-checkbox .left .text {
+  width: calc(100% - 65px);
+}
+body.toplevel_page_accessibility-onetap-settings .wrap .box-custom-checkbox .left .text span.title {
+  font-size: 1rem;
+  font-weight: 500;
+  color: #111;
+  margin: 0;
+  display: block;
+}
+body.toplevel_page_accessibility-onetap-settings .wrap .box-custom-checkbox .left .text span.desc {
+  font-weight: 400;
+  margin: 0;
+  display: block;
+  margin-top: 7px;
+}
+body.toplevel_page_accessibility-onetap-settings .wrap .box-custom-checkbox .right {
+  position: relative;
+  right: 32px;
+}
+body.toplevel_page_accessibility-onetap-settings .wrap .box-custom-checkbox .right .switch {
+  position: relative;
+  display: inline-block;
+  width: 46px;
+  height: 23px;
+}
+body.toplevel_page_accessibility-onetap-settings .wrap .box-custom-checkbox .right .switch input {
+  display: none;
+}
+body.toplevel_page_accessibility-onetap-settings .wrap .box-custom-checkbox .right .slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: #ddd;
+  -webkit-transition: 0.4s;
+  transition: 0.4s;
+  margin: 0;
+}
+body.toplevel_page_accessibility-onetap-settings .wrap .box-custom-checkbox .right .slider::before {
+  content: "";
+  position: absolute;
+  height: 17px;
+  width: 18px;
+  left: 3px;
+  bottom: 3px;
+  background: #fff;
+  -webkit-transition: 0.4s;
+  transition: 0.4s;
+}
+body.toplevel_page_accessibility-onetap-settings .wrap .box-custom-checkbox .right input:checked + .slider {
+  background: #2563eb;
+}
+body.toplevel_page_accessibility-onetap-settings .wrap .box-custom-checkbox .right input:focus + .slider {
+  box-shadow: #2563eb;
+}
+body.toplevel_page_accessibility-onetap-settings .wrap .box-custom-checkbox .right input:checked + .slider::before {
+  -webkit-transform: translateX(22px);
+  -ms-transform: translateX(22px);
+  transform: translateX(22px);
+}
+body.toplevel_page_accessibility-onetap-settings .wrap .box-custom-checkbox .right .slider.round {
+  border-radius: 34px;
+}
+body.toplevel_page_accessibility-onetap-settings .wrap .box-custom-checkbox .right .slider.round::before {
+  border-radius: 50%;
+}
+body.toplevel_page_accessibility-onetap-settings .wrap .box-custom-checkbox .right .slider-red.round::before {
+  border-radius: 50%;
+}
+body.toplevel_page_accessibility-onetap-settings .wrap .box-custom-checkbox.onetap-pro {
+  opacity: 0.6;
+  filter: grayscale(1);
+}
+body.toplevel_page_accessibility-onetap-settings .wrap .box-custom-checkbox.onetap-pro .left .text {
+  position: relative;
+}
+body.toplevel_page_accessibility-onetap-settings .wrap .box-custom-checkbox.onetap-pro .left .text span.status-pro {
+  font-size: 0.75rem;
+  padding: 0.25rem 0.5rem;
+  color: #fff;
+  background: #111;
+  border-radius: 1rem;
+  font-weight: 500;
+  position: absolute;
+}
+body.toplevel_page_accessibility-onetap-settings .wrap .box-custom-checkbox.onetap-pro .left .text span.title {
+  position: relative;
+  left: 45px;
+}
+body.toplevel_page_accessibility-onetap-settings .wrap .box-custom-checkbox.onetap-pro .right {
+  position: relative;
+}
+body.toplevel_page_accessibility-onetap-settings .wrap .box-custom-checkbox.onetap-pro .right::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 10000000000000000;
+}
+
+body.onetap_page_accessibility-onetap-modules .wrap .box-custom-checkbox {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  background: #fff;
+  border-bottom: 1px solid #eee;
+}
+body.onetap_page_accessibility-onetap-modules .wrap .box-custom-checkbox .left {
+  display: flex;
+  flex-wrap: wrap;
+  padding: 32px;
+  width: calc(100% - 150px);
+}
+body.onetap_page_accessibility-onetap-modules .wrap .box-custom-checkbox .left .icon {
+  font-size: 30px;
+  padding: 10px;
+  border-radius: 8px 8px 8px 8px;
+  background: #eff6ff;
+  fill: #2563eb;
+  color: #2563eb;
+  width: 30px;
+  height: 30px;
+  margin-right: 15px;
+}
+body.onetap_page_accessibility-onetap-modules .wrap .box-custom-checkbox .left .text {
+  width: calc(100% - 65px);
+}
+body.onetap_page_accessibility-onetap-modules .wrap .box-custom-checkbox .left .text span.title {
+  font-size: 1rem;
+  font-weight: 500;
+  color: #111;
+  margin: 0;
+  display: block;
+}
+body.onetap_page_accessibility-onetap-modules .wrap .box-custom-checkbox .left .text span.desc {
+  font-weight: 400;
+  margin: 0;
+  display: block;
+  margin-top: 7px;
+}
+body.onetap_page_accessibility-onetap-modules .wrap .box-custom-checkbox .right {
+  position: relative;
+  right: 32px;
+}
+body.onetap_page_accessibility-onetap-modules .wrap .box-custom-checkbox .right .switch {
+  position: relative;
+  display: inline-block;
+  width: 46px;
+  height: 23px;
+}
+body.onetap_page_accessibility-onetap-modules .wrap .box-custom-checkbox .right .switch input {
+  display: none;
+}
+body.onetap_page_accessibility-onetap-modules .wrap .box-custom-checkbox .right .slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: #ddd;
+  -webkit-transition: 0.4s;
+  transition: 0.4s;
+  margin: 0;
+}
+body.onetap_page_accessibility-onetap-modules .wrap .box-custom-checkbox .right .slider::before {
+  content: "";
+  position: absolute;
+  height: 17px;
+  width: 18px;
+  left: 3px;
+  bottom: 3px;
+  background: #fff;
+  -webkit-transition: 0.4s;
+  transition: 0.4s;
+}
+body.onetap_page_accessibility-onetap-modules .wrap .box-custom-checkbox .right input:checked + .slider {
+  background: #2563eb;
+}
+body.onetap_page_accessibility-onetap-modules .wrap .box-custom-checkbox .right input:focus + .slider {
+  box-shadow: #2563eb;
+}
+body.onetap_page_accessibility-onetap-modules .wrap .box-custom-checkbox .right input:checked + .slider::before {
+  -webkit-transform: translateX(22px);
+  -ms-transform: translateX(22px);
+  transform: translateX(22px);
+}
+body.onetap_page_accessibility-onetap-modules .wrap .box-custom-checkbox .right .slider.round {
+  border-radius: 34px;
+}
+body.onetap_page_accessibility-onetap-modules .wrap .box-custom-checkbox .right .slider.round::before {
+  border-radius: 50%;
+}
+body.onetap_page_accessibility-onetap-modules .wrap .box-custom-checkbox .right .slider-red.round::before {
+  border-radius: 50%;
+}
+body.onetap_page_accessibility-onetap-modules .wrap .box-custom-checkbox.onetap-pro {
+  opacity: 0.6;
+  filter: grayscale(1);
+}
+body.onetap_page_accessibility-onetap-modules .wrap .box-custom-checkbox.onetap-pro .left .text {
+  position: relative;
+}
+body.onetap_page_accessibility-onetap-modules .wrap .box-custom-checkbox.onetap-pro .left .text span.status-pro {
+  font-size: 0.75rem;
+  padding: 0.25rem 0.5rem;
+  color: #fff;
+  background: #111;
+  border-radius: 1rem;
+  font-weight: 500;
+  position: absolute;
+}
+body.onetap_page_accessibility-onetap-modules .wrap .box-custom-checkbox.onetap-pro .left .text span.title {
+  position: relative;
+  left: 45px;
+}
+body.onetap_page_accessibility-onetap-modules .wrap .box-custom-checkbox.onetap-pro .right {
+  position: relative;
+}
+body.onetap_page_accessibility-onetap-modules .wrap .box-custom-checkbox.onetap-pro .right::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 10000000000000000;
+}
+body.onetap_page_accessibility-onetap-modules .wrap .metabox-holder > div:first-child {
+  display: none !important;
+}
+body.onetap_page_accessibility-onetap-modules .wrap .metabox-holder > div:last-child {
+  display: block !important;
+}
+body.onetap_page_accessibility-onetap-modules .wrap .metabox-holder table tr td {
+  padding-top: 0;
+  padding-bottom: 0;
+}
+body.onetap_page_accessibility-onetap-modules .wrap .metabox-holder table tr:nth-child(4) td .box-custom-checkbox,
+body.onetap_page_accessibility-onetap-modules .wrap .metabox-holder table tr:nth-child(15) td .box-custom-checkbox,
+body.onetap_page_accessibility-onetap-modules .wrap .metabox-holder table tr:nth-child(22) td .box-custom-checkbox {
+  border-radius: 1rem 1rem 0 0;
+}
+body.onetap_page_accessibility-onetap-modules .wrap .metabox-holder table tr:nth-child(12) td .box-custom-checkbox,
+body.onetap_page_accessibility-onetap-modules .wrap .metabox-holder table tr:nth-child(19) td .box-custom-checkbox,
+body.onetap_page_accessibility-onetap-modules .wrap .metabox-holder table tr:nth-child(30) td .box-custom-checkbox {
+  border-radius: 0 0 1rem 1rem;
+}
+body.onetap_page_accessibility-onetap-modules .wrap .metabox-holder table tr:last-child td .box-custom-checkbox {
+  border-radius: 0 0 1rem 1rem;
+}
+body.onetap_page_accessibility-onetap-modules .wrap .metabox-holder table tr:last-child td .box-custom-checkbox .left .icon button {
+  display: flex;
+  min-width: 113px;
+  position: relative;
+  right: 44px;
+  top: 50px;
+}
+body.onetap_page_accessibility-onetap-modules .wrap .metabox-holder table tr.accessibility-profiles-title td {
+  padding-bottom: 0;
+}
+body.onetap_page_accessibility-onetap-modules .wrap .metabox-holder table tr.accessibility-profiles-title td .box-setting-option.icons .box-control,
+body.onetap_page_accessibility-onetap-modules .wrap .metabox-holder table tr.accessibility-profiles-title td .box-setting-option.size .box-control,
+body.onetap_page_accessibility-onetap-modules .wrap .metabox-holder table tr.accessibility-profiles-title td .box-setting-option.border .box-control {
+  padding-top: 0;
+  border-radius: 0;
+}
+body.onetap_page_accessibility-onetap-modules .wrap .metabox-holder table tr.accessibility-profiles-title td .box-setting-option.icons .box-control .title-label,
+body.onetap_page_accessibility-onetap-modules .wrap .metabox-holder table tr.accessibility-profiles-title td .box-setting-option.size .box-control .title-label,
+body.onetap_page_accessibility-onetap-modules .wrap .metabox-holder table tr.accessibility-profiles-title td .box-setting-option.border .box-control .title-label {
+  font-size: 0.925rem;
+  font-weight: 500;
+  line-height: 28px;
+  color: #1e293b;
+  display: block;
+  cursor: pointer;
+  margin-bottom: 0.5rem;
+  width: 100%;
+}
+body.onetap_page_accessibility-onetap-modules .wrap .metabox-holder table tr.accessibility-profiles-title td .box-setting-option.icons .box-control .boxes,
+body.onetap_page_accessibility-onetap-modules .wrap .metabox-holder table tr.accessibility-profiles-title td .box-setting-option.size .box-control .boxes,
+body.onetap_page_accessibility-onetap-modules .wrap .metabox-holder table tr.accessibility-profiles-title td .box-setting-option.border .box-control .boxes {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  gap: 20px;
+}
+body.onetap_page_accessibility-onetap-modules .wrap .metabox-holder table tr.accessibility-profiles-title td .box-setting-option.icons .box-control .boxes .box label,
+body.onetap_page_accessibility-onetap-modules .wrap .metabox-holder table tr.accessibility-profiles-title td .box-setting-option.size .box-control .boxes .box label,
+body.onetap_page_accessibility-onetap-modules .wrap .metabox-holder table tr.accessibility-profiles-title td .box-setting-option.border .box-control .boxes .box label {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  margin: 0;
+  line-height: normal;
+  height: 135px;
+  width: 135px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+body.onetap_page_accessibility-onetap-modules .wrap .metabox-holder table tr.accessibility-profiles-title td .box-setting-option.icons .box-control .boxes .box label.checked,
+body.onetap_page_accessibility-onetap-modules .wrap .metabox-holder table tr.accessibility-profiles-title td .box-setting-option.size .box-control .boxes .box label.checked,
+body.onetap_page_accessibility-onetap-modules .wrap .metabox-holder table tr.accessibility-profiles-title td .box-setting-option.border .box-control .boxes .box label.checked {
+  border: 1px solid #2563eb;
+  box-shadow: 0 0 0 1px #2563eb;
+}
+body.onetap_page_accessibility-onetap-modules .wrap .metabox-holder table tr.accessibility-profiles-title td .box-setting-option.icons .box-control .boxes .box label img,
+body.onetap_page_accessibility-onetap-modules .wrap .metabox-holder table tr.accessibility-profiles-title td .box-setting-option.size .box-control .boxes .box label img,
+body.onetap_page_accessibility-onetap-modules .wrap .metabox-holder table tr.accessibility-profiles-title td .box-setting-option.border .box-control .boxes .box label img {
+  height: 30px;
+  width: 30px;
+  padding: 15px;
+  background: #2563eb;
+  border-radius: 50%;
+}
+body.onetap_page_accessibility-onetap-modules .wrap .metabox-holder table tr.accessibility-profiles-title td .box-setting-option.icons .box-control .boxes .box label input,
+body.onetap_page_accessibility-onetap-modules .wrap .metabox-holder table tr.accessibility-profiles-title td .box-setting-option.size .box-control .boxes .box label input,
+body.onetap_page_accessibility-onetap-modules .wrap .metabox-holder table tr.accessibility-profiles-title td .box-setting-option.border .box-control .boxes .box label input {
+  display: none;
+}
+body.onetap_page_accessibility-onetap-modules .wrap .metabox-holder table tr.accessibility-profiles-title td .box-setting-option.icons .box-control button.save-changes,
+body.onetap_page_accessibility-onetap-modules .wrap .metabox-holder table tr.accessibility-profiles-title td .box-setting-option.size .box-control button.save-changes,
+body.onetap_page_accessibility-onetap-modules .wrap .metabox-holder table tr.accessibility-profiles-title td .box-setting-option.border .box-control button.save-changes {
+  display: none;
+}
+body.onetap_page_accessibility-onetap-modules .wrap .metabox-holder table tr.accessibility-profiles-title td .box-setting-option.icons .box-control {
+  padding-top: 2rem;
+  border-radius: 1rem 1rem 0 0;
+}
+body.onetap_page_accessibility-onetap-modules .wrap .metabox-holder table tr.accessibility-profiles-title td .box-setting-option.size .site-description {
+  margin: 0;
+}
+body.onetap_page_accessibility-onetap-modules .wrap .metabox-holder table tr.accessibility-profiles-title td .box-setting-option.size .box-control .boxes .box:nth-child(1) img {
+  height: 20px;
+  width: 20px;
+  padding: 10px;
+}
+body.onetap_page_accessibility-onetap-modules .wrap .metabox-holder table tr.accessibility-profiles-title td .box-setting-option.size .box-control .boxes .box:nth-child(2) img {
+  height: 30px;
+  width: 30px;
+  padding: 15px;
+}
+body.onetap_page_accessibility-onetap-modules .wrap .metabox-holder table tr.accessibility-profiles-title td .box-setting-option.size .box-control .boxes .box:nth-child(3) img {
+  height: 35px;
+  width: 35px;
+  padding: 17.5px;
+}
+body.onetap_page_accessibility-onetap-modules .wrap .metabox-holder table tr.accessibility-profiles-title td .box-setting-option.border .site-description {
+  margin: 0;
+}
+body.onetap_page_accessibility-onetap-modules .wrap .metabox-holder table tr.accessibility-profiles-title td .box-setting-option.border .box-control {
+  border-radius: 0 0 1rem 1rem;
+}
+body.onetap_page_accessibility-onetap-modules .wrap .metabox-holder table tr.accessibility-profiles-title td .box-setting-option.border .box-control .boxes .box:nth-child(1) img {
+  border: solid 2px #fff;
+  box-shadow: 0 0 0 4px #2563eb;
+}
+body.onetap_page_accessibility-onetap-modules .wrap .metabox-holder table tr.accessibility-profiles-title td .box-setting-option.border .box-control button.save-changes {
+  display: block;
+}
+body.onetap_page_accessibility-onetap-modules .wrap .metabox-holder table tr.accessibility-profiles td .box-custom-checkbox {
+  border-radius: 1rem;
+  margin-bottom: 64px;
+  border: none;
+}
+body.onetap_page_accessibility-onetap-modules .wrap .metabox-holder table tr.content-modules-title-save-changes td button,
+body.onetap_page_accessibility-onetap-modules .wrap .metabox-holder table tr.color-modules-save-changes td button,
+body.onetap_page_accessibility-onetap-modules .wrap .metabox-holder table tr.orientation-modules-save-changes td button {
+  margin-top: 20px;
+  margin-bottom: 64px;
+}
+
+@media only screen and (max-width: 960px) {
+  body.onetap_page_accessibility-onetap-modules #wpcontent,
+  body.toplevel_page_accessibility-onetap-settings #wpcontent {
+    padding-left: 32px;
+    padding-left: 36px;
+  }
+}
+@media only screen and (max-width: 782px) {
+  body.onetap_page_accessibility-onetap-modules #wpcontent,
+  body.toplevel_page_accessibility-onetap-settings #wpcontent {
+    padding-left: 0;
+  }
+  body.onetap_page_accessibility-onetap-modules .wrap,
+  body.toplevel_page_accessibility-onetap-settings .wrap {
+    padding: 20px;
+  }
+  body.onetap_page_accessibility-onetap-modules .wrap .button:not(.wp-color-result, .wp-picker-default),
+  body.toplevel_page_accessibility-onetap-settings .wrap .button:not(.wp-color-result, .wp-picker-default) {
+    padding: 5px 8px;
+    font-size: 13px;
+    height: auto;
+  }
+  body.onetap_page_accessibility-onetap-modules .wrap header.top::before,
+  body.toplevel_page_accessibility-onetap-settings .wrap header.top::before {
+    height: calc(100% + 116px);
+  }
+  body.onetap_page_accessibility-onetap-modules .wrap header.top .mycontainer .myrow1,
+  body.toplevel_page_accessibility-onetap-settings .wrap header.top .mycontainer .myrow1 {
+    padding-bottom: 30px;
+  }
+  body.onetap_page_accessibility-onetap-modules .wrap .box-button-navigation,
+  body.toplevel_page_accessibility-onetap-settings .wrap .box-button-navigation {
+    position: sticky;
+    top: 33px;
+    background: #fff;
+    z-index: 10000000000000000;
+  }
+  body.onetap_page_accessibility-onetap-modules .wrap .box-button-navigation .separator::before, body.onetap_page_accessibility-onetap-modules .wrap .box-button-navigation .separator::after,
+  body.toplevel_page_accessibility-onetap-settings .wrap .box-button-navigation .separator::before,
+  body.toplevel_page_accessibility-onetap-settings .wrap .box-button-navigation .separator::after {
+    height: 64px;
+  }
+  body.onetap_page_accessibility-onetap-modules .wrap .box-button-navigation ul,
+  body.toplevel_page_accessibility-onetap-settings .wrap .box-button-navigation ul {
+    gap: 5px;
+  }
+  body.onetap_page_accessibility-onetap-modules .wrap .box-button-navigation ul li a,
+  body.toplevel_page_accessibility-onetap-settings .wrap .box-button-navigation ul li a {
+    height: auto;
+    margin-bottom: 0;
+  }
+  body.onetap_page_accessibility-onetap-modules .wrap .box-custom-checkbox .left {
+    padding: 20px;
+  }
+  body.toplevel_page_accessibility-onetap-settings .metabox-holder table tr td {
+    padding-bottom: 30px;
+  }
+  body.toplevel_page_accessibility-onetap-settings .metabox-holder table tr td .box-setting-option .box-control {
+    padding: 20px;
+  }
+  body.toplevel_page_accessibility-onetap-settings .metabox-holder table tr.license td {
+    padding-top: 30px;
+  }
+}
+@media only screen and (max-width: 600px) {
+  body.onetap_page_accessibility-onetap-modules .wrap .box-button-navigation,
+  body.toplevel_page_accessibility-onetap-settings .wrap .box-button-navigation {
+    top: 0;
+  }
+}
+@media only screen and (max-width: 474px) {
+  body.onetap_page_accessibility-onetap-modules .wrap .box-button-navigation .separator::before, body.onetap_page_accessibility-onetap-modules .wrap .box-button-navigation .separator::after {
+    height: 108px;
+  }
+}
