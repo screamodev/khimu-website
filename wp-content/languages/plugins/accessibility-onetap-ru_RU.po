@@ -1,0 +1,592 @@
+# Translation of Plugins - OneTap (One Click Accessibility) - Stable (latest release) in Russian
+# This file is distributed under the same license as the Plugins - OneTap (One Click Accessibility) - Stable (latest release) package.
+msgid ""
+msgstr ""
+"PO-Revision-Date: 2025-05-03 17:59:20+0000\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=3; plural=(n % 10 == 1 && n % 100 != 11) ? 0 : ((n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 12 || n % 100 > 14)) ? 1 : 2);\n"
+"X-Generator: GlotPress/4.0.1\n"
+"Language: ru\n"
+"Project-Id-Version: Plugins - OneTap (One Click Accessibility) - Stable (latest release)\n"
+
+#: admin/class-accessibility-onetap-settings-options.php:757
+msgid "Easily mute website sounds for a distraction-free browsing experience"
+msgstr "Легко отключайте звуки веб-сайтов, чтобы не отвлекаться от просмотра"
+
+#: admin/class-accessibility-onetap-settings-options.php:756
+msgid "Mute Sounds"
+msgstr "Приглушить звук"
+
+#: admin/class-accessibility-onetap-settings-options.php:670
+#: admin/partials/modules.php:67
+#: public/class-accessibility-onetap-public.php:4318
+msgid "Orientation"
+msgstr "Ориентация"
+
+#: admin/class-accessibility-onetap-settings-options.php:575
+msgid "Magnify selected text for enhanced readability and accessibility"
+msgstr "Увеличьте выбранный текст для улучшения читаемости и доступности"
+
+#: admin/class-accessibility-onetap-settings-options.php:574
+msgid "Text Magnifier"
+msgstr "Текстовая лупа"
+
+#: admin/class-accessibility-onetap-settings-options.php:564
+msgid "Adjust text alignment for improved structure and readability"
+msgstr "Отрегулируйте выравнивание текста для улучшения структуры и читабельности"
+
+#: admin/class-accessibility-onetap-settings-options.php:563
+#: public/class-accessibility-onetap-public.php:4210
+msgid "Align Text"
+msgstr "Выравнивание текста"
+
+#: admin/class-accessibility-onetap-settings-options.php:488
+#: admin/partials/modules.php:57
+msgid "Content Modules"
+msgstr "Контент-модули"
+
+#: admin/class-accessibility-onetap-settings-options.php:691
+msgid "Navigate the site using only the keyboard"
+msgstr "Навигация по сайту только с помощью клавиатуры"
+
+#: admin/class-accessibility-onetap-settings-options.php:690
+msgid "Keyboard Navigation"
+msgstr "Навигация с помощью клавиатуры"
+
+#: admin/class-accessibility-onetap-settings-options.php:768
+msgid "Disable animations to reduce distractions"
+msgstr "Отключите анимацию, чтобы уменьшить отвлекающие факторы"
+
+#: admin/class-accessibility-onetap-settings-options.php:767
+#: public/class-accessibility-onetap-public.php:4349
+msgid "Stop Animations"
+msgstr "Отключить анимацию"
+
+#: admin/class-accessibility-onetap-settings-options.php:702
+msgid "Highlight titles for better recognition"
+msgstr "Выделите заголовки для лучшего распознавания"
+
+#: admin/class-accessibility-onetap-settings-options.php:701
+msgid "Highlight Titles"
+msgstr "Выделить заголовки"
+
+#: admin/class-accessibility-onetap-settings-options.php:735
+msgid "Highlight elements when hovered over"
+msgstr "Выделять элементы при наведении курсора"
+
+#: admin/class-accessibility-onetap-settings-options.php:734
+msgid "Highlight All"
+msgstr "Выделить все"
+
+#: admin/class-accessibility-onetap-settings-options.php:531
+msgid "Adjust letter spacing for improved readability"
+msgstr "Отрегулируйте расстояние между буквами для улучшения читабельности"
+
+#: admin/class-accessibility-onetap-settings-options.php:530
+#: public/class-accessibility-onetap-public.php:4178
+msgid "Letter Spacing"
+msgstr "Межбуквенный интервал"
+
+#: admin/class-accessibility-onetap-settings-options.php:456
+msgid "Easily remove the \"Powered by OneTap\" text from the sidebar on the frontend of your website."
+msgstr "Легко удалите текст «Разработано OneTap» с боковой панели в интерфейсе вашего веб-сайта."
+
+#: admin/class-accessibility-onetap-settings-options.php:455
+msgid "Hide \"Powered by OneTap\""
+msgstr "Скрыть «Разработано OneTap»"
+
+#: admin/class-accessibility-onetap-settings-options.php:438
+#: public/class-accessibility-onetap-public.php:4034
+msgid "Български"
+msgstr "Болгарский"
+
+#: admin/class-accessibility-onetap-settings-options.php:437
+#: public/class-accessibility-onetap-public.php:4030
+msgid "Gaeilge"
+msgstr "Ирландский"
+
+#: admin/class-accessibility-onetap-settings-options.php:436
+#: public/class-accessibility-onetap-public.php:4026
+msgid "Hrvatski"
+msgstr "Хорватский"
+
+#: admin/class-accessibility-onetap-settings-options.php:435
+#: public/class-accessibility-onetap-public.php:4022
+msgid "Eesti"
+msgstr "Эстонский"
+
+#: admin/class-accessibility-onetap-settings-options.php:434
+#: public/class-accessibility-onetap-public.php:4018
+msgid "Latviešu"
+msgstr "Латвийский"
+
+#: admin/class-accessibility-onetap-settings-options.php:433
+#: public/class-accessibility-onetap-public.php:4014
+msgid "Lietuvių"
+msgstr "Литовский"
+
+#: admin/class-accessibility-onetap-settings-options.php:432
+#: public/class-accessibility-onetap-public.php:4010
+msgid "Magyar"
+msgstr "Венгерский"
+
+#: admin/class-accessibility-onetap-settings-options.php:431
+#: public/class-accessibility-onetap-public.php:4006
+msgid "Čeština"
+msgstr "Чешский"
+
+#: admin/class-accessibility-onetap-settings-options.php:430
+#: public/class-accessibility-onetap-public.php:4002
+msgid "Ελληνικά"
+msgstr "Греческий"
+
+#: admin/class-accessibility-onetap-settings-options.php:429
+#: public/class-accessibility-onetap-public.php:3998
+msgid "Dansk"
+msgstr "Датский"
+
+#: admin/class-accessibility-onetap-settings-options.php:428
+#: public/class-accessibility-onetap-public.php:3994
+msgid "Nederlands"
+msgstr "Нидерландский"
+
+#: admin/class-accessibility-onetap-settings-options.php:427
+#: public/class-accessibility-onetap-public.php:3990
+msgid "Slovenčina"
+msgstr "Словацкий"
+
+#: admin/class-accessibility-onetap-settings-options.php:426
+#: public/class-accessibility-onetap-public.php:3986
+msgid "Slovenščina"
+msgstr "Словенский"
+
+#: admin/class-accessibility-onetap-settings-options.php:425
+#: public/class-accessibility-onetap-public.php:3982
+msgid "Română"
+msgstr "Румынский"
+
+#: admin/class-accessibility-onetap-settings-options.php:424
+#: public/class-accessibility-onetap-public.php:3978
+msgid "Português"
+msgstr "Португальский"
+
+#: admin/class-accessibility-onetap-settings-options.php:416
+#: public/class-accessibility-onetap-public.php:3936
+#: public/class-accessibility-onetap-public.php:3946
+msgid "English"
+msgstr "Английский"
+
+#: admin/class-accessibility-onetap-admin.php:114
+msgid "No, it’s not  good enough"
+msgstr "Нет, это недостаточно хорошо"
+
+#: admin/class-accessibility-onetap-admin.php:113
+msgid "Already did"
+msgstr "Уже сделал"
+
+#: admin/class-accessibility-onetap-admin.php:112
+msgid "Ok, you deserve it"
+msgstr "Хорошо, вы это заслужили"
+
+#: admin/class-accessibility-onetap-admin.php:109
+msgid "It would mean a lot to us."
+msgstr "Это будет очень много значить для нас."
+
+#: admin/class-accessibility-onetap-admin.php:102
+msgid ""
+"Hey!\n"
+"\t\t\t\t\tWe’re happy that you’re using OneTap. We'd like to take this opportunity to kindly ask for a 5-star rating on WordPress."
+msgstr ""
+"Привет!\n"
+"Мы рады, что вы используете OneTap. Мы хотели бы воспользоваться этой возможностью, чтобы любезно попросить вас поставить 5 звезд на WordPress."
+
+#. Plugin Name of the plugin
+#: accessibility-onetap.php
+msgid "OneTap (One Click Accessibility)"
+msgstr "OneTap (доступность в один клик)"
+
+#: public/class-accessibility-onetap-public.php:4452
+msgid "Version "
+msgstr "Версия "
+
+#: public/class-accessibility-onetap-public.php:4413
+msgid "Reset Settings"
+msgstr "Сброс настроек"
+
+#: admin/class-accessibility-onetap-settings-options.php:585
+#: public/class-accessibility-onetap-public.php:4337
+msgid "Highlight Links"
+msgstr "Выделить ссылки"
+
+#: admin/class-accessibility-onetap-settings-options.php:508
+#: public/class-accessibility-onetap-public.php:4161
+msgid "Cursor"
+msgstr "Курсор"
+
+#: public/class-accessibility-onetap-public.php:4118
+msgid "Powered by"
+msgstr "При поддержке"
+
+#: public/class-accessibility-onetap-public.php:4112
+msgid "Accessibility  Adjustments"
+msgstr "Корректировка доступности"
+
+#: public/class-accessibility-onetap-public.php:3938
+msgid "icon drop down menu"
+msgstr "значок выпадающего меню"
+
+#: admin/partials/settings.php:31
+msgid "General Plugin Settings"
+msgstr "Общие настройки плагина"
+
+#: admin/partials/modules.php:41 admin/partials/settings.php:39
+msgid "See Whats Include"
+msgstr "Посмотреть, что включено"
+
+#: admin/partials/modules.php:38 admin/partials/settings.php:36
+msgid "Get Pro Version"
+msgstr "Получить версию Pro"
+
+#: admin/partials/modules.php:34
+msgid "For the best results, we recommend keeping all features turned on to maximize ease of use and inclusivity."
+msgstr "Для достижения наилучших результатов мы рекомендуем оставить все функции включенными, чтобы максимально упростить использование и обеспечить инклюзивность."
+
+#: admin/partials/settings.php:32
+msgid "Adjust the general settings for optimal performance of the plugin. Customize colors, select your preferred language, and configure other options to tailor the plugin to your needs. These settings ensure a personalized and accessible experience."
+msgstr "Отрегулируйте общие параметры для оптимальной работы плагина. Настройте цвета, выберите предпочитаемый язык и другие параметры, чтобы адаптировать плагин к вашим потребностям. Эти настройки обеспечивают персонализированный и доступный интерфейс."
+
+#: admin/partials/modules.php:32
+msgid "Customize your browsing experience by enabling or disabling various accessibility modules."
+msgstr "Настройте свой браузер, включив или отключив различные модули специальных возможностей."
+
+#: admin/partials/modules.php:31
+msgid "Accessibility Settings"
+msgstr "Настройки специальных возможностей"
+
+#: admin/partials/modules.php:26 admin/partials/settings.php:26
+msgid "Support"
+msgstr "Поддержка"
+
+#: admin/partials/modules.php:22 admin/partials/settings.php:22
+msgid "logo"
+msgstr "логотип"
+
+#: admin/class-accessibility-onetap-settings-options.php:713
+msgid "Use a mask to focus on a specific area of text and reduce distractions"
+msgstr "Используйте маску, чтобы сосредоточиться на определенной области текста и уменьшить отвлекающие факторы."
+
+#: admin/class-accessibility-onetap-settings-options.php:712
+#: public/class-accessibility-onetap-public.php:4377
+msgid "Reading Mask"
+msgstr "Маска чтения"
+
+#: admin/class-accessibility-onetap-settings-options.php:746
+msgid "Automatically read aloud the page content for hands-free accessibility"
+msgstr "Автоматически читать вслух содержимое страницы для удобства использования без помощи рук"
+
+#: admin/class-accessibility-onetap-settings-options.php:745
+msgid "Read Page"
+msgstr "Прочитать страницу"
+
+#: admin/class-accessibility-onetap-settings-options.php:586
+msgid "Easily identify clickable links with visual enhancements for better navigation"
+msgstr "Легко идентифицируйте активные ссылки с помощью визуальных улучшений для лучшей навигации"
+
+#: admin/class-accessibility-onetap-settings-options.php:680
+msgid "Highlight the current line to track reading progress and improve focus"
+msgstr "Выделите текущую строку, чтобы отслеживать прогресс чтения и улучшить фокус"
+
+#: admin/class-accessibility-onetap-settings-options.php:679
+#: public/class-accessibility-onetap-public.php:4391
+msgid "Reading Line"
+msgstr "Линия чтения"
+
+#: admin/class-accessibility-onetap-settings-options.php:671
+msgid "Tools to enhance ease of movement and accessibility across the site."
+msgstr "Инструменты для повышения удобства перемещения и доступности по сайту."
+
+#: admin/class-accessibility-onetap-settings-options.php:655
+msgid "Adjust color saturation for a more vivid or subdued visual experience"
+msgstr "Отрегулируйте насыщенность цвета для более яркого или приглушенного визуального восприятия"
+
+#: admin/class-accessibility-onetap-settings-options.php:654
+msgid "Saturnation"
+msgstr "Насыщенность"
+
+#: admin/class-accessibility-onetap-settings-options.php:644
+msgid "Convert display to black and white for reduced visual clutter and better focus"
+msgstr "Преобразуйте дисплей в черно-белый режим для уменьшения визуального беспорядка и лучшей фокусировки"
+
+#: admin/class-accessibility-onetap-settings-options.php:643
+#: public/class-accessibility-onetap-public.php:4264
+msgid "Grayscale"
+msgstr "Оттенки серого"
+
+#: admin/class-accessibility-onetap-settings-options.php:633
+msgid "Fine-tune color contrast for clearer text and improved readability"
+msgstr "Тонкая настройка цветового контраста для более четкого текста и улучшения читабельности"
+
+#: admin/class-accessibility-onetap-settings-options.php:632
+msgid "Contrast"
+msgstr "Контраст"
+
+#: admin/class-accessibility-onetap-settings-options.php:622
+msgid "Adjust screen brightness to reduce glare and enhance text visibility"
+msgstr "Отрегулируйте яркость экрана, чтобы уменьшить блики и улучшить видимость текста"
+
+#: admin/class-accessibility-onetap-settings-options.php:621
+#: public/class-accessibility-onetap-public.php:4283
+msgid "Brightness"
+msgstr "Яркость"
+
+#: admin/class-accessibility-onetap-settings-options.php:611
+msgid "Swap text and background colors for better contrast and readability"
+msgstr "Поменяйте местами цвета текста и фона для лучшей контрастности и читабельности"
+
+#: admin/class-accessibility-onetap-settings-options.php:610
+#: public/class-accessibility-onetap-public.php:4302
+msgid "Invert Colors"
+msgstr "Инвертировать цвета"
+
+#: admin/class-accessibility-onetap-settings-options.php:602
+msgid "Options to adjust color settings for improved visibility and comfort."
+msgstr "Возможности настройки параметров цвета для улучшения видимости и комфорта"
+
+#: admin/class-accessibility-onetap-settings-options.php:553
+msgid "Use a specialized font designed to enhance readability for dyslexic users"
+msgstr "Используйте специализированный шрифт, предназначенный для повышения читабельности у пользователей с дислексией"
+
+#: admin/class-accessibility-onetap-settings-options.php:552
+msgid "Dyslexic Font"
+msgstr "Дислексический шрифт"
+
+#: admin/class-accessibility-onetap-settings-options.php:542
+msgid "Switch to a clearer, easy-to-read font for improved text accessibility"
+msgstr "Переключитесь на более четкий и легко читаемый шрифт для улучшения доступности текста"
+
+#: admin/class-accessibility-onetap-settings-options.php:541
+#: public/class-accessibility-onetap-public.php:4198
+msgid "Readable Font"
+msgstr "Читабельный шрифт"
+
+#: admin/class-accessibility-onetap-settings-options.php:724
+msgid "Remove distracting images for a cleaner, more focused browsing experience"
+msgstr "Удалите отвлекающие изображения, чтобы сделать просмотр более чистым и целенаправленным"
+
+#: admin/class-accessibility-onetap-settings-options.php:723
+#: public/class-accessibility-onetap-public.php:4363
+msgid "Hide Images"
+msgstr "Скрыть изображения"
+
+#: admin/class-accessibility-onetap-settings-options.php:520
+msgid "Adjust line spacing for better readability and improved text clarity"
+msgstr "Отрегулируйте межстрочный интервал, чтобы улучшить читабельность и четкость текста"
+
+#: admin/class-accessibility-onetap-settings-options.php:519
+#: public/class-accessibility-onetap-public.php:4229
+msgid "Line Height"
+msgstr "Межстрочное расстояние"
+
+#: admin/class-accessibility-onetap-settings-options.php:509
+msgid "Enhance visibility with a larger cursor for easier navigation and control"
+msgstr "Улучшите видимость с помощью курсора большего размера для упрощения навигации и управления"
+
+#: admin/class-accessibility-onetap-settings-options.php:498
+msgid "Easily enlarge text for improved readability and accessibility for all"
+msgstr "Легко увеличивайте текст для улучшения читаемости и доступности для всех"
+
+#: admin/class-accessibility-onetap-settings-options.php:497
+#: public/class-accessibility-onetap-public.php:4142
+msgid "Bigger Text"
+msgstr "Увеличенный текст"
+
+#: admin/class-accessibility-onetap-settings-options.php:489
+msgid "Versatile tools to customize and enhance overall accessibility and usability."
+msgstr "Универсальные инструменты для настройки и повышения общей доступности и удобства использования."
+
+#: admin/class-accessibility-onetap-settings-options.php:316
+#: admin/class-accessibility-onetap-settings-options.php:359
+#: admin/class-accessibility-onetap-settings-options.php:402
+msgid "Top left"
+msgstr "Верхний левый угол"
+
+#: admin/class-accessibility-onetap-settings-options.php:315
+#: admin/class-accessibility-onetap-settings-options.php:358
+#: admin/class-accessibility-onetap-settings-options.php:401
+msgid "Top right"
+msgstr "Верхний правый угол"
+
+#: admin/class-accessibility-onetap-settings-options.php:314
+#: admin/class-accessibility-onetap-settings-options.php:357
+#: admin/class-accessibility-onetap-settings-options.php:400
+msgid "Bottom left"
+msgstr "Нижний левый угол"
+
+#: admin/class-accessibility-onetap-settings-options.php:313
+#: admin/class-accessibility-onetap-settings-options.php:356
+#: admin/class-accessibility-onetap-settings-options.php:399
+msgid "Bottom right"
+msgstr "Нижний правый угол"
+
+#: admin/class-accessibility-onetap-settings-options.php:312
+#: admin/class-accessibility-onetap-settings-options.php:355
+#: admin/class-accessibility-onetap-settings-options.php:398
+msgid "Middle left"
+msgstr "Посередине слева"
+
+#: admin/class-accessibility-onetap-settings-options.php:311
+#: admin/class-accessibility-onetap-settings-options.php:354
+#: admin/class-accessibility-onetap-settings-options.php:397
+msgid "Middle right"
+msgstr "Посередине справа"
+
+#: admin/class-accessibility-onetap-settings-options.php:304
+#: admin/class-accessibility-onetap-settings-options.php:347
+#: admin/class-accessibility-onetap-settings-options.php:390
+msgid "Widget Position"
+msgstr "Расположение виджета"
+
+#: admin/class-accessibility-onetap-settings-options.php:292
+#: admin/class-accessibility-onetap-settings-options.php:335
+#: admin/class-accessibility-onetap-settings-options.php:378
+msgid "Left/right position (px)"
+msgstr "Положение слева/справа (пикс.)"
+
+#: admin/class-accessibility-onetap-settings-options.php:280
+#: admin/class-accessibility-onetap-settings-options.php:323
+#: admin/class-accessibility-onetap-settings-options.php:366
+msgid "Adjust the position of widgets to fit your layout preferences."
+msgstr "Отрегулируйте положение виджетов в соответствии с вашими предпочтениями макета."
+
+#: admin/class-accessibility-onetap-settings-options.php:279
+#: admin/class-accessibility-onetap-settings-options.php:322
+#: admin/class-accessibility-onetap-settings-options.php:365
+#: admin/partials/settings.php:60
+msgid "Position"
+msgstr "Расположение"
+
+#: admin/class-accessibility-onetap-settings-options.php:278
+#: admin/class-accessibility-onetap-settings-options.php:321
+#: admin/class-accessibility-onetap-settings-options.php:364
+msgid "Top/bottom position (px)"
+msgstr "Верхнее/нижнее положение (пикс.)"
+
+#: admin/class-accessibility-onetap-settings-options.php:269
+msgid "Set your own branding colors to personalize the plugin’s appearance."
+msgstr "Установите собственные фирменные цвета для персонализации внешнего вида плагина."
+
+#: admin/class-accessibility-onetap-settings-options.php:268
+#: admin/class-accessibility-onetap-settings-options.php:601
+#: admin/partials/modules.php:62 admin/partials/settings.php:55
+#: public/class-accessibility-onetap-public.php:4245
+msgid "Colors"
+msgstr "Цвета"
+
+#: admin/class-accessibility-onetap-settings-options.php:267
+msgid "Color"
+msgstr "Цвет"
+
+#: admin/class-accessibility-onetap-settings-options.php:423
+#: public/class-accessibility-onetap-public.php:3974
+msgid "Suomi"
+msgstr "Финский"
+
+#: admin/class-accessibility-onetap-settings-options.php:422
+#: public/class-accessibility-onetap-public.php:3970
+msgid "Svenska"
+msgstr "Шведский"
+
+#: admin/class-accessibility-onetap-settings-options.php:421
+#: public/class-accessibility-onetap-public.php:3966
+msgid "Polski"
+msgstr "Польский"
+
+#: admin/class-accessibility-onetap-settings-options.php:420
+#: public/class-accessibility-onetap-public.php:3962
+msgid "Italiano"
+msgstr "Итальянский"
+
+#: admin/class-accessibility-onetap-settings-options.php:419
+#: public/class-accessibility-onetap-public.php:3958
+msgid "Français"
+msgstr "Французский"
+
+#: admin/class-accessibility-onetap-settings-options.php:418
+#: public/class-accessibility-onetap-public.php:3954
+msgid "Español"
+msgstr "Испанский"
+
+#: admin/class-accessibility-onetap-settings-options.php:417
+#: public/class-accessibility-onetap-public.php:3950
+msgid "Deutsch"
+msgstr "Немецкий"
+
+#: admin/class-accessibility-onetap-settings-options.php:409
+msgid "Choose your preferred language for the plugin’s interface."
+msgstr "Выберите предпочитаемый язык интерфейса для плагина."
+
+#: admin/class-accessibility-onetap-settings-options.php:408
+#: admin/partials/settings.php:65
+msgid "Language"
+msgstr "Язык"
+
+#: admin/class-accessibility-onetap-settings-options.php:407
+msgid "Default Language"
+msgstr "Язык по умолчанию"
+
+#: admin/class-accessibility-onetap-settings-options.php:116
+#: admin/class-accessibility-onetap-settings-options.php:117
+#: admin/class-accessibility-onetap-settings-options.php:219
+msgid "Modules"
+msgstr "Модули"
+
+#: admin/class-accessibility-onetap-admin.php:251
+#: admin/class-accessibility-onetap-settings-options.php:107
+#: admin/class-accessibility-onetap-settings-options.php:108
+#: admin/class-accessibility-onetap-settings-options.php:215
+msgid "Settings"
+msgstr "Настройки"
+
+#: admin/class-accessibility-onetap-settings-manager.php:1296
+msgid "PRO"
+msgstr "ПРО"
+
+#: admin/class-accessibility-onetap-settings-manager.php:1094
+msgid "Choose File"
+msgstr "Выбрать файл"
+
+#: admin/class-accessibility-onetap-settings-manager.php:275
+#: admin/class-accessibility-onetap-settings-manager.php:554
+#: admin/class-accessibility-onetap-settings-manager.php:638
+#: admin/class-accessibility-onetap-settings-manager.php:709
+#: admin/class-accessibility-onetap-settings-manager.php:913
+#: admin/class-accessibility-onetap-settings-manager.php:979
+#: admin/class-accessibility-onetap-settings-manager.php:1197
+#: admin/class-accessibility-onetap-settings-manager.php:1267
+msgid "Save Changes"
+msgstr "Сохранить изменения"
+
+#. Author URI of the plugin
+#: accessibility-onetap.php
+msgid "https://wponetap.com/"
+msgstr "https://wponetap.com/"
+
+#. Author of the plugin
+#: accessibility-onetap.php
+#: admin/class-accessibility-onetap-settings-options.php:96
+#: admin/class-accessibility-onetap-settings-options.php:97
+#: public/class-accessibility-onetap-public.php:4121
+msgid "OneTap"
+msgstr "OneTap"
+
+#. Description of the plugin
+#: accessibility-onetap.php
+msgid "OneTap is a multilingual WordPress plugin designed for seamless website accessibility. With a simple one-click installation, it ensures your site meets accessibility standards without any hassle. Built for performance, providing an inclusive, user-friendly web environment for all visitors."
+msgstr "OneTap — это многоязычный плагин WordPress, предназначенный для обеспечения беспрепятственного доступа к веб-сайту. Простая установка в один клик гарантирует, что ваш сайт без каких-либо проблем будет соответствовать стандартам доступности. Создан для повышения производительности, предоставляя инклюзивную и удобную веб-среду для всех посетителей."
+
+#. Plugin URI of the plugin
+#: accessibility-onetap.php
+msgid "https://wponetap.com"
+msgstr "https://wponetap.com"
