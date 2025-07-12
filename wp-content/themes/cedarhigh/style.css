@@ -136,3 +136,45 @@ Template Id: prod-29735
 .ai-c{
 	align-items: center;
 }
+.header__menu{
+	display: flex;
+	align-items: center;
+}
+.jc-sb{
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	width: 100vw!important;
+	padding: 0 20px;
+}
+.jc-sb > .elementor-widget-wrap.elementor-element-populated{
+	display: flex;
+	flex-wrap: nowrap;
+	justify-content: space-between!important;
+	align-items: center;
+}
+#burgerButton{
+	display: none;
+}
+
+details, summary{
+	cursor: pointer;
+}
+.jet-carousel .jet-arrow{
+	z-index: 20;
+}
+@media(max-width: 900px){
+	#headerMenu{
+		display: none;
+	}
+	#burgerButton{
+		display: block;
+	}
+	.header__menu{
+		flex-wrap: wrap;
+	}
+	.header__menu > *{
+		display: block;
+		width: fit-content;
+	}
+}
