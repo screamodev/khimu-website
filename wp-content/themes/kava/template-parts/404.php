@@ -7,15 +7,12 @@
  * @package Kava
  */
 ?>
+<?php
+$lang = function_exists('pll_current_language') ? pll_current_language() : 'uk';
 
-<section class="error-404 not-found">
-	<header class="page-header">
-		<h1 class="page-title"><?php esc_html_e( 'Oops! That page can&rsquo;t be found.', 'kava' ); ?></h1>
-	</header><!-- .page-header -->
-
-	<div class="page-content">
-		<p><?php esc_html_e( 'It looks like nothing was found at this location. Maybe try one of the links below or a search?', 'kava' ); ?></p>
-
-		<?php get_search_form(); ?>
-	</div><!-- .page-content -->
-</section><!-- .error-404 -->
+if ($lang === 'uk') {
+	wp_redirect(home_url('/404-ua'));
+} else {
+	wp_redirect(home_url('/404-en'));
+}
+exit;
