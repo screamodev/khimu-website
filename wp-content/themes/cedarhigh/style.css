@@ -163,6 +163,25 @@ details, summary{
 .jet-carousel .jet-arrow{
 	z-index: 20;
 }
+.page-header {
+    display: none;
+}
+.jet-smart-tiles__terms > a{
+	color: #0D2D62;
+}
+.rector-grid > .elementor-widget-container > .elementor-image-gallery > .gallery > .gallery-item{
+	padding-top: 20px;
+	padding-bottom: 20px;
+}
+.rector-grid > .elementor-widget-container > .elementor-image-gallery > .gallery > .gallery-item > .gallery-icon.portrait > img{
+	height: 300px;
+    object-fit: cover;
+	object-position: top;
+}
+*{
+	font-family: "Montserrat", sans-serif;
+	font-size: 14px;
+}
 @media(max-width: 900px){
 	#headerMenu{
 		display: none;
@@ -176,5 +195,10 @@ details, summary{
 	.header__menu > *{
 		display: block;
 		width: fit-content;
+	}
+}
+@media(max-width: 768px){
+	.rector-grid > .elementor-widget-container > .elementor-image-gallery > .gallery > .gallery-item > .gallery-icon.portrait > img{
+		height: auto;
 	}
 }
