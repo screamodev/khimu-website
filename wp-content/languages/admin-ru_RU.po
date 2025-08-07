@@ -2,7 +2,7 @@
 # This file is distributed under the same license as the WordPress - 6.8.x - Development - Administration package.
 msgid ""
 msgstr ""
-"PO-Revision-Date: 2025-07-16 13:29:55+0000\n"
+"PO-Revision-Date: 2025-08-05 20:51:52+0000\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -4711,7 +4711,7 @@ msgstr "Подсчет используемого места невозможе�
 
 #: wp-admin/includes/class-wp-debug-data.php:1950
 msgid "The directory size calculation has timed out. Usually caused by a very large number of sub-directories and files."
-msgstr "Подсчет используемого места занял слишком много времени. Возможно, что  у вас слишком много подпапок и файлов."
+msgstr "Подсчет используемого места занял слишком много времени. Возможно, что у вас слишком много подпапок и файлов."
 
 #: wp-admin/includes/class-wp-debug-data.php:1579
 msgid "These settings alter where and how parts of WordPress are loaded."
@@ -4903,7 +4903,7 @@ msgstr "Фоновые обновления работают"
 #. translators: %s: The name of the failed cron event.
 #: wp-admin/includes/class-wp-site-health.php:1672
 msgid "The scheduled event, %s, failed to run. Your site still works, but this may indicate that scheduling posts or automated updates may not work as intended."
-msgstr "Запланированное задание %s было пропущено. Ваш сайт все ещё работает,  но возможно есть проблемы с автоматическим обновлением или отложенной публикацией записей."
+msgstr "Запланированное задание %s было пропущено. Ваш сайт все ещё работает, но, возможно, есть проблемы с автоматическим обновлением или отложенной публикацией записей."
 
 #: wp-admin/includes/class-wp-site-health.php:1666
 msgid "A scheduled event has failed"
@@ -6202,7 +6202,7 @@ msgstr "Дополнительная информация"
 #. translators: Privacy policy tutorial.
 #: wp-admin/includes/class-wp-privacy-policy-content.php:614
 msgid "In this section you should provide a contact method for privacy-specific concerns. If you are required to have a Data Protection Officer, list their name and full contact details here as well."
-msgstr "Здесь вам следует указать метод связи с вами по вопросам конфиденциальности.  Если у вас есть офицер по защите данных, укажите его/её имя и полные контактные данные."
+msgstr "Здесь вам следует указать метод связи с вами по вопросам конфиденциальности. Если у вас есть офицер по защите данных, укажите его/её имя и полные контактные данные."
 
 #. translators: Privacy policy tutorial.
 #: wp-admin/includes/class-wp-privacy-policy-content.php:604
@@ -6332,7 +6332,7 @@ msgstr "Если посетитель оставляет комментарий 
 #. translators: Privacy policy tutorial.
 #: wp-admin/includes/class-wp-privacy-policy-content.php:522
 msgid "By default, WordPress does not include a contact form. If you use a contact form plugin, use this subsection to note what personal data is captured when someone submits a contact form, and how long you keep it. For example, you may note that you keep contact form submissions for a certain period for customer service purposes, but you do not use the information submitted through them for marketing purposes."
-msgstr "WordPress не имеет своей формы контактов. Если вы используете плагин контактной формы, используйте этот раздел для указания какие данные собираются при заполнении формы контактов и как долго вы будете хранить их. К примеру, вам можно указать, что вы будете сохранять данные от форм в течение какого-то периода с целью предоставления обслуживания клиенту, но вы не будете использовать эти данные с целью  маркетинга."
+msgstr "WordPress не имеет своей формы контактов. Если вы используете плагин контактной формы, используйте этот раздел для указания какие данные собираются при заполнении формы контактов и как долго вы будете хранить их. К примеру, вам можно указать, что вы будете сохранять данные от форм в течение какого-то периода с целью предоставления обслуживания клиенту, но вы не будете использовать эти данные с целью маркетинга."
 
 #. translators: Default privacy policy heading.
 #: wp-admin/includes/class-wp-privacy-policy-content.php:520
@@ -6357,7 +6357,7 @@ msgstr "Персональные данные создаются не тольк
 #. translators: Privacy policy tutorial.
 #: wp-admin/includes/class-wp-privacy-policy-content.php:487
 msgid "In addition to listing what personal data you collect, you need to note why you collect it. These explanations must note either the legal basis for your data collection and retention or the active consent the user has given."
-msgstr "В дополнению к списку собираемых персональных данных, вам нужно указать зачем вы их собираете.  Эти объяснения должны обосновывать законность сбора данных и их хранение или факт согласия данный пользователем."
+msgstr "В дополнению к списку собираемых персональных данных, вам нужно указать зачем вы их собираете. Эти объяснения должны обосновывать законность сбора данных и их хранение или факт согласия данный пользователем."
 
 #. translators: Privacy policy tutorial.
 #: wp-admin/includes/class-wp-privacy-policy-content.php:485
@@ -6552,7 +6552,7 @@ msgstr "Если у вас уже есть страница политики к�
 #. translators: %s: URL to Pages Trash.
 #: wp-admin/options-privacy.php:136
 msgid "The currently selected Privacy Policy page is in the Trash. Please create or select a new Privacy Policy page or <a href=\"%s\">restore the current page</a>."
-msgstr "Текущая выбранная страница политики конфиденциальности удалена в корзину. Создайте или выберите новую страницу, вы также можете  <a href=\"%s\">восстановить страницу из корзины</a>."
+msgstr "Текущая выбранная страница политики конфиденциальности удалена в корзину. Создайте или выберите новую страницу, вы также можете <a href=\"%s\">восстановить страницу из корзины</a>."
 
 #: wp-admin/options-privacy.php:126
 msgid "The currently selected Privacy Policy page does not exist. Please create or select a new page."
@@ -7068,7 +7068,7 @@ msgstr "Невозможно записать в файл."
 #. translators: 1: Line number, 2: File path.
 #: wp-admin/includes/file.php:316
 msgid "Your PHP code changes were not applied due to an error on line %1$s of file %2$s. Please fix and try saving again."
-msgstr "Ваши изменения в коде PHP были отменены из за ошибки на строке %1$s файла %2$s.  Исправьте и попробуйте пересохранить."
+msgstr "Ваши изменения в коде PHP были отменены из за ошибки на строке %1$s файла %2$s. Исправьте и попробуйте пересохранить."
 
 #. translators: If a Rosetta site exists (e.g. https://es.wordpress.org/news/),
 #. then use that. Otherwise, leave untranslated.
@@ -11481,7 +11481,7 @@ msgstr "Ремонт завершён. Пожалуйста, удалите сл
 #. translators: 1: Table name, 2: Error message.
 #: wp-admin/maint/repair.php:119
 msgid "The %1$s table is not okay. It is reporting the following error: %2$s. WordPress will attempt to repair this table&hellip;"
-msgstr "Таблица %1$s повреждена. Сообщается следующая ошибка: %2$s.  WordPress попытается исправить эту таблицу&hellip;"
+msgstr "Таблица %1$s повреждена. Сообщается следующая ошибка: %2$s. WordPress попытается исправить эту таблицу&hellip;"
 
 #: wp-admin/user-new.php:454
 msgid "Enter the email address or username of an existing user on this network to invite them to this site. That person will be sent an email asking them to confirm the invite."
