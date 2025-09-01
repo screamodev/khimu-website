@@ -2,7 +2,7 @@
 # This file is distributed under the same license as the WordPress - 6.8.x - Development package.
 msgid ""
 msgstr ""
-"PO-Revision-Date: 2025-07-15 17:14:27+0000\n"
+"PO-Revision-Date: 2025-08-15 06:45:22+0000\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -18878,7 +18878,7 @@ msgstr "Адрес&nbsp;email:"
 
 #: wp-signup.php:287
 msgid "(Must be at least 4 characters, lowercase letters and numbers only.)"
-msgstr "(Не менее 4 символов, только буквы и цифры.)"
+msgstr "(Не менее 4 символов, только маленькие буквы и цифры.)"
 
 #: wp-signup.php:219
 msgid "Privacy:"
