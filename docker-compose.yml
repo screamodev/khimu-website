@@ -6,7 +6,7 @@ services:
     environment:
       WORDPRESS_DB_HOST: db
       WORDPRESS_DB_USER: wpuser
-      WORDPRESS_DB_PASSWORD: wppass
+      WORDPRESS_DB_PASSWORD: ${WORDPRESS_DB_PASSWORD}
       WORDPRESS_DB_NAME: wpdb
     volumes:
     - wordpress_data:/var/www/html
@@ -20,23 +20,11 @@ services:
     environment:
       MARIADB_DATABASE: wpdb
       MARIADB_USER: wpuser
-      MARIADB_PASSWORD: wppass
-      MARIADB_ROOT_PASSWORD: rootpass
+      MARIADB_PASSWORD: ${MARIADB_PASSWORD}
+      MARIADB_ROOT_PASSWORD: ${MARIADB_ROOT_PASSWORD}
     volumes:
     - db_data:/var/lib/mysql
     - ./database/dump.sql:/docker-entrypoint-initdb.d/dump.sql:ro
-  phpmyadmin:
-    image: phpmyadmin/phpmyadmin
-    restart: always
-    ports:
-    - 8081:80
-    environment:
-      PMA_HOST: db
-      PMA_USER: wpuser
-      PMA_PASSWORD: wppass
-      UPLOAD_LIMIT: 32M
-    depends_on:
-    - db
 volumes:
   wordpress_data: null
   db_data: null
