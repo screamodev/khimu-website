@@ -1,0 +1,1776 @@
+# Translation of Plugins - Loginizer - Stable (latest release) in Russian
+# This file is distributed under the same license as the Plugins - Loginizer - Stable (latest release) package.
+msgid ""
+msgstr ""
+"PO-Revision-Date: 2023-10-07 14:01:52+0000\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=3; plural=(n % 10 == 1 && n % 100 != 11) ? 0 : ((n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 12 || n % 100 > 14)) ? 1 : 2);\n"
+"X-Generator: GlotPress/4.0.1\n"
+"Language: ru\n"
+"Project-Id-Version: Plugins - Loginizer - Stable (latest release)\n"
+
+#: main/settings/sso.php:200
+msgid "You can leave it empty if you just want to create a SSO link"
+msgstr "Вы можете оставить это поле пустым, если вы хотите только создать ссылку для одноосновной аутентификации (SSO)"
+
+#: main/settings/sso.php:256
+msgid "Username"
+msgstr "Имя пользователя"
+
+#: main/settings/sso.php:205
+msgid "User"
+msgstr "Пользователь"
+
+#: main/settings/sso.php:62
+msgid "The given user was not found !"
+msgstr "Указанный пользователь не найден!"
+
+#: main/settings/sso.php:257
+msgid "SSO Link"
+msgstr "SSO ссылка"
+
+#: main/settings/sso.php:20
+msgid "SSO is a Pro feature so it can not be used with the free version."
+msgstr "SSO - функция Pro, поэтому ее нельзя использовать в бесплатной версии."
+
+#: main/settings/sso.php:84
+msgid "SSO IDs were malformed"
+msgstr "SSO IDs были неверно сформированы"
+
+#: main/admin.php:571
+msgid "Single Sign On"
+msgstr "Единый вход"
+
+#: main/settings/sso.php:27
+msgid "Security Check Failed!"
+msgstr "Проверка безопасности не пройдена!"
+
+#: main/settings/sso.php:76
+msgid "Please select SSO Links to delete!"
+msgstr "Выберите SSO ссылки для удаления!"
+
+#: main/settings/sso.php:38
+msgid "Please select a user for whom you want to generate the link"
+msgstr "Выберите пользователя, для которого вы хотите создать ссылку"
+
+#: main/settings/sso.php:265
+msgid "No SSO link has been created yet."
+msgstr "SSO ссылка пока не создана."
+
+#: main/settings/sso.php:169
+msgid "Generate SSO"
+msgstr "Создать SSO"
+
+#: main/settings/sso.php:259
+msgid "Expiring in"
+msgstr "Истекает через"
+
+#: main/settings/sso.php:196
+msgid "Email of the person you want to send the SSO to"
+msgstr "Электронная почта человека, которому вы хотите отправить SSO"
+
+#: main/settings/sso.php:195
+msgid "Email"
+msgstr "Электронная почта"
+
+#: main/settings/sso.php:309
+msgid "Delete Selected Links"
+msgstr "Удалить выбранные ссылки"
+
+#: main/settings/sso.php:255
+msgid "User ID"
+msgstr "ID пользователя"
+
+#: main/settings/sso.php:206
+msgid "User for who's account you want to generate the SSO"
+msgstr "Пользователь, для учетной записи которого вы хотите сгенерировать SSO"
+
+#: main/settings/dashboard.php:212 main/settings/sso.php:232
+msgid "Login Attempts"
+msgstr "Попытки входа в систему"
+
+#: main/settings/dashboard.php:296
+msgid "Failed"
+msgstr "Ошибка"
+
+#: main/settings/security.php:910
+msgid "Block"
+msgstr "Блок"
+
+#: main/settings/security.php:927
+msgid "Exclude Roles"
+msgstr "Исключить роли"
+
+#: main/settings/security.php:897
+msgid "Enable"
+msgstr "Включить"
+
+#: main/settings/security.php:910
+msgid "Blocks all the login attempts if limit is reached"
+msgstr "Блокирует все попытки входа в систему, если достигнут лимит"
+
+#: main/settings/dashboard.php:195
+msgid "Brute-force attacks on your websites are on rise"
+msgstr "Растет число атак методом перебора на ваши веб-сайты"
+
+#: main/settings/dashboard.php:222
+msgid "Data For Last 24 hours"
+msgstr "Данные за последние 24 часа"
+
+#: main/settings/dashboard.php:198
+msgid "Your website is under heavy brute-force attacks.<br/> <a href=\"https://loginizer.com/pricing?utm_source=stats_block\" target=\"_blank\">Upgrade to a premium version</a> for added protection if this trend persists. Act fast to secure your site."
+msgstr "Ваш веб-сайт подвергается массовым атакам методом брутфорсинга.<br/> <a href=\"https://loginizer.com/pricing?utm_source=stats_block\" target=\"_blank\">Перейдите на платную версию</a> для дополнительной защиты, если эта тенденция сохранится. Действуйте быстро, чтобы обеспечить безопасность вашего сайта."
+
+#: main/settings/dashboard.php:188
+msgid "Your Website is safe"
+msgstr "Ваш веб-сайт в безопасности"
+
+#: main/settings/dashboard.php:203
+msgid "Your website is being protected by Loginizer Security."
+msgstr "Ваш веб-сайт защищен средствами безопасности Loginizer."
+
+#: main/settings/dashboard.php:219
+msgid "Total Attempts:"
+msgstr "Всего попыток:"
+
+#: main/settings/security.php:892
+msgid "This feature will help limit the number of devices your user can login to concurrently"
+msgstr "Эта функция поможет ограничить количество устройств, на которых ваш пользователь может одновременно войти в систему"
+
+#: main/settings/security.php:918
+msgid "Set Maximum number of sessions can be created"
+msgstr "Установите максимальное количество сеансов, которые могут быть созданы"
+
+#: main/settings/dashboard.php:192
+msgid "Risk from Brute-force attacks is low, attacks are under control"
+msgstr "Риск от атак брутфорса низкий, атаки находятся под контролем"
+
+#: main/settings/security.php:912
+msgid "Revokes all the sessions on successful login"
+msgstr "Отменяет все сеансы после успешного входа в систему"
+
+#: main/settings/security.php:917
+msgid "Max Session Count"
+msgstr "Максимальное количество сеансов"
+
+#: main/settings/security.php:906
+msgid "Limit Type"
+msgstr "Тип ограничения"
+
+#: main/settings/security.php:882
+msgid "Limit Concurrent Sessions"
+msgstr "Ограничить одновременные сессии"
+
+#: main/settings/security.php:928
+msgid "Excluded roles won't face session limit checks"
+msgstr "Исключенные роли не будут проверяться на ограничение по сеансам"
+
+#: main/settings/security.php:912
+msgid "Destroy"
+msgstr "Уничтожить"
+
+#: main/settings/security.php:898
+msgid "Enabling it will start limiting number of devices the user can login on concurrently"
+msgstr "Включение этой опции приведет к ограничению количества устройств, с которых пользователь может одновременно осуществлять вход в систему"
+
+#: main/settings/security.php:1003
+msgid "Update .htaccess"
+msgstr "Обновить .htaccess"
+
+#: main/settings/security.php:622
+msgid ".htaccess has been updated !"
+msgstr ".htaccess обновлен!"
+
+#: main/settings/brute-force.php:90
+msgid "Add your IP to whitelist to enable Trusted IP's"
+msgstr "Добавьте свой IP-адрес в белый список, чтобы включить доверенные IP-адреса"
+
+#: main/admin.php:232 main/admin.php:399
+msgid "Auto Backups"
+msgstr "Авто резервное копирование"
+
+#: main/admin.php:400
+msgid "Backup Rotation"
+msgstr "Ротация резервных копий"
+
+#: main/admin.php:404
+msgid "Backup to Amazon S3"
+msgstr "Резервное копирование в Amazon S3"
+
+#: main/admin.php:405
+msgid "Backup to Dropbox"
+msgstr "Резервное копирование на Dropbox"
+
+#: main/admin.php:406
+msgid "Backup to FTP,FTPS and many more ..."
+msgstr "Резервное копирование на FTP, FTPS и многие другие ..."
+
+#: main/admin.php:403
+msgid "Backup to Google Drive"
+msgstr "Резервное копирование в Google Drive"
+
+#: main/admin.php:231
+msgid "Backup to remote locations like FTP, FTPS, SFTP, WebDAV, Google Drive, OneDrive, Dropbox, Amazon S3"
+msgstr "Резервное копирование в удаленные места, такие как FTP, FTPS, SFTP, WebDAV, Google Drive, OneDrive, Dropbox, Amazon S3"
+
+#: main/admin.php:229
+msgid "Backups are the best form of security. Secure your WordPress site by creating backups with Backuply"
+msgstr "Резервное копирование - лучшая форма безопасности. Защитите свой сайт WordPress, создавая резервные копии с помощью Backuply"
+
+#: main/settings/security.php:648
+msgid "CSRF Protection"
+msgstr "Защита CSRF"
+
+#: main/settings/passwordless.php:165
+msgid "Custom redirect for"
+msgstr "Пользовательское перенаправление для"
+
+#: main/settings/passwordless.php:155
+msgid "Custom redirect to"
+msgstr "Пользовательское перенаправление на"
+
+#: main/settings/2fa.php:727
+msgid "Custom Redirects based on roles"
+msgstr "Пользовательские перенаправления на основе ролей"
+
+#: main/admin.php:236 main/admin.php:408
+msgid "Visit Backuply"
+msgstr "Посетите Backuply"
+
+#: main/settings/security.php:627
+msgid "Was unable to update the .htaccess file so please update it manually"
+msgstr "Не удалось обновить файл .htaccess, поэтому, обновите его вручную"
+
+#: main/admin.php:236
+msgid "Install Backuply"
+msgstr "Установите Backuply"
+
+#: main/admin.php:521
+msgid "You have enabled CSRF protection but the .htaccess file has not been updated"
+msgstr "Вы включили защиту от CSRF, но файл .htaccess не был обновлен"
+
+#: main/settings/security.php:1017
+msgid "You can manually update your .htaccess by adding the given code at the top of your .htaccess file"
+msgstr "Вы можете вручную обновить файл .htaccess, добавив указанный код в начало файла .htaccess"
+
+#: main/settings/brute-force.php:716
+msgid "Trusted IP's"
+msgstr "Доверенные IP-адреса"
+
+#: main/settings/passwordless.php:166
+msgid "Select the user roles for whom this custom redirect will be used"
+msgstr "Выберите роли пользователей, для которых будет использоваться данное пользовательское перенаправление"
+
+#: main/admin.php:396
+msgid "Secure your WordPress site by creating backups with Backuply"
+msgstr "Обеспечьте безопасность вашего сайта на WordPress, создавая резервные копии с Backuply"
+
+#: main/settings/2fa.php:758
+msgid "Save Custom URLs"
+msgstr "Сохранить пользовательские URL-адреса"
+
+#: main/settings/security.php:1004
+msgid "Rewrites rule to change wp-admin and if you have a Multisite then check"
+msgstr "Переписывает правило для изменения wp-admin и, если у вас есть мультисайт, проверьте"
+
+#: main/settings/security.php:1004
+msgid "Rewrites rule for CSRF session URL"
+msgstr "Переписывает правило для URL сессии CSRF"
+
+#: main/settings/brute-force.php:110
+msgid "Reset Retries value is invalid"
+msgstr "Неверное значение для сброса количества попыток"
+
+#: main/admin.php:398
+msgid "Remote Backup to 8 location"
+msgstr "Удаленное резервное копирование в 8 местоположениях"
+
+#: main/settings/passwordless.php:156
+msgid "Redirects user to a page of your website other than the admin panel"
+msgstr "Перенаправляет пользователя на страницу вашего веб-сайта, отличную от панели администратора"
+
+#: main/admin.php:401
+msgid "One-Click Restore"
+msgstr "Восстановление одним щелчком мыши"
+
+#: main/settings/security.php:535
+msgid "Note: Be careful while changing the Admin name as your CSRF Protection is on"
+msgstr "Примечание: будьте осторожны при изменении имени администратора, так как у вас включена защита от CSRF"
+
+#: main/settings/brute-force.php:102
+msgid "Max Lockouts value is invalid"
+msgstr "Неверное значение для максимального количества блокировок"
+
+#: main/settings/security.php:1016
+msgid "Manually Update .htaccess"
+msgstr "Вручную обновить .htaccess"
+
+#: main/settings/security.php:664
+msgid "If enabled, it will update the URL of wp-admin with a random session string in the URL making it hard to predict the URL."
+msgstr "Если включено, он обновит URL wp-admin случайной строкой сеанса в URL, что затруднит предсказание URL."
+
+#: main/settings/brute-force.php:719
+msgid "If enabled Loginizer will only allow whitlisted IP's to Login."
+msgstr "Если включено, Loginizer разрешит вход только для IP-адресов в белом списке."
+
+#: main/settings/2fa.php:738
+msgid "Here you can set the URL, which you wish your user to get redirected to after login via 2FA."
+msgstr "Здесь вы можете установить URL-адрес, на который вы хотите перенаправить пользователя после входа через 2FA."
+
+#: main/settings/brute-force.php:106
+msgid "Extended Lockout value is invalid"
+msgstr "Неверное значение продления блокировки"
+
+#: main/settings/security.php:663
+msgid "Enable CSRF Protection"
+msgstr "Включить защиту от CSRF"
+
+#: main/settings/brute-force.php:114
+msgid "Email Notification value is invalid"
+msgstr "Неверное значение уведомления по электронной почте"
+
+#: main/admin.php:233
+msgid "Easy One-Click restores"
+msgstr "Простое восстановление одним щелчком"
+
+#: main/admin.php:306
+msgid "Done! Backuply is now installed and activated."
+msgstr "Готово! Backuply теперь установлен и активирован."
+
+#: main/admin.php:402
+msgid "Stress-free Migration"
+msgstr "Миграция без стресса"
+
+#: main/admin.php:234
+msgid "Stress Free Migrations"
+msgstr "Миграция без стресса"
+
+#: main/admin.php:425
+msgid "Theme Builder"
+msgstr "Конструктор тем"
+
+#: main/admin.php:428
+msgid "Form Builder"
+msgstr "Конструктор форм"
+
+#: main/admin.php:463
+msgid "here"
+msgstr "здесь"
+
+#: main/settings/dashboard.php:100
+msgid "Add Review"
+msgstr "Добавить отзыв"
+
+#: main/settings/brute-force.php:511
+msgid "Past"
+msgstr "Прошедшие"
+
+#: main/admin.php:345
+msgid "Premium Version"
+msgstr "Премиум версия"
+
+#: main/admin.php:371
+msgid "Recommendations"
+msgstr "Рекомендации"
+
+#: main/admin.php:422
+msgid "30+ Free Widgets"
+msgstr "30+ бесплатных виджетов"
+
+#: main/admin.php:424
+msgid "400+ Premium Sections"
+msgstr "400+ премиальных разделов"
+
+#: main/admin.php:423
+msgid "60+ Premium Widgets"
+msgstr "60+ премиальных виджетов"
+
+#: main/admin.php:359 main/admin.php:430
+msgid "And many more ..."
+msgstr "И многое другое..."
+
+#: main/admin.php:382
+msgid "Change 'admin' Username"
+msgstr "Изменить имя пользователя 'admin'"
+
+#: main/settings/security.php:331
+msgid " to anything of your choice e.g. mylogin. This would make it very difficult for automated attack bots to know where to login !"
+msgstr " к чему-либо по вашему выбору, например, mylogin. Это очень затруднит автоматизированные атаки ботов, чтобы узнать, где войти в систему!"
+
+#: main/admin.php:429
+msgid "Popup Builder"
+msgstr "Конструктор всплывающего окна"
+
+#: main/admin.php:463
+msgid "v"
+msgstr "v"
+
+#: main/admin.php:432
+msgid "Visit Pagelayer"
+msgstr "Посетите Pagelayer"
+
+#: main/settings/security.php:541
+msgid "You can rename your WordPress Admin access URL <b>wp-admin</b> to anything of your choice e.g. my-admin. This will require you to change .htaccess, so please follow"
+msgstr "Вы можете переименовать URL-адрес администратора WordPress <b>wp-admin</b> в любое удобное для вас слово, например, my-admin. Для этого вам потребуется изменить файл .htaccess, поэтому, пожалуйста, следуйте"
+
+#: main/settings/security.php:331
+msgid "You can rename your Login page from"
+msgstr "Вы можете переименовать страницу входа с"
+
+#: main/admin.php:426
+msgid "WooCommerce Builder"
+msgstr "Конструктор WooCommerce"
+
+#: main/settings/dashboard.php:130
+msgid "Welcome to Loginizer Security. By default the <b>Brute Force Protection</b> is immediately enabled. You should start by going over the default settings and tweaking them as per your needs."
+msgstr "Добро пожаловать в безопасность Loginizer. По умолчанию включена <b>защита от брутфорса</b>. Вы можете начать с изучения настроек по умолчанию и их настройки в соответствии с вашими потребностями."
+
+#: main/admin.php:350
+msgid "Upgrade to the premium version and get the following features"
+msgstr "Обновитесь до премиум-версии и получите следующие функции"
+
+#: main/settings/dashboard.php:135
+msgid "Upgrade to Pro</a> for more features like <b>reCAPTCHA, Two Factor Auth, Rename wp-admin and wp-login.php pages, Email based PasswordLess</b> login and more. These features will improve your website's security."
+msgstr "Обновитесь до Pro</a>, чтобы получить больше функций, таких как <b>reCAPTCHA, двухфакторная аутентификация, переименование страниц wp-admin и wp-login.php, вход без пароля по электронной почте</b> и многое другое. Эти функции повысят безопасность вашего веб-сайта."
+
+#: main/admin.php:353 main/admin.php:380
+msgid "Two Factor Auth - Email"
+msgstr "Двухфакторная аутентификация - Электронная почта"
+
+#: main/admin.php:354 main/admin.php:381
+msgid "Two Factor Auth - App"
+msgstr "Двухфакторная аутентификация - Приложение"
+
+#: main/admin.php:427
+msgid "Theme Creator and Exporter"
+msgstr "Создание и экспорт тем"
+
+#: main/settings/dashboard.php:100
+msgid "Thank you for choosing Loginizer! Many more features coming soon... &nbsp; Review Loginizer at WordPress &nbsp; &nbsp;"
+msgstr "Спасибо, что выбрали Loginizer! Множество новых функций скоро будут добавлены... &nbsp; Оставьте отзыв о Loginizer на WordPress &nbsp; &nbsp;"
+
+#: main/settings/dashboard.php:247
+msgid "Security PRO Version"
+msgstr "Security PRO Version"
+
+#: main/admin.php:503
+msgid "Refer and Earn"
+msgstr "Рекомендуйте и зарабатывайте"
+
+#: main/admin.php:352
+msgid "PasswordLess Login"
+msgstr "Вход без пароля"
+
+#: main/settings/security.php:541
+msgid "our guide"
+msgstr "наше руководство"
+
+#: main/settings/security.php:541
+msgid "on how to do so !"
+msgstr "о том, как это сделать!"
+
+#: main/settings/brute-force.php:94
+msgid "Max Retries value is invalid"
+msgstr "Неверное значение для максимального количества попыток"
+
+#: main/admin.php:355 main/admin.php:378
+msgid "Login Challenge Question"
+msgstr "Вопрос о безопасности при входе в систему"
+
+#: main/settings/brute-force.php:98
+msgid "Lockout Time value is invalid"
+msgstr "Неверное значение времени блокировки"
+
+#: main/admin.php:446
+msgid "Let your friends know that you have secured your website :"
+msgstr "Скажите своим друзьям, что вы защитили свой веб-сайт:"
+
+#: main/admin.php:448
+msgid "I just secured my @WordPress site against #bruteforce using @loginizer"
+msgstr "Я только что обеспечил безопасность своего сайта @WordPress от #bruteforce, используя @loginizer"
+
+#: main/settings/brute-force.php:511
+msgid "Failed Login Attempts Logs"
+msgstr "Журналы неудачных попыток входа"
+
+#: main/admin.php:420
+msgid "Easily manage and make professional pages and content with our Pagelayer builder"
+msgstr "Легко управляйте и создавайте профессиональные страницы и контент с помощью нашего конструктора Pagelayer"
+
+#: main/admin.php:375
+msgid "We recommed that you enable atleast one of the following security features"
+msgstr "Мы рекомендуем включить хотя бы одну из следующих функций безопасности"
+
+#: main/settings/dashboard.php:133
+msgid "In the Premium version of Loginizer you have many more features. We recommend you enable features like <b>reCAPTCHA, Two Factor Auth or Email based PasswordLess</b> login. These features will improve your websites security"
+msgstr "В премиум-версии Loginizer у вас есть множество дополнительных возможностей. Мы рекомендуем вам включить функции, такие как <b>reCAPTCHA, двухфакторная аутентификация или вход без пароля через электронную почту</b>. Эти возможности повысят безопасность вашего веб-сайта"
+
+#: main/settings/security.php:46 main/settings/security.php:164
+msgid "The wp-login.php and wp-admin slugs cannot be the same. Choose unique names for login and admin slugs"
+msgstr "Ярлык wp-login.php и wp-admin не могут быть одинаковыми. Выберите уникальные имена для ярлыка login и admin"
+
+#: main/settings/recaptcha.php:325
+msgid "Google reCAPTCHA"
+msgstr "Google reCAPTCHA"
+
+#: main/settings/recaptcha.php:460
+msgid "(Default)"
+msgstr "(по-умолчанию)"
+
+#: main/settings/recaptcha.php:324
+msgid "Disabled"
+msgstr "Отключено"
+
+#: main/settings/recaptcha.php:320
+msgid "Captcha Status"
+msgstr "Статус капчи"
+
+#: main/settings/recaptcha.php:249
+msgid "The reCAPTCHA domain is invalid"
+msgstr "Неверный домен для reCAPTCHA"
+
+#: main/settings/recaptcha.php:453
+msgid "reCAPTCHA Domain"
+msgstr "Домен reCAPTCHA"
+
+#: main/settings/recaptcha.php:454
+msgid "If Google is not accessible or blocked in your country select other one"
+msgstr "Если Google недоступен или заблокирован в вашей стране, выберите другого поставщика"
+
+#: main/settings/brute-force.php:710
+msgid "Email Address"
+msgstr "Email-адрес"
+
+#: main/settings/brute-force.php:712
+msgid "failed login attempts notifications will be sent to this email"
+msgstr "оповещения о неудачных попытках входа будут отправлены на этот адрес электронной почты"
+
+#: main/settings/brute-force.php:86
+msgid "Email address is invalid"
+msgstr "Недопустимый адрес электронной почты"
+
+#: main/settings/brute-force.php:890 main/settings/brute-force.php:994
+msgid "Submit"
+msgstr "Отправить"
+
+#: main/settings/brute-force.php:900 main/settings/brute-force.php:1004
+msgid "Import CSV"
+msgstr "Импорт CSV"
+
+#: main/settings/brute-force.php:653 main/settings/brute-force.php:901
+#: main/settings/brute-force.php:1005
+msgid "Export CSV"
+msgstr "Экспорт CSV"
+
+#: main/settings/brute-force.php:389
+msgid "Imported "
+msgstr "Импортировано "
+
+#: main/settings/brute-force.php:651
+msgid "Blacklist Selected IPs"
+msgstr "Черный список выбранных IP-адресов"
+
+#: main/settings/brute-force.php:341
+msgid "Invalid import type"
+msgstr "Недопустимый тип импорта"
+
+#: main/settings/brute-force.php:444
+msgid "The selected IP(s) have been blacklisted"
+msgstr "Выбранные IP-адреса добавлены в черный список"
+
+#: main/settings/brute-force.php:451
+msgid "No IP(s) selected"
+msgstr "IP-адрес(а) не выбраны"
+
+#: main/ajax.php:94 main/ajax.php:147
+msgid "No data to export"
+msgstr "Нет данных для экспорта"
+
+#: main/settings/brute-force.php:991
+msgid "Import Whitelist IPs (CSV)"
+msgstr "Импортировать IP-адреса из белого списка (CSV)"
+
+#: main/settings/brute-force.php:887
+msgid "Import Blacklist IPs (CSV)"
+msgstr "Импортировать IP-адреса из черного списка (CSV)"
+
+#: main/settings/brute-force.php:1225
+msgid "Line no."
+msgstr "Номер линии."
+
+#: main/settings/2fa.php:458 main/settings/brute-force.php:1144
+#: main/settings/passwordless.php:148
+msgid "Send email as HTML"
+msgstr "Отправлять электронные письма в формате HTML"
+
+#: main/settings/2fa.php:672
+msgid "Are you sure you want to delete all Whitelist IP Range(s) for 2FA ?"
+msgstr "Вы уверены, что хотите удалить все IP-адреса из белого списка для 2FA?"
+
+#: main/settings/2fa.php:255
+msgid "Whitelist IP range for Two Factor Authentication added successfully"
+msgstr "Диапазон IP-адресов для двухфакторной аутентификации добавлен в белый список успешно"
+
+#: main/settings/2fa.php:689
+msgid "No Whitelist IPs for Two Factor Authentication. You will see whitelisted IP ranges here."
+msgstr "Нет белых IP-адресов для двухфакторной аутентификации. Здесь вы увидите белые IP-адреса."
+
+#: main/settings/2fa.php:672
+msgid "Delete All Whitelist IP Range(s) for 2FA"
+msgstr "Удалить все диапазоны белого списка IP для двухфакторной аутентификации"
+
+#: main/settings/2fa.php:654
+msgid "Enter the IP you want to whitelist for two factor authentication"
+msgstr "Введите IP-адрес, который вы хотите включить в белый список для двухфакторной аутентификации"
+
+#: main/settings/2fa.php:648
+msgid "Disable Two Factor Authentication for IP"
+msgstr "Отключить двухфакторную аутентификацию для IP"
+
+#: init.php:931
+msgid "Your Answer"
+msgstr "Твой ответ"
+
+#: main/settings/2fa.php:422
+msgid "Customize the email template to be used when sending the OTP to login via Email for 2FA."
+msgstr "Настройте шаблон email, который будет использоваться при отправке одноразового пароля для входа в систему через Email для 2FA."
+
+#: main/settings/2fa.php:522
+msgid "Title for Security Question"
+msgstr "Заголовок для вопроса безопасности"
+
+#: main/settings/2fa.php:532
+msgid "Title for Security Answer"
+msgstr "Заголовок для ответа безопасности"
+
+#: main/settings/2fa.php:512
+msgid "Title for OTP field"
+msgstr "Заголовок для поля OTP"
+
+#: main/settings/2fa.php:541
+msgid "Save Messages"
+msgstr "Сохранить сообщения"
+
+#: init.php:928
+msgid "Please enter the OTP emailed to you"
+msgstr "Введите OTP, отправленный вам по электронной почте"
+
+#: init.php:927
+msgid "Please enter the OTP as seen in your App"
+msgstr "Введите OTP, который вы видите в своем приложении"
+
+#: init.php:930
+msgid "Please answer your security question"
+msgstr "Ответьте на свой вопрос о безопасности"
+
+#: main/settings/2fa.php:411
+msgid "OTP via Email Template"
+msgstr "OTP через шаблон электронной почты"
+
+#: main/settings/2fa.php:492
+msgid "OTP via APP"
+msgstr "OTP через приложение"
+
+#: init.php:929
+msgid "One Time Password"
+msgstr "Одноразовый пароль"
+
+#: main/settings/2fa.php:150
+msgid "Messages were saved successfully"
+msgstr "Сообщения успешно сохранены"
+
+#: main/settings/2fa.php:487
+msgid "If you do not make changes below the default messages will be used !"
+msgstr "Если вы не внесете изменения ниже, будут использованы стандартные сообщения!"
+
+#: main/settings/2fa.php:423
+msgid "If you do not make changes below the default email template will be used !"
+msgstr "Если вы не внесете изменения ниже, будет использован шаблон электронной почты по умолчанию!"
+
+#: main/settings/2fa.php:486
+msgid "Customize the title for OTP field displayed to the user on the login form."
+msgstr "Настройка заголовка поля OTP, отображаемого пользователю в форме входа."
+
+#: main/settings/2fa.php:475
+msgid "Custom Messages for OTP"
+msgstr "Настроить сообщения для OTP"
+
+#: main/settings/brute-force.php:1092
+msgid "Minutes"
+msgstr "Минуты"
+
+#: init.php:915
+msgid "minute(s)"
+msgstr "минут(ы)"
+
+#: init.php:916
+msgid "hour(s)"
+msgstr "час(-а, -ов)"
+
+#: main/settings/brute-force.php:1099
+msgid "Hours"
+msgstr "Часы"
+
+#: main/settings/brute-force.php:597
+msgid "IP"
+msgstr "IP"
+
+#: main/settings/recaptcha.php:363 main/settings/recaptcha.php:428
+#: main/settings/recaptcha.php:506
+msgid "Language"
+msgstr "Язык"
+
+#: main/settings/recaptcha.php:591 main/settings/social_login.php:362
+#: main/settings/social_login.php:460 main/settings/social_login.php:535
+msgid "Login Form"
+msgstr "Форма входа"
+
+#: main/settings/recaptcha.php:603 main/settings/social_login.php:469
+#: main/settings/social_login.php:477 main/settings/social_login.php:542
+msgid "Registration Form"
+msgstr "Форма регистрации"
+
+#: main/settings/2fa.php:383 main/settings/2fa.php:465
+#: main/settings/brute-force.php:730 main/settings/brute-force.php:1208
+#: main/settings/checksum.php:253 main/settings/passwordless.php:215
+#: main/settings/recaptcha.php:646 main/settings/security.php:384
+#: main/settings/security.php:438 main/settings/security.php:586
+#: main/settings/security.php:674 main/settings/security.php:951
+#: main/settings/social_login.php:526 main/settings/social_login.php:589
+#: main/settings/social_login.php:636
+msgid "Save Settings"
+msgstr "Сохранить настройки"
+
+#: main/settings/dashboard.php:253
+msgid "URL"
+msgstr "URL"
+
+#: main/admin.php:356 main/admin.php:379 main/admin.php:568
+msgid "reCAPTCHA"
+msgstr "reCAPTCHA"
+
+#: main/settings/dashboard.php:288
+msgid ".htaccess is writable"
+msgstr ".htaccess доступен для записи"
+
+#: main/settings/recaptcha.php:392
+msgid "<a href=\"https://g.co/recaptcha/sitetypes/\" target=\"_blank\">See Site Types for more details</a>"
+msgstr "<a href=\"https://g.co/recaptcha/sitetypes/\" target=\"_blank\">Подробнее см. в разделе Типы сайтов</a>"
+
+#: main/settings/brute-force.php:705
+msgid "after "
+msgstr "после "
+
+#: main/settings/brute-force.php:681
+msgid "minutes"
+msgstr "минуты"
+
+#: main/settings/brute-force.php:703
+msgid "Email Notification"
+msgstr "Уведомления на email"
+
+#: main/settings/brute-force.php:1054
+msgid "Error Messages"
+msgstr "Сообщения об ошибках"
+
+#: main/settings/recaptcha.php:395
+msgid "reCAPTCHA v3"
+msgstr "reCAPTCHA v3"
+
+#: main/settings/recaptcha.php:335 main/settings/recaptcha.php:401
+#: main/settings/recaptcha.php:479
+msgid "Site Key"
+msgstr "Ключ сайта"
+
+#: main/settings/recaptcha.php:345 main/settings/recaptcha.php:410
+#: main/settings/recaptcha.php:487
+msgid "Secret Key"
+msgstr "Секретный ключ"
+
+#: main/settings/recaptcha.php:351 main/settings/recaptcha.php:416
+#: main/settings/recaptcha.php:493
+msgid "Theme"
+msgstr "Тема"
+
+#: main/settings/recaptcha.php:376 main/settings/recaptcha.php:440
+#: main/settings/recaptcha.php:518
+msgid "Size"
+msgstr "Размер"
+
+#: main/settings/recaptcha.php:599
+msgid "Reset Password Form"
+msgstr "Форма сброса пароля"
+
+#: main/settings/recaptcha.php:607
+msgid "Comment Form"
+msgstr "Форма комментариев"
+
+#: main/settings/recaptcha.php:614
+msgid "WooCommerce Checkout"
+msgstr "Оформление заказа WooCommerce"
+
+#: main/settings/2fa.php:567
+msgid "Username / Email"
+msgstr "Имя пользователя / электронная почта"
+
+#: main/settings/2fa.php:428 main/settings/brute-force.php:1153
+#: main/settings/passwordless.php:123
+msgid "Email Subject"
+msgstr "Тема письма"
+
+#: main/admin.php:357 main/admin.php:377 main/settings/security.php:321
+msgid "Rename Login Page"
+msgstr "Переименовать страницу логина"
+
+#: main/admin.php:358 main/settings/security.php:414
+msgid "Disable XML-RPC"
+msgstr "Отключить XML-RPC"
+
+#: main/settings/security.php:703
+msgid "Change Admin Username"
+msgstr "Изменение имени пользователя Админстратора"
+
+#: main/settings/checksum.php:58
+msgid "Once a Day"
+msgstr "Раз в сутки"
+
+#: main/settings/checksum.php:59
+msgid "Once a Week"
+msgstr "Раз в неделю"
+
+#: main/settings/checksum.php:60
+msgid "Once a Month"
+msgstr "Раз в месяц"
+
+#: main/admin.php:125
+msgctxt "Plugin action link label."
+msgid "Upgrade"
+msgstr "Обновить"
+
+#: main/admin.php:546
+msgid "Security"
+msgstr "Безопасность"
+
+#: main/admin.php:549 main/admin.php:580
+msgid "Security Settings"
+msgstr "Настройки безопасности"
+
+#: main/admin.php:590
+msgid "Go Pro"
+msgstr "Перейти на PRO версию"
+
+#: main/settings/dashboard.php:119
+msgid "Getting Started"
+msgstr "Приступая к работе"
+
+#: main/settings/dashboard.php:235
+msgid "System Information"
+msgstr "Системная информация"
+
+#: main/settings/dashboard.php:257
+msgid "Path"
+msgstr "Путь"
+
+#: main/settings/dashboard.php:398
+msgid "File Permissions"
+msgstr "Разрешения на доступ к файлам"
+
+#: main/settings/checksum.php:287 main/settings/checksum.php:344
+#: main/settings/dashboard.php:411
+msgid "Relative Path"
+msgstr "Относительный путь"
+
+#: main/settings/brute-force.php:511 main/settings/brute-force.php:699
+msgid "hours"
+msgstr "часы"
+
+#: main/settings/2fa.php:682 main/settings/brute-force.php:912
+#: main/settings/brute-force.php:1015
+msgid "Options"
+msgstr "Параметры"
+
+#: main/settings/brute-force.php:956
+msgid "Whitelist IP"
+msgstr "Белый список IP-адресов"
+
+#: main/settings/recaptcha.php:310
+msgid "reCAPTCHA Settings"
+msgstr "Настройки reCAPTCHA"
+
+#: main/settings/recaptcha.php:390
+msgid "reCAPTCHA type"
+msgstr "Тип reCAPTCHA"
+
+#: main/settings/recaptcha.php:532
+msgid "Captcha Text"
+msgstr "Текст капчи"
+
+#: main/settings/2fa.php:438 main/settings/brute-force.php:1167
+#: main/settings/passwordless.php:133
+msgid "Email Body"
+msgstr "Текст письма"
+
+#: main/settings/security.php:422
+msgid "Disable Pingbacks"
+msgstr "Отключите Уведомления"
+
+#: main/settings/security.php:775
+msgid "Username(s)"
+msgstr "Имя пользователя (й)"
+
+#: main/settings/checksum.php:288 main/settings/checksum.php:345
+msgid "Found"
+msgstr "Найдено"
+
+#. Author URI of the plugin
+#: loginizer.php
+msgid "https://www.loginizer.com"
+msgstr "https://www.loginizer.com"
+
+#. Plugin URI of the plugin
+#: loginizer.php
+msgid "https://wordpress.org/extend/plugins/loginizer/"
+msgstr "https://wordpress.org/extend/plugins/loginizer/"
+
+#: main/admin.php:541
+msgid "Dashboard"
+msgstr "Консоль"
+
+#: main/admin.php:538 main/admin.php:541
+msgid "Loginizer Dashboard"
+msgstr "Консоль Loginizer"
+
+#: main/settings/brute-force.php:602
+msgid "URL Attacked"
+msgstr "URL-адрес подвергся атаке"
+
+#: main/settings/brute-force.php:673
+msgid "Max Retries"
+msgstr "Макс. кол-во повторных попыток"
+
+#: main/settings/brute-force.php:685
+msgid "Max Lockouts"
+msgstr "Макс. кол-во блокировок"
+
+#: main/settings/brute-force.php:691
+msgid "Extend Lockout"
+msgstr "Продлить блокировку"
+
+#: main/settings/security.php:351
+msgid "Access Secretly Only"
+msgstr "Только секретный доступ"
+
+#: main/settings/brute-force.php:851
+msgid "Blacklist IP"
+msgstr "Черный список IP-адресов"
+
+#: main/settings/security.php:867
+msgid "Add New Domain"
+msgstr "Добавить новый домен"
+
+#: main/settings/security.php:802
+msgid "Add New Username"
+msgstr "Добавить новое имя пользователя"
+
+#: main/settings/checksum.php:318
+msgid "Add Selected to Ignore List"
+msgstr "Добавить выбранное в черный список"
+
+#: main/settings/2fa.php:671 main/settings/brute-force.php:979
+msgid "Add Whitelist IP Range"
+msgstr "Добавить диапазон IP-адресов в белый список"
+
+#: main/settings/brute-force.php:216
+msgid "All the IP Logs have been cleared"
+msgstr "Все журналы IP очищены"
+
+#: main/settings/2fa.php:368
+msgid "Apply 2FA to Roles"
+msgstr "Применить 2FA к ролям"
+
+#: main/settings/brute-force.php:876
+msgid "Are you sure you want to delete all Blacklist IP Range(s) ?"
+msgstr "Вы уверены, что хотите удалить все IP-адреса из черного списка?"
+
+#: main/settings/brute-force.php:980
+msgid "Are you sure you want to delete all Whitelist IP Range(s) ?"
+msgstr "Вы уверены, что хотите удалить все IP-адреса из белого списка?"
+
+#: main/settings/brute-force.php:598
+msgid "Attempted Username"
+msgstr "Попытка использования имени пользователя"
+
+#: main/settings/brute-force.php:1078
+msgid "Attempts Left"
+msgstr "Попыток осталось"
+
+#: main/settings/brute-force.php:285
+msgid "Blacklist IP range added successfully"
+msgstr "IP-адрес черного списка успешно добавлен"
+
+#: main/settings/brute-force.php:1071
+msgid "Blacklisted IP"
+msgstr "IP-адрес в черном списке"
+
+#: main/admin.php:554 main/settings/brute-force.php:663
+msgid "Brute Force Settings"
+msgstr "Настройки брутфорс-атак"
+
+#: main/admin.php:554
+msgid "Brute Force"
+msgstr "Защита от брутфорс-атак (перебора)"
+
+#: main/settings/recaptcha.php:541
+msgid "Captcha Time"
+msgstr "Время ввода капчи"
+
+#: main/settings/checksum.php:213
+msgid "Checksum Frequency"
+msgstr "Частота контрольной суммы"
+
+#: main/settings/checksum.php:185
+msgid "Checksum Settings"
+msgstr "Настройки контрольной суммы"
+
+#: main/settings/recaptcha.php:391
+msgid "Choose the type of reCAPTCHA"
+msgstr "Выберите тип reCAPTCHA"
+
+#: main/settings/brute-force.php:649
+msgid "Clear All Logs"
+msgstr "Очистить все журналы"
+
+#: main/settings/security.php:718
+msgid "Current Username"
+msgstr "Текущее имя пользователя"
+
+#: main/settings/security.php:78
+msgid "Current username is required"
+msgstr "Требуется текущее имя пользователя"
+
+#: main/settings/dashboard.php:413
+msgid "Actual"
+msgstr "Фактический"
+
+#: main/settings/brute-force.php:875
+msgid "Add Blacklist IP Range"
+msgstr "Добавить диапазон IP-адресов в черный список"
+
+#: main/settings/security.php:770
+msgid "Attackers generally use common usernames like <b>admin, administrator, or variations of your domain name / business name</b>. You can specify such username here and Loginizer will auto-blacklist the IP Address(s) of clients who try to use such username(s)."
+msgstr "Злоумышленники обычно используют распространенные имена пользователей, такие как <b>администратор, администратор или варианты вашего доменного имени/названия компании</b>. Вы можете указать такое имя пользователя здесь, и Loginizer автоматически занесет в черный список IP-адреса клиентов, которые пытаются использовать такое имя пользователя."
+
+#: main/settings/2fa.php:339
+msgid "After entering the correct login credentials, the user will be asked for the OTP. The OTP will be emailed to the user."
+msgstr "После ввода правильных учетных данных пользователя попросят ввести одноразовый пароль. Пароль будет отправлен пользователю по электронной почте."
+
+#: main/settings/checksum.php:228
+msgid "Time of Day"
+msgstr "Время дня"
+
+#: main/settings/checksum.php:263
+msgid "Mismatching Files"
+msgstr "Несовпадающие файлы"
+
+#. Author of the plugin
+#: loginizer.php
+msgid "Softaculous"
+msgstr "Softaculous"
+
+#: main/settings/dashboard.php:265
+msgid "Your IP Address"
+msgstr "Ваш IP-адрес"
+
+#: main/settings/2fa.php:681 main/settings/brute-force.php:911
+#: main/settings/brute-force.php:1014
+msgid "Date (DD/MM/YYYY)"
+msgstr "Дата (дд/мм/гггг)"
+
+#: main/settings/2fa.php:493 main/settings/2fa.php:503
+#: main/settings/2fa.php:513 main/settings/2fa.php:523
+#: main/settings/2fa.php:533 main/settings/brute-force.php:1067
+#: main/settings/brute-force.php:1074 main/settings/brute-force.php:1081
+#: main/settings/brute-force.php:1088 main/settings/brute-force.php:1095
+#: main/settings/brute-force.php:1102
+msgid "Default: <em>&quot;"
+msgstr "По умолчанию: <em>&quot;"
+
+#: main/settings/security.php:577
+msgid "I have setup .htaccess"
+msgstr "У меня настроен .htaccess"
+
+#: main/settings/recaptcha.php:595
+msgid "Lost Password Form"
+msgstr "Форма восстановления пароля"
+
+#. Plugin Name of the plugin
+#: loginizer.php
+msgid "Loginizer"
+msgstr "Loginizer"
+
+#: main/admin.php:590
+msgid "Loginizer Go Pro"
+msgstr "Получить Loginizer Pro"
+
+#: main/settings/brute-force.php:232 main/settings/brute-force.php:416
+msgid "There are no IPs submitted"
+msgstr "Не представлено ни одного IP"
+
+#: main/settings/brute-force.php:245
+msgid "The selected IP Logs have been reset"
+msgstr "Выбранные IP-журналы были сброшены"
+
+#: main/settings/2fa.php:187 main/settings/brute-force.php:1229
+msgid "Please enter the Start IP"
+msgstr "Введите начальный IP-адрес"
+
+#: main/settings/brute-force.php:601
+msgid "Lockouts Count"
+msgstr "Счетчик блокировок"
+
+#: main/settings/brute-force.php:610
+msgid "No Logs. You will see logs about failed login attempts here."
+msgstr "Нет журналов. Здесь вы увидите журналы о неудачных попытках входа в систему."
+
+#: main/settings/brute-force.php:647
+msgid "Remove From Logs"
+msgstr "Удалить из журналов"
+
+#: main/settings/brute-force.php:675
+msgid "Maximum failed attempts allowed before lockout"
+msgstr "Макс. допустимое число неудачных попыток перед блокировкой"
+
+#: main/settings/brute-force.php:679
+msgid "Lockout Time"
+msgstr "Время блокировки"
+
+#: main/settings/brute-force.php:693
+msgid "hours. Extend Lockout time after Max Lockouts"
+msgstr "часы. Продление времени блокировки после макс. блокировок"
+
+#: main/settings/brute-force.php:697
+msgid "Reset Retries"
+msgstr "Сброс повторных попыток"
+
+#: main/settings/brute-force.php:706
+msgid "lockouts <br />0 to disable email notifications"
+msgstr "блокировки <br />0 для отключения уведомлений по email"
+
+#: main/settings/brute-force.php:735
+msgid "Disable Brute Force Protection"
+msgstr "Отключить защиту от перебора"
+
+#: main/settings/brute-force.php:739
+msgid "Enable Brute Force Protection"
+msgstr "Включить защиту от перебора"
+
+#: main/settings/brute-force.php:857
+msgid "Enter the IP you want to blacklist from login"
+msgstr "Введите IP-адрес, который вы хотите внести в черный список для входа в систему"
+
+#: main/settings/2fa.php:659 main/settings/2fa.php:679
+#: main/settings/brute-force.php:863 main/settings/brute-force.php:909
+#: main/settings/brute-force.php:967 main/settings/brute-force.php:1012
+msgid "Start IP"
+msgstr "Начальный IP-адрес"
+
+#: main/settings/2fa.php:680 main/settings/brute-force.php:910
+#: main/settings/brute-force.php:1013
+msgid "End IP"
+msgstr "Конечный IP-адрес"
+
+#: main/settings/brute-force.php:919
+msgid "No Blacklist IPs. You will see blacklisted IP ranges here."
+msgstr "Нет IP-адресов в черном списке. Здесь вы увидите диапазоны IP-адресов, занесенные в черный список."
+
+#: main/settings/brute-force.php:1064
+msgid "Failed Login Attempt"
+msgstr "Неудачная попытка входа"
+
+#: main/settings/brute-force.php:1085
+msgid "Lockout Error"
+msgstr "Ошибка блокировки"
+
+#: main/settings/brute-force.php:1106
+msgid "Save Error Messages"
+msgstr "Сохранить сообщения об ошибках"
+
+#: main/settings/2fa.php:661 main/settings/brute-force.php:865
+#: main/settings/brute-force.php:969
+msgid "Start IP of the range"
+msgstr "Начальный IP-адрес диапазона"
+
+#: main/settings/2fa.php:665 main/settings/brute-force.php:869
+#: main/settings/brute-force.php:973
+msgid "End IP (Optional)"
+msgstr "Конечный IP-адрес (опционально)"
+
+#: main/settings/brute-force.php:871
+msgid "End IP of the range. <br />If you want to blacklist single IP leave this field blank."
+msgstr "Конечный IP диапазона. <br />Если вы хотите внести в черный список один IP-адрес, оставьте это поле пустым."
+
+#: main/settings/brute-force.php:876
+msgid "Delete All Blacklist IP Range(s)"
+msgstr "Удалить все диапазоны IP-адресов из черного списка"
+
+#: main/settings/brute-force.php:962
+msgid "Enter the IP you want to whitelist for login"
+msgstr "Введите IP-адрес, который вы хотите внести в белый список для входа в систему"
+
+#: main/settings/2fa.php:667 main/settings/brute-force.php:975
+msgid "End IP of the range. <br />If you want to whitelist single IP leave this field blank."
+msgstr "Конечный IP диапазона. <br />Если вы хотите внести в белый список один IP-адрес, оставьте это поле пустым."
+
+#: main/settings/brute-force.php:980
+msgid "Delete All Whitelist IP Range(s)"
+msgstr "Удалить все диапазоны IP-адресов из белого списка"
+
+#: main/settings/brute-force.php:1022
+msgid "No Whitelist IPs. You will see whitelisted IP ranges here."
+msgstr "Нет IP-адресов в белых списках. Здесь вы увидите диапазоны IP-адресов, внесенных в белый список."
+
+#: main/settings/2fa.php:17 main/settings/checksum.php:42
+#: main/settings/passwordless.php:17 main/settings/recaptcha.php:21
+#: main/settings/security.php:17
+msgid "This feature is not available in the Free version. <a href=\""
+msgstr "Эта функция недоступна в бесплатной версии. <a href=\""
+
+#: main/settings/recaptcha.php:166
+msgid "The Captcha key was not submitted"
+msgstr "Ключ капчи не был отправлен"
+
+#: main/settings/recaptcha.php:225
+msgid "The reCAPTCHA key is invalid"
+msgstr "Ключ reCAPTCHA недействителен"
+
+#: main/settings/recaptcha.php:230
+msgid "The reCAPTCHA secret is invalid"
+msgstr "Секрет reCAPTCHA недействителен"
+
+#: main/settings/recaptcha.php:235
+msgid "The reCAPTCHA theme is invalid"
+msgstr "Тема reCAPTCHA недействительна"
+
+#: main/settings/recaptcha.php:240
+msgid "The reCAPTCHA size is invalid"
+msgstr "Недопустимый размер reCAPTCHA"
+
+#: main/settings/brute-force.php:473
+msgid "Error messages were saved successfully"
+msgstr "Сообщения об ошибках успешно сохранены"
+
+#: main/settings/checksum.php:329
+msgid "Ignore List"
+msgstr "Список игнорируемого"
+
+#: main/settings/security.php:727
+msgid "New Username"
+msgstr "Новое имя пользователя"
+
+#: main/settings/recaptcha.php:566
+msgid "Addition (+)"
+msgstr "Добавление (+)"
+
+#: main/settings/recaptcha.php:570
+msgid "Subtraction (-)"
+msgstr "Вычитание (-)"
+
+#: main/settings/recaptcha.php:574
+msgid "Multiplication (x)"
+msgstr "Умножение (x)"
+
+#: main/settings/security.php:399
+msgid "XML-RPC Settings"
+msgstr "Настройки XML-RPC"
+
+#: init.php:912
+msgid "Your IP has been blacklisted"
+msgstr "Ваш IP-адрес добавлен в черный список"
+
+#: main/settings/security.php:578
+msgid "You need to confirm that you have configured .htaccess as per <a href=\""
+msgstr "Вам нужно подтвердить, что вы настроили файл .htaccess в соответствии с <a href=\""
+
+#: init.php:914
+msgid "You have exceeded maximum login retries<br /> Please try after"
+msgstr "Вы превысили максимальное количество попыток входа<br /> Пожалуйста, попробуйте позже"
+
+#: main/settings/security.php:776 main/settings/security.php:841
+msgid "You can use - <b>*</b> (Star)- as a wild card as well. Blank fields will be ignored"
+msgstr "Вы можете использовать - <b>*</b> (звездочку) - как подстановочный символ. Пустые поля будут проигнорированы"
+
+#: main/settings/security.php:713
+msgid "You can change the Admin Username from here to anything of your choice e.g. iamtheboss. This would make it very difficult for automated attack bots to know what is the admin username !"
+msgstr "Вы можете изменить имя администратора на любое удобное для вас, например, iamtheboss. Это затруднит задачу автоматическим ботам-атакующим узнать, какое имя имеет администратор!"
+
+#: main/settings/dashboard.php:281
+msgid "wp-config.php is writable"
+msgstr "wp-config.php можно изменять"
+
+#: main/settings/security.php:564
+msgid "WP-Admin Error Message"
+msgstr "Сообщение об ошибке WP-Admin"
+
+#: main/settings/security.php:409
+msgid "WordPress's XML-RPC feature allows external services to access and modify content on the site. Services like the Jetpack plugin, the WordPress mobile app, pingbacks, etc make use of the XML-RPC feature. If this site does not use a service that requires XML-RPC, please <b>disable</b> the XML-RPC feature as it prevents attackers from using the feature to attack the site. If your service can use a custom XML-RPC URL, you can also <b>rename</b> the XML-RPC page to a <b>custom slug</b>."
+msgstr "Функция XML-RPC WordPress позволяет внешним службам получать доступ к содержимому сайта и модифицировать его. Службы, такие как плагин Jetpack, мобильное приложение WordPress, pingbacks и др., используют функцию XML-RPC. Если на этом сайте нет службы, которая требует XML-RPC, пожалуйста, <b>отключите</b> функцию XML-RPC, так как это предотвращает использование атакующими этой функции для атаки на сайт. Если ваша служба может использовать настраиваемый URL для XML-RPC, вы также можете <b>переименовать</b> страницу XML-RPC в <b>пользовательский слаг</b>."
+
+#: main/settings/brute-force.php:323
+msgid "Whitelist IP range added successfully"
+msgstr "Диапазон IP-адресов добавлен в белый список успешно"
+
+#: main/settings/security.php:760
+msgid "Username Auto Blacklist"
+msgstr "Автоматический черный список имен пользователей"
+
+#: main/settings/2fa.php:347
+msgid "User Defined Question & Answer"
+msgstr "Пользовательский вопрос и ответ"
+
+#: main/settings/2fa.php:313
+msgid "Two Factor Authentication Settings"
+msgstr "Настройки двухфакторной аутентификации"
+
+#: main/admin.php:563
+msgid "Two Factor Auth"
+msgstr "Двухфакторная аутентификация"
+
+#: main/settings/2fa.php:88
+msgid "There is no such user with the email or username you submitted"
+msgstr "Пользователь с указанным вами адресом электронной почты или именем пользователя не существует"
+
+#: main/settings/2fa.php:176 main/settings/brute-force.php:205
+msgid "The Whitelist IP range(s) have been cleared successfully"
+msgstr "Диапазон(ы) белых IP-адресов был успешно очищен"
+
+#: main/settings/2fa.php:165 main/settings/brute-force.php:193
+msgid "The Whitelist IP range has been deleted successfully"
+msgstr "Диапазон белых IP-адресов был успешно удален"
+
+#: main/settings/2fa.php:568
+msgid "The username or email of the user whose 2FA you would like to disable"
+msgstr "Имя пользователя или адрес электронной почты пользователя, для которого вы хотите отключить 2FA"
+
+#: main/settings/security.php:89
+msgid "The username begins with <b>admin</b>. Please change it !"
+msgstr "Имя пользователя начинается с <b>admin</b>. Пожалуйста, измените его!"
+
+#: main/settings/2fa.php:102
+msgid "The user's 2FA settings have been reset"
+msgstr "Настройки 2FA пользователя были сброшены"
+
+#: main/settings/security.php:110
+msgid "The user is not an administrator. Only administrator user's username can be changed."
+msgstr "Этот пользователь не является администратором. Имя пользователя может быть изменено только для пользователей с правами администратора."
+
+#: main/settings/recaptcha.php:533
+msgid "The text to be shown for the Captcha Field"
+msgstr "Текст, отображаемый в поле Captcha"
+
+#: main/settings/2fa.php:225 main/settings/brute-force.php:1273
+msgid "The Start IP or End IP submitted conflicts with an existing IP range !"
+msgstr "Начальный или конечный IP-адрес конфликтует с существующим диапазоном IP-адресов!"
+
+#: main/settings/2fa.php:231 main/settings/brute-force.php:1279
+msgid "The Start IP is present in an existing range !"
+msgstr "Начальный IP-адрес уже присутствует в существующем диапазоне!"
+
+#: main/settings/brute-force.php:148 main/settings/checksum.php:142
+#: main/settings/dashboard.php:105 main/settings/passwordless.php:68
+#: main/settings/recaptcha.php:285 main/settings/security.php:289
+#: main/settings/social_login.php:204
+msgid "The settings were saved successfully"
+msgstr "Настройки были успешно сохранены"
+
+#: main/settings/recaptcha.php:245
+msgid "The reCAPTCHA language is invalid"
+msgstr "Неверный язык для reCAPTCHA"
+
+#: main/settings/security.php:728
+msgid "The new username you want to set"
+msgstr "Новое имя пользователя, которое вы хотите установить"
+
+#: main/settings/security.php:98
+msgid "The new username is already assigned to another user"
+msgstr "Новое имя пользователя уже присвоено другому пользователю"
+
+#: main/settings/recaptcha.php:560
+msgid "The Mathematical operations to use for Captcha"
+msgstr "Математические операции, используемые для Captcha"
+
+#: main/settings/2fa.php:237 main/settings/brute-force.php:1285
+msgid "The End IP is present in an existing range!"
+msgstr "Конечный IP-адрес уже присутствует в существующем диапазоне!"
+
+#: main/settings/2fa.php:210 main/settings/brute-force.php:1251
+msgid "The End IP cannot be smaller than the Start IP"
+msgstr "Конечный IP-адрес не может быть меньше начального IP-адреса"
+
+#: main/settings/security.php:719
+msgid "The current username you want to change"
+msgstr "Текущее имя пользователя, которое вы хотите изменить"
+
+#: main/settings/checksum.php:147
+msgid "The Checksum process was executed successfully"
+msgstr "Процесс расчета контрольной суммы был успешно выполнен"
+
+#: main/settings/brute-force.php:51
+msgid "The Brute Force Protection feature is now enabled"
+msgstr "Функция защиты от брутфорса теперь включена"
+
+#: main/settings/brute-force.php:37
+msgid "The Brute Force Protection feature is now disabled"
+msgstr "Функция защиты от брутфорса теперь отключена"
+
+#: main/settings/brute-force.php:177
+msgid "The Blacklist IP range(s) have been cleared successfully"
+msgstr "Диапазон(ы) черных IP-адресов был успешно очищен"
+
+#: main/settings/brute-force.php:165
+msgid "The Blacklist IP range has been deleted successfully"
+msgstr "Диапазон черных IP-адресов был успешно удален"
+
+#: main/settings/security.php:182
+msgid "Special characters are not allowed"
+msgstr "Специальные символы не разрешены"
+
+#: main/settings/recaptcha.php:586
+msgid "Show Captcha On"
+msgstr "Показать Captcha на"
+
+#: main/settings/checksum.php:289 main/settings/checksum.php:346
+msgid "Should be"
+msgstr "Должно быть"
+
+#: main/settings/security.php:736
+msgid "Set the Username"
+msgstr "Установите имя пользователя"
+
+#: main/settings/security.php:431
+msgid "Set blank to reset to the original XML-RPC URL"
+msgstr "Установите пустое значение, чтобы сбросить к исходному URL XML-RPC"
+
+#: main/settings/security.php:547
+msgid "Set blank to reset to the original wp-admin URL"
+msgstr "Установите пустое значение, чтобы сбросить к исходному URL wp-admin"
+
+#: main/settings/security.php:337
+msgid "Set blank to reset to the original login URL"
+msgstr "Установите пустое значение, чтобы сбросить к исходному URL входа в систему"
+
+#: main/settings/2fa.php:429 main/settings/brute-force.php:1154
+#: main/settings/passwordless.php:124
+msgid "Set blank to reset to the default subject"
+msgstr "Установите пустое значение, чтобы сбросить к исходной теме"
+
+#: main/settings/2fa.php:439 main/settings/brute-force.php:1168
+#: main/settings/passwordless.php:134
+msgid "Set blank to reset to the default message"
+msgstr "Установите пустое значение, чтобы сбросить к исходному сообщению"
+
+#: main/settings/dashboard.php:261
+msgid "Server's IP Address"
+msgstr "IP-адрес сервера"
+
+#: main/settings/2fa.php:369
+msgid "Select the Roles to which 2FA should be applied."
+msgstr "Выберите роли, к которым должна применяться 2FA."
+
+#: main/settings/security.php:806
+msgid "Save Username(s)"
+msgstr "Сохранить имя пользователя(ей)"
+
+#: main/settings/security.php:871
+msgid "Save Domains(s)"
+msgstr "Сохранить домен(ы)"
+
+#: main/admin.php:503
+msgid "Review Loginizer"
+msgstr "Оставить отзыв о Loginizer"
+
+#: main/settings/2fa.php:576
+msgid "Reset 2FA for User"
+msgstr "Сбросить 2FA для пользователя"
+
+#: main/settings/security.php:528
+msgid "Rename wp-admin access feature is supported only on Apache and Litespeed"
+msgstr "Функция переименования доступа к wp-admin поддерживается только на Apache и Litespeed"
+
+#: main/settings/security.php:514
+msgid "Rename wp-admin access"
+msgstr "Переименовать доступ к wp-admin"
+
+#: main/settings/checksum.php:378
+msgid "Remove Selected from Ignore List"
+msgstr "Убрать выбранные из списка игнорируемых"
+
+#: main/settings/recaptcha.php:397
+msgid "reCAPTCHA v2 - Invisible"
+msgstr "reCAPTCHA v2 - Невидимая"
+
+#: main/settings/recaptcha.php:396
+msgid "reCAPTCHA v2 - Checkbox"
+msgstr "reCAPTCHA v2 - Переключатель"
+
+#: main/settings/recaptcha.php:290
+msgid "reCAPTCHA has been disabled !"
+msgstr "reCAPTCHA была отключена!"
+
+#: main/settings/2fa.php:197 main/settings/brute-force.php:1238
+msgid "Please provide a valid start IP"
+msgstr "Укажите действительный начальный IP-адрес"
+
+#: main/settings/2fa.php:201 main/settings/brute-force.php:1242
+msgid "Please provide a valid end IP"
+msgstr "Укажите действительный конечный IP-адрес"
+
+#: main/settings/2fa.php:324
+msgid "Please choose from the following Two Factor Authentication methods. Each user can choose any one method from the ones enabled by you. You can enable all or anyone that you would like."
+msgstr "Выберите один из следующих методов двухфакторной аутентификации. Каждый пользователь может выбрать любой метод из включенных вами. Вы можете включить все или тот, который вам нравится."
+
+#: main/settings/passwordless.php:100
+msgid "PasswordLess Settings"
+msgstr "Настройки без пароля"
+
+#: main/admin.php:557
+msgid "PasswordLess"
+msgstr "Без пароля"
+
+#: main/settings/2fa.php:338 main/settings/2fa.php:502
+msgid "OTP via Email"
+msgstr "OTP через электронную почту"
+
+#: main/settings/2fa.php:329
+msgid "OTP via App"
+msgstr "OTP через приложение"
+
+#: main/settings/security.php:735
+msgid "Note: Username can be changed only for administrator users."
+msgstr "Примечание: имя пользователя можно изменить только для пользователей-администраторов."
+
+#: main/settings/security.php:105
+msgid "No user found with the current username provided"
+msgstr "Пользователь с указанным вами именем пользователя не найден"
+
+#: main/settings/checksum.php:371
+msgid "No files have been added to the ignore list"
+msgstr "Файлы не были добавлены в список игнорируемых"
+
+#: main/settings/security.php:430
+msgid "New XML-RPC Slug"
+msgstr "Новый фрагмент XML-RPC"
+
+#: main/settings/security.php:83
+msgid "New username is required"
+msgstr "Требуется новое имя пользователя"
+
+#: main/settings/security.php:825
+msgid "New Registration Domain Blacklist"
+msgstr "Черный список новых регистрационных доменов"
+
+#: main/settings/recaptcha.php:559
+msgid "Mathematical operations"
+msgstr "Математические операции"
+
+#: main/settings/recaptcha.php:326
+msgid "Math Captcha"
+msgstr "Математическая капча"
+
+#: main/settings/recaptcha.php:336 main/settings/recaptcha.php:402
+msgid "Make sure you enter the correct keys as per the reCAPTCHA type selected above"
+msgstr "Убедитесь, что вы вводите правильные ключи в соответствии с выбранным выше типом reCAPTCHA"
+
+#: main/settings/dashboard.php:246
+msgid "Loginizer Version"
+msgstr "Версия Loginizer"
+
+#: main/admin.php:538
+msgid "Loginizer Security"
+msgstr "Безопасность Loginizer"
+
+#. Description of the plugin
+#: loginizer.php
+msgid "Loginizer is a WordPress plugin which helps you fight against bruteforce attack by blocking login for the IP after it reaches maximum retries allowed. You can blacklist or whitelist IPs for login using Loginizer."
+msgstr "Loginizer - это плагин WordPress, который помогает вам бороться с атаками методом перебора паролей, блокируя доступ к входу по IP-адресу после достижения максимального количества попыток. Вы можете добавлять IP-адреса в черный или белый список для входа, используя Loginizer."
+
+#: main/admin.php:583
+msgid "Loginizer File Checksums"
+msgstr "Файловые контрольные суммы Loginizer"
+
+#: init.php:911
+msgid "Incorrect Username or Password"
+msgstr "Неверное имя пользователя или пароль"
+
+#: main/settings/2fa.php:360
+msgid "If the user does not have any 2FA method selected, this will enforce the OTP via Email for the users."
+msgstr "Если у пользователя не выбран метод двухфакторной аутентификации, это заставит пользователя использовать OTP через электронную почту."
+
+#: main/settings/security.php:556
+msgid "If set, then only the new admin slug will work and access to the Old Admin Slug i.e. wp-admin will be disabled. If anyone accesses wp-admin, a warning will be shown.<br><label>NOTE: Please use this option cautiously !</label>"
+msgstr "Если установлено, будет работать только новый слаг администратора, и доступ к старому слагу администратора (т. е. wp-admin) будет отключен. Если кто-то пытается получить доступ к wp-admin, будет показано предупреждение.<br><label>ПРИМЕЧАНИЕ: Пожалуйста, будьте осторожны при использовании этой опции!</label>"
+
+#: main/settings/recaptcha.php:551
+msgid "If selected the Captcha will be displayed in words rather than numbers"
+msgstr "Если выбрано, капча будет отображаться словами, а не цифрами"
+
+#: main/settings/passwordless.php:117
+msgid "If enabled, the login screen will just ask for the username <b>OR</b> email address of the user. If such a user exists, an email with a <b>One Time Login </b> link will be sent to the email address of the user. The link will be valid for 10 minutes only."
+msgstr "Если включено, экран входа будет запрашивать только имя пользователя <b>ИЛИ</b> адрес электронной почты пользователя. Если такой пользователь существует, на его адрес электронной почты будет отправлена электронная почта с ссылкой на <b>Одноразовый вход</b>. Ссылка будет действительна только 10 минут."
+
+#: main/settings/checksum.php:196 main/settings/checksum.php:249
+msgid "If disabled, Loginizer will not check your sites core files against the WordPress checksum list."
+msgstr "Если отключено, Loginizer не будет проверять основные файлы вашего сайта по списку контрольных сумм WordPress."
+
+#: main/settings/checksum.php:229
+msgid "If Checksum is enabled, what time of day should Loginizer do the check. Note : The check will be done on or after this time has elapsed as per the accesses being made."
+msgstr "Если включена контрольная сумма, в какое время суток Loginizer должен проводить проверку. Примечание: проверка будет выполнена в это время или после того, как это время истечет в соответствии с доступами, осуществленными."
+
+#: main/settings/checksum.php:214
+msgid "If Checksum is enabled, at what frequency should the checksums be performed."
+msgstr "Если контрольная сумма включена, с какой частотой следует выполнять проверку контрольных сумм."
+
+#: main/settings/checksum.php:205
+msgid "If checked, Loginizer will not email you the checksum results."
+msgstr "Если установлен флажок, Loginizer не будет отправлять вам результаты проверки контрольных сумм по электронной почте."
+
+#: main/settings/passwordless.php:118
+msgid "If a wrong username/email is given, the brute force checker will prevent any brute force attempt !"
+msgstr "Если указано неверное имя пользователя или электронная почта, проверка на перебор паролей предотвратит любую попытку перебора пароля!"
+
+#: main/settings/recaptcha.php:640
+msgid "Hide CAPTCHA for logged in Users"
+msgstr "Скрыть CAPTCHA для вошедших пользователей"
+
+#: main/settings/recaptcha.php:406
+msgid "Get the Site Key and Secret Key from <a href=\"https://www.google.com/recaptcha/admin/\" target=\"_blank\">Google</a>"
+msgstr "Получите Site Key и Secret Key с <a href=\"https://www.google.com/recaptcha/admin/\" target=\"_blank\">Google</a>"
+
+#: main/settings/2fa.php:562
+msgid "Here you can disable the Two Factor Authentication settings of a user. In the event a user has forgotten his secret answer or lost his Device App, he will not be able to login. You can reset such a users settings from here."
+msgstr "Здесь вы можете отключить настройки двухфакторной аутентификации пользователя. В случае, если пользователь забыл свой секретный ответ или потерял свое приложение на устройстве, он не сможет войти. Вы можете сбросить настройки такого пользователя здесь."
+
+#: main/settings/2fa.php:359
+msgid "Force OTP via Email"
+msgstr "Принудительно использовать OTP через электронную почту"
+
+#: main/admin.php:583
+msgid "File Checksums"
+msgstr "Контрольные суммы файлов"
+
+#: main/settings/brute-force.php:600
+msgid "Failed Attempts Count"
+msgstr "Количество неудачных попыток"
+
+#: main/settings/security.php:496
+msgid "Everything seems to be good. You can proceed to save the settings !"
+msgstr "Все кажется в порядке. Вы можете продолжить и сохранить настройки!"
+
+#: main/settings/security.php:565
+msgid "Error message to show if someone accesses wp-admin"
+msgstr "Сообщение об ошибке для отображения, если кто-то пытается получить доступ к wp-admin"
+
+#: main/settings/recaptcha.php:542
+msgid "Enter the number of seconds, a user has to enter captcha value."
+msgstr "Введите количество секунд, которое пользователь имеет для ввода значения капчи."
+
+#: main/settings/security.php:840
+msgid "Domain(s)"
+msgstr "Домен(ы)"
+
+#: main/settings/checksum.php:253
+msgid "Do a Checksum Now"
+msgstr "Выполнить проверку контрольной суммы сейчас"
+
+#: main/settings/recaptcha.php:578
+msgid "Division (÷)"
+msgstr "Деление (÷)"
+
+#: main/settings/recaptcha.php:550
+msgid "Display Captcha in Words"
+msgstr "Отображать капчу словами"
+
+#: main/settings/security.php:555
+msgid "Disable wp-admin access"
+msgstr "Отключить доступ к wp-admin"
+
+#: main/settings/checksum.php:204
+msgid "Disable Email of Checksum Results"
+msgstr "Отключить отправку результатов проверки контрольной суммы по электронной почте"
+
+#: main/settings/checksum.php:195
+msgid "Disable Checksum of WP Core"
+msgstr "Отключить проверку контрольной суммы WP Core"
+
+#: init.php:913
+msgid "attempt(s) left"
+msgstr "попыток(ки) осталось"
+
+#: main/settings/security.php:170
+msgid "You have not confirmed that you have read the guide and configured .htaccess. Please read the guide, configure .htaccess and then save these settings and check this checkbox"
+msgstr "Вы не подтвердили, что ознакомились с руководством и настроили файл .htaccess. Пожалуйста, прочтите руководство, настройте .htaccess, сохраните настройки и установите этот флажок"
+
+#: main/settings/security.php:582
+msgid "Test New WP-Admin Slug"
+msgstr "Проверить новый ярлык WP-Admin"
+
+#: main/settings/dashboard.php:412
+msgid "Suggested"
+msgstr "Предлагаемый"
+
+#: main/admin.php:549
+msgid "Rename Login"
+msgstr "Переименовать логин"
+
+#: main/settings/brute-force.php:599
+msgid "Last Failed Attempt  (DD/MM/YYYY)"
+msgstr "Последняя неудачная попытка  (ДД/ММ/ГГГГ)"
+
+#: main/settings/2fa.php:348
+msgid "In this method the user will be asked to set a secret personal question and answer. After entering the correct login credentials, the user will be asked to answer the question set by them, thus increasing the security"
+msgstr "В этом методе пользователю будет предложено задать секретный вопрос и ответ. После ввода правильных учетных данных пользователю будет предложено ответить на вопрос, который он задал, тем самым повышая безопасность"
+
+#: main/settings/security.php:352
+msgid "If set, then all Login URL's will still point to "
+msgstr "Если установлено, все URL для входа всё равно будут указывать на "
+
+#: main/settings/checksum.php:311
+msgid "This is great ! No file with any wrong checksum has been found."
+msgstr "Это здорово! Не найдено ни одного файла с неправильной контрольной суммой."
+
+#: main/settings/security.php:501
+msgid "There was an error connecting to WordPress with the new Admin Slug. Did you configure everything properly ?"
+msgstr "Произошла ошибка при подключении к WordPress с новым ярлыком администратора. Все ли вы настроили правильно?"
+
+#: main/settings/security.php:53
+msgid "The XML-RPC slug length must be greater than <b>4</b> chars and upto <b>50</b> chars long"
+msgstr "Длина ярлыка XML-RPC должна быть больше <b>4</b> символов и не более <b>50</b> символов"
+
+#: main/settings/security.php:176
+msgid "The new Admin slug length must be greater than <b>4</b> chars and upto <b>50</b> chars long"
+msgstr "Новая длина ярлыка администратора должна быть больше, чем <b>4</b> символов и не более <b>50</b> символов"
+
+#: main/settings/security.php:39
+msgid "The Login slug length must be greater than <b>4</b> chars and upto <b>50</b> chars long"
+msgstr "Длина ярлыка входа должна быть больше, чем <b>4</b> символов и не более <b>50</b> символов"
+
+#: main/settings/security.php:546
+msgid "New wp-admin Slug"
+msgstr "Новый ярлык wp-admin"
+
+#: main/settings/security.php:336
+msgid "New Login Slug"
+msgstr "Новый ярлык для входа"
+
+#: main/settings/passwordless.php:110
+msgid "Enable PasswordLess Login"
+msgstr "Включить вход без пароля"
+
+#: main/settings/2fa.php:551
+msgid "Disable Two Factor Authentication for a User"
+msgstr "Отключение двухфакторной аутентификации для пользователя"
+
+#: main/settings/2fa.php:330
+msgid "After entering the correct login credentials, the user will be asked for the OTP. The OTP will be obtained from the users mobile app e.g. <b>Google Authenticator, Authy, etc.</b>"
+msgstr "После ввода правильных учетных данных пользователю будет предложено ввести OTP. OTP будет получен из мобильного приложения пользователя, например <b>Google Authenticator, Authy и т. д.</b>"
