@@ -153,6 +153,9 @@ Template Id: prod-29735
 	justify-content: space-between!important;
 	align-items: center;
 }
+.khimu-link-20 *{
+	font-size: 20px;
+}
 #burgerButton{
 	display: none;
 }
