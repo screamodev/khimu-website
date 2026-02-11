@@ -2,12 +2,12 @@
 # This file is distributed under the same license as the Plugins - Connect Polylang for Elementor - Stable (latest release) package.
 msgid ""
 msgstr ""
-"PO-Revision-Date: 2023-06-13 08:17:28+0000\n"
+"PO-Revision-Date: 2025-10-01 16:54:19+0000\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=(n % 10 == 1 && n % 100 != 11) ? 0 : ((n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 12 || n % 100 > 14)) ? 1 : 2);\n"
-"X-Generator: GlotPress/4.0.1\n"
+"X-Generator: GlotPress/4.0.3\n"
 "Language: ru\n"
 "Project-Id-Version: Plugins - Connect Polylang for Elementor - Stable (latest release)\n"
 
@@ -16,7 +16,7 @@ msgstr ""
 msgid "Connect Polylang for Elementor"
 msgstr "Connect Polylang for Elementor"
 
-#: includes/connect-plugins.php:680
+#: includes/connect-plugins.php:694
 msgid "Add a translation — %s"
 msgstr "Добавить перевод — %s"
 
@@ -24,7 +24,7 @@ msgstr "Добавить перевод — %s"
 msgid "On Click"
 msgstr "По щелчку"
 
-#: includes/connect-plugins.php:454
+#: includes/connect-plugins.php:466
 msgid "None"
 msgstr "Ничего"
 
@@ -40,11 +40,11 @@ msgstr "Вниз"
 msgid "On Mouse Hover"
 msgstr "По наведению мыши"
 
-#: includes/connect-plugins.php:787
+#: includes/connect-plugins.php:838
 msgid "(from %s)"
 msgstr "(из %s)"
 
-#: includes/connect-plugins.php:781
+#: includes/connect-plugins.php:832
 msgid "No instances"
 msgstr "Нет экземпляров"
 
@@ -75,15 +75,15 @@ msgstr "Язык"
 msgid "Size"
 msgstr "Размер"
 
-#: includes/language-visibility.php:84
+#: includes/language-visibility.php:86
 msgid "Visibility"
 msgstr "Видимость"
 
-#: includes/language-visibility.php:88
+#: includes/language-visibility.php:90
 msgid "Show"
 msgstr "Показать"
 
-#: includes/language-visibility.php:92
+#: includes/language-visibility.php:94
 msgid "Hide"
 msgstr "Скрыть"
 
@@ -103,7 +103,7 @@ msgstr "Отступы значка"
 msgid "Border Radius"
 msgstr "Скругление углов"
 
-#: includes/language-visibility.php:74
+#: includes/language-visibility.php:76
 msgid "Enable"
 msgstr "Включить"
 
@@ -139,7 +139,7 @@ msgstr "Текущий язык"
 msgid "Displays flags"
 msgstr "Отображать флаги"
 
-#: includes/connect-plugins.php:681
+#: includes/connect-plugins.php:695 includes/connect-plugins.php:974
 msgid "Add a translation in %s"
 msgstr "Добавить перевод в %s"
 
@@ -159,11 +159,12 @@ msgstr "Флаг"
 msgid "Language switcher"
 msgstr "Переключатель языка"
 
-#: includes/language-visibility.php:66
+#: includes/language-visibility.php:68
 msgid "Language Visibility"
 msgstr "Видимость языка"
 
-#: includes/connect-plugins.php:690 includes/dynamic-tags/manager.php:38
+#: includes/connect-plugins.php:704 includes/connect-plugins.php:925
+#: includes/dynamic-tags/manager.php:40
 #: includes/finder/polylang-category.php:29
 msgid "Languages"
 msgstr "Языки"
@@ -183,7 +184,7 @@ msgctxt "Typography Control"
 msgid "Uppercase"
 msgstr "Верхний регистр"
 
-#: includes/language-visibility.php:106
+#: includes/language-visibility.php:108
 msgid "When language is:"
 msgstr "Когда язык является:"
 
@@ -244,10 +245,6 @@ msgstr "Растягиваться"
 #: includes/widgets/polylang-language-switcher.php:271
 msgid "Main Menu"
 msgstr "Главное меню"
-
-#: includes/widgets/polylang-language-switcher.php:399
-msgid "Horizontal Padding"
-msgstr "Внутренний отступ по горизонтали"
 
 #: includes/widgets/polylang-language-switcher.php:414
 msgid "Vertical Padding"
@@ -340,3 +337,7 @@ msgstr "Шаблоны"
 #: includes/finder/polylang-category.php:106
 msgid "View website in this language"
 msgstr "Посмотреть веб-сайт на этом языке"
+
+#: includes/widgets/polylang-language-switcher.php:399
+msgid "Horizontal Padding"
+msgstr "Горизонтальный внутренний отступ"

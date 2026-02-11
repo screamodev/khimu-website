@@ -37,7 +37,6 @@ if ( !class_exists( 'MediaSync' ) ) :
          */
         static $start_time = null;
 
-
         /**
          * Render main plugin content
          *
@@ -46,40 +45,19 @@ if ( !class_exists( 'MediaSync' ) ) :
          */
         static public function media_sync_main_page()
         {
+            // Suppress raw PHP errors on Media Sync page, so we can show cleaner custom message
+            @ini_set('display_errors', '0');
+
+            // Register shutdown function to catch fatal errors (e.g. memory exhausted)
+            register_shutdown_function(function() {
+                $message = self::media_sync_get_fatal_error_message();
+                if ( ! empty( $message ) ) {
+                    self::media_sync_render_error_message( $message );
+                }
+            });
 
             if(!MediaSync::media_sync_user_has_general_access()) {
                 wp_die(__('You do not have sufficient permissions to access this page.', 'media-sync'));
-            }
-
-            $is_debug = self::media_sync_is_debug();
-            if($is_debug) {
-                @ini_set('display_errors', 1);
-
-                // Enable WP_DEBUG mode
-                if ( !defined('WP_DEBUG') ) {
-                    define('WP_DEBUG', true);
-                }
-
-                // Enable Debug logging to the /wp-content/debug.log file
-                if ( !defined('WP_DEBUG_LOG') ) {
-                    define('WP_DEBUG_LOG', true);
-                }
-
-                // Enable display of errors and warnings
-                if ( !defined('WP_DEBUG_DISPLAY') ) {
-                    define('WP_DEBUG_DISPLAY', true);
-                }
-
-                // Use dev versions of core JS and CSS files (only needed if you are modifying these core files)
-                if ( !defined('SCRIPT_DEBUG') ) {
-                    define('SCRIPT_DEBUG', true);
-                }
-
-                // 512 MB
-                @ini_set('memory_limit', '512M');
-
-                // 10 min
-                @ini_set('max_execution_time', '600');
             }
 
             $scan_files = self::filter_input_boolean(INPUT_GET, 'scan_files');
@@ -114,7 +92,6 @@ if ( !class_exists( 'MediaSync' ) ) :
                     <form action="<?= $here ?>" method="GET">
                         <input type="hidden" name="page" value="media-sync-page"/>
                         <input type="hidden" name="scan_files" value="<?= $scan_files ?>"/>
-                        <input type="hidden" name="is_debug" value="<?= $is_debug ?>"/>
                         <div class="media-sync-buttons-holder">
                             <?php if (!$scan_files) : ?>
                                 <div class="card">
@@ -143,23 +120,7 @@ if ( !class_exists( 'MediaSync' ) ) :
                                         <?= __('Use this to see Media Library items that are missing actual files. This takes you to Media Library but with custom filter.', 'media-sync') ?>
                                     </p>
                                 </div>
-                                <div class="card">
-                                    <h2 class="title">Media Sync Pro</h2>
-                                    <a id="purchase-media-sync-pro" class="button button-primary" href="https://checkout.freemius.com/mode/dialog/plugin/14503/plan/24225/?show_monthly_switch=1" target="_blank" rel="nofollow noopener">Upgrade Now</a>
-                                    &nbsp;
-                                    <a class="button button-secondary" href="https://mediasyncplugin.com/?utm_source=base_plugin_banner&amp;utm_medium=init_page&amp;utm_campaign=bip" target="_blank" rel="noopener">Find out more</a>
-
-                                    <h4>Check out our newly revamped pro version with amazing new features.</h4>
-
-                                    <ul style="list-style: circle; margin-left: 15px;">
-                                        <li><strong>Revised incremental scan</strong>: Allows scanning and importing unlimited number of files.</li>
-                                        <li><strong>Quick single directory rescan</strong>: Easily rescan one directory to find new files or apply a different filter without reloading the whole page.</li>
-                                        <li><strong>Advanced filters</strong>: Find any file by customizing all default filters, search for a specific file type (images, videos, etc.), skip by tailor-made rules, or enter any custom pattern.</li>
-                                        <li><strong>Schedule automatic imports</strong>: Select a desired interval and let the plugin automatically import any new files it finds.</li>
-                                        <li><strong>Import logs</strong>: View the history of manual or scheduled imports.</li>
-                                        <li><strong>Limit plugin access</strong>: Limit plugin access to a specific role.</li>
-                                    </ul>
-                                </div>
+                                <?php MediaSync::media_sync_render_pro_card(); ?>
                             <?php endif; ?>
 
                             <?php if ($scan_files) : ?>
@@ -188,7 +149,6 @@ if ( !class_exists( 'MediaSync' ) ) :
                                         <label><?= __('Date/time to set for newly imported files', 'media-sync') ?>:</label>
                                         <?php self::media_sync_render_post_date_option( 'file_post_date' ) ?>
                                     </div>
-
                                     <div class="import-option-batch-size">
                                         <label for="batch-size">
                                             <?= __('Batch Size:', 'media-sync') ?>
@@ -208,21 +168,17 @@ if ( !class_exists( 'MediaSync' ) ) :
 
                         <?php if ($scan_files) : ?>
                             <p class="media-sync-state-holder">
-                                <?php if (!$is_debug) : ?>
-                                    <span class="media-sync-progress-holder">
-                                        <span class="media-sync-progress"></span>
-                                    </span>
-                                <?php endif; ?>
+                                <span class="media-sync-progress-holder">
+                                    <span class="media-sync-progress"></span>
+                                </span>
                                 <span class="media-sync-state">
-                                    <?php if (!$is_debug) : ?>
-                                        <span class="media-sync-state-text">
-                                            <?= __('Imported', 'media-sync') ?>
-                                        </span>
-                                        <span class="media-sync-state-number media-sync-imported-count js-media-sync-imported-count">0</span>
-                                        <span class="media-sync-state-text">
-                                            <?= __('out of', 'media-sync') ?>
-                                        </span>
-                                    <?php endif; ?>
+                                    <span class="media-sync-state-text">
+                                        <?= __('Imported', 'media-sync') ?>
+                                    </span>
+                                    <span class="media-sync-state-number media-sync-imported-count js-media-sync-imported-count">0</span>
+                                    <span class="media-sync-state-text">
+                                        <?= __('out of', 'media-sync') ?>
+                                    </span>
                                     <span class="media-sync-state-number media-sync-selected-count js-media-sync-selected-count">0</span>
                                     <span class="media-sync-state-text">
                                         <?= __('selected items', 'media-sync') ?>
@@ -248,14 +204,6 @@ if ( !class_exists( 'MediaSync' ) ) :
                                     </div>
                                 </div>
                             </div>
-
-                            <?php if ($is_debug) : ?>
-                                <div class="media-sync-html-response-holder">
-                                    <div class="media-sync-html-response-title"><?= __('Raw import results', 'media-sync') ?>:</div>
-                                    <div class="media-sync-html-responses js-media-sync-html-responses"></div>
-                                </div>
-                            <?php endif; ?>
-
                             <?php
                             $tree = $upload_dir_path ? self::media_sync_get_list_of_uploads() : array();
                             ?>
@@ -272,15 +220,9 @@ if ( !class_exists( 'MediaSync' ) ) :
                                     </table>
                                     <span class="spinner is-active table-spinner"></span>
                                 </div>
-
-                                <?php
-                                self::media_sync_render_debug_stats('after table render');
-                                ?>
                             <?php else : ?>
                                 <p class="media-sync-no-results">
-                                    <?php if ($missing_from_ml) : ?>
-                                        <?= __('Everything seems fine here, there are no files that are not already in your Media Library.', 'media-sync') ?>
-                                    <?php elseif(!$upload_dir_path) : ?>
+                                    <?php if(!$upload_dir_path) : ?>
                                         <?= $no_upload_dir_message ?>
                                     <?php else : ?>
                                         <?= __('No Results', 'media-sync') ?>
@@ -290,6 +232,87 @@ if ( !class_exists( 'MediaSync' ) ) :
                         <?php endif; ?>
                     </form>
                 </div>
+            </div>
+            <?php
+        }
+
+
+        /**
+         * Render error message when limits are reached.
+         *
+         * @param string $message
+         * @return void
+         */
+        static private function media_sync_render_error_message($message)
+        {
+            ?>
+            <div class="notice notice-error inline">
+                <p>
+                    <?= __('Server has reached limits that prevent scanning all files at once.', 'media-sync') ?>
+                </p>
+                <p>
+                    <strong><?= __('Caught error:', 'media-sync') ?></strong>
+                    <?= $message ?>
+                </p>
+            </div>
+            <?php
+            MediaSync::media_sync_render_pro_card();
+        }
+
+
+        /**
+         * Get fatal error message if one occurred.
+         *
+         * @since 1.4.9
+         * @return string
+         */
+        static private function media_sync_get_fatal_error_message() {
+            try {
+                $error = error_get_last();
+                // Check if it's a fatal error and if it's related to memory or time
+                if ( $error && ( $error['type'] === E_ERROR || $error['type'] === E_USER_ERROR ) ) {
+                    if ( strpos( $error['message'], 'Allowed memory size' ) !== false ) {
+                        return sprintf(
+                            __( 'Memory limit reached (%s used).', 'media-sync' ),
+                            size_format( memory_get_peak_usage( true ) )
+                        );
+                    }
+                    if ( strpos( $error['message'], 'Maximum execution time' ) !== false ) {
+                        return sprintf(
+                            __( 'Execution time limit reached (%s seconds).', 'media-sync' ),
+                            ini_get( 'max_execution_time' )
+                        );
+                    }
+                }
+            } catch ( Exception $e ) {
+            }
+
+            return "";
+        }
+
+
+        /**
+         * @since 1.4.9
+         * @return void
+         */
+        static private function media_sync_render_pro_card() {
+            ?>
+            <div class="card">
+                <h2 class="title">Media Sync Pro</h2>
+                <a id="purchase-media-sync-pro" class="button button-primary" href="https://checkout.freemius.com/mode/dialog/plugin/14503/plan/24225/?show_monthly_switch=1" target="_blank" rel="nofollow noopener">Upgrade Now</a>
+                &nbsp;
+                <a class="button button-secondary" href="https://mediasyncplugin.com/?utm_source=base_plugin_banner&amp;utm_medium=init_page&amp;utm_campaign=bip" target="_blank" rel="noopener">Find out more</a>
+
+                <h4>Check out our newly revamped pro version with amazing new features.</h4>
+
+                <ul style="list-style: circle; margin-left: 15px;">
+                    <li><strong>Revised incremental scan</strong>: Allows scanning and importing unlimited number of files.</li>
+                    <li><strong>Quick single directory rescan</strong>: Easily rescan one directory to find new files or apply a different filter without reloading the whole page.</li>
+                    <li><strong>Advanced filters</strong>: Find any file by customizing all default filters, search for a specific file type (images, videos, etc.), skip by tailor-made rules, or enter any custom pattern.</li>
+                    <li><strong>Schedule automatic imports</strong>: Select a desired interval and let the plugin automatically import any new files it finds.</li>
+                    <li><strong>Import logs</strong>: View the history of manual or scheduled imports.</li>
+                    <li><strong>Limit plugin access</strong>: Limit plugin access to a specific role.</li>
+                </ul>
             </div>
             <?php
         }
@@ -310,16 +333,15 @@ if ( !class_exists( 'MediaSync' ) ) :
             // From this plugin
             add_option( 'ms_sg_use_dry_run', 1 );
             add_option( 'ms_sg_file_post_date', 'default' );
-            add_option( 'ms_sg_use_debug', 0 );
             register_setting( 'media-sync-settings-group', 'ms_sg_use_dry_run' );
             register_setting( 'media-sync-settings-group', 'ms_sg_file_post_date' );
-            register_setting( 'media-sync-settings-group', 'ms_sg_use_debug' );
 
             // From Add-On
             do_action('media_sync_extended_advanced_options_register');
 
             // Delete options that are no longer used
             // delete_option('ms_sg_scan_sub_dir');
+            delete_option('ms_sg_use_debug');
         }
 
 
@@ -370,19 +392,6 @@ if ( !class_exists( 'MediaSync' ) ) :
                                 </th>
                                 <td>
                                     <?php self::media_sync_render_post_date_option( 'ms_sg_file_post_date' ) ?>
-                                </td>
-                            </tr>
-                            <tr>
-                                <th scope="row">
-                                    <label><?= __('Turn on debugging', 'media-sync') ?></label>
-                                </th>
-                                <td>
-                                    <fieldset>
-                                        <label for="ms-sg-use-debugging">
-                                            <?php $checked = checked( 1, get_option( 'ms_sg_use_debug' ), false ); ?>
-                                            <input type="checkbox" name="ms_sg_use_debug" id="ms-sg-use-debugging" value="1" <?= $checked ?>>
-                                        </label>
-                                    </fieldset>
                                 </td>
                             </tr>
                             <?php
@@ -568,8 +577,23 @@ if ( !class_exists( 'MediaSync' ) ) :
          */
         static public function media_sync_import_files()
         {
+            // Register shutdown function to catch fatal errors (e.g. memory exhausted)
+            register_shutdown_function(function() {
+                $message = self::media_sync_get_fatal_error_message();
+                if ( ! empty( $message ) ) {
+                    wp_send_json_error(
+                        __( 'Server has reached limits that prevented importing all selected files.', 'media-sync' ) . ' ' .
+                        $message . ' ' .
+                        sprintf(
+                            __( '%s solves this by processing files in smaller batches.', 'media-sync' ),
+                            '<a href="https://mediasyncplugin.com/?utm_source=base_plugin_error&utm_medium=scan_page&utm_campaign=esp" target="_blank">Media Sync Pro</a>'
+                        )
+                    );
+                }
+            });
+
             if(!MediaSync::media_sync_user_has_general_access()) {
-                wp_die(__('You do not have sufficient permissions to access this page.', 'media-sync'));
+                wp_send_json_error( __( 'You do not have sufficient permissions to access this page.', 'media-sync' ) );
             }
 
             check_ajax_referer( 'media_sync_import_files', 'security' );
@@ -661,45 +685,13 @@ if ( !class_exists( 'MediaSync' ) ) :
                 }
             }
 
-            if (self::media_sync_is_debug()) {
-                foreach ($results as $result) {
-                    echo self::media_sync_render_html_import_result($result);
-                }
-            } else {
-                echo json_encode(array(
-                    'results' => $results
-                ));
-            }
+            echo json_encode(array(
+                'results' => $results
+            ));
 
             wp_die(); // Must have for Ajax calls
         }
 
-        /**
-         * Render HTML response for each item.
-         * Used only when debugging is turned on.
-         *
-         * @since 1.2.6
-         * @param array $result
-         * @return void
-         */
-        static public function media_sync_render_html_import_result($result)
-        {
-            $icon = isset($result['inserted']) && $result['inserted'] === true ? "✅" : "❌";
-            $row_id = isset($result['row_id']) ? $result['row_id'] : "";
-            $errors = "";
-            if (isset($result['error']) && !empty($result['error'])) {
-                $errors .= "  [Error]: {$result['error']} ";
-            }
-            if (isset($result['errorMessage']) && !empty($result['errorMessage'])) {
-                $errors .= (!empty($errors) ? "<br />" : "") . "  [Error Message]: {$result['errorMessage']} ";
-            }
-
-            $return = "<div class='media-sync-html-response-item-" . (!empty($errors) ? 'error' : 'success') . "'>";
-            $return .= "{$icon} {$row_id}" . (!empty($errors) ? '<div>' . $errors . '</div>' : '');
-            $return .= "</div>";
-
-            return $return;
-        }
 
         /**
          * Find mime type for file being imported
@@ -821,9 +813,6 @@ if ( !class_exists( 'MediaSync' ) ) :
             }
 
             if (!($attach_id > 0)) {
-
-                // TODO: Revert wp_insert_attachment()?
-
                 return array(
                     'errorMessage' => sprintf(__('Attach ID not received for inserted attachment (`wp_posts` table) for file: %s.', 'media-sync'), $absolute_path)
                 );
@@ -1052,16 +1041,8 @@ if ( !class_exists( 'MediaSync' ) ) :
             // Clear cached files (affecting file_exists, stream_resolve_include_path, etc.)
             clearstatcache();
 
-            // Show debugging stats if debugging is turned on
-            self::media_sync_render_debug_stats('before uploads directory scan');
-
             // Get all files - returning Generator (not Array)
-            $tree = self::media_sync_get_list_of_files(self::$upload_dir_path, self::$files_in_db, $is_missing_from_ml_filter);
-
-            // Show debugging stats if debugging is turned on
-            self::media_sync_render_debug_stats('after uploads directory scan');
-
-            return $tree;
+            return self::media_sync_get_list_of_files(self::$upload_dir_path, self::$files_in_db, $is_missing_from_ml_filter);
         }
 
 
@@ -1100,7 +1081,7 @@ if ( !class_exists( 'MediaSync' ) ) :
                 // 2. ends with "-scaled" (also WP generated), or
                 // 3. retina thumbnail (e.g. -100x100@2x.jpg), or
                 // 4. has .webp after another file type (e.g. .jpg.webp).
-                $is_ignored = preg_match('/(-scaled|[_-]\d+x\d+)|@[2-6]\x(?=\.[a-z]{3,4}$)|\.[a-z]{3,4}.webp/im', $file_name) == true;
+                $is_ignored = preg_match('/(-scaled|[_-]\d+x\d+)|@[2-6]x(?=\.[a-z]{3,4}$)|\.[a-z]{3,4}.webp/im', $file_name) == true;
 
                 // Receive external rules for skipping files/folders
                 $is_ignored_external = apply_filters('media_sync_filter_is_scan_object_ignored', $is_ignored, $full_path, $file_name);
@@ -1160,7 +1141,7 @@ if ( !class_exists( 'MediaSync' ) ) :
                 if ($isDir) {
                     $item['url'] = 'javascript:;';
                     $item['children'] = $children;
-                    // TODO: Figure out how to count children when using generators (yield)
+                    // Not so easy when using generators (yield)
                     $item['count_children'] = null;
                 } else {
                     $item['url'] = get_site_url() . $relative_path;
@@ -1215,20 +1196,20 @@ if ( !class_exists( 'MediaSync' ) ) :
          */
         static private function media_sync_get_files_in_db()
         {
-            $media_query = new WP_Query(array(
-                'post_type' => 'attachment',
-                'post_status' => array('inherit', 'trash'),
-                'posts_per_page' => -1
-            ));
+            $media_query = new WP_Query( array(
+                'post_type'      => 'attachment',
+                'post_status'    => array( 'inherit', 'trash' ),
+                'posts_per_page' => - 1
+            ) );
 
-            $upload_dir_path = self::media_sync_get_uploads_basedir();
-            $upload_dir_relative_path = self::media_sync_get_relative_path($upload_dir_path);
+            $upload_dir_path          = self::media_sync_get_uploads_basedir();
+            $upload_dir_relative_path = self::media_sync_get_relative_path( $upload_dir_path );
 
             $files = array();
-            foreach ($media_query->posts as $post) {
+            foreach ( $media_query->posts as $post ) {
 
-                $file_path = get_post_meta($post->ID, '_wp_attached_file', true);
-                if (empty($file_path)) {
+                $file_path = get_post_meta( $post->ID, '_wp_attached_file', true );
+                if ( empty( $file_path ) ) {
                     continue;
                 }
 
@@ -1236,26 +1217,26 @@ if ( !class_exists( 'MediaSync' ) ) :
                 $short_relative_path = '/' . $file_path;
 
                 // e.g. /wp-content/uploads/2012/03/img%20space.jpg
-                $relative_path = self::media_sync_url_encode($upload_dir_relative_path . $short_relative_path);
+                $relative_path = self::media_sync_url_encode( $upload_dir_relative_path . $short_relative_path );
 
                 $file = array(
-                    'id' => $post->ID,
-                    'name' => $post->post_title,
+                    'id'     => $post->ID,
+                    'name'   => $post->post_title,
                     'status' => $post->post_status
                 );
 
-                $files[$relative_path] = $file;
+                $files[ $relative_path ] = $file;
 
                 // Path to current file without file name
-                $base_path = self::get_base_path($file_path);
+                $base_path = self::get_base_path( $file_path );
 
                 // For large images - WordPress creates resized versions ("-scaled" at the end of file)
                 // https://make.wordpress.org/core/2019/10/09/introducing-handling-of-big-images-in-wordpress-5-3/
                 // So we also need to find and treat original file as "file in db"
-                $meta = wp_get_attachment_metadata($post->ID);
-                if (!empty($meta['original_image'])) {
-                    $original_image_path = self::media_sync_url_encode($upload_dir_relative_path . $base_path . $meta['original_image']);
-                    $files[$original_image_path] = $file;
+                $meta = wp_get_attachment_metadata( $post->ID );
+                if ( ! empty( $meta['original_image'] ) ) {
+                    $original_image_path           = self::media_sync_url_encode( $upload_dir_relative_path . $base_path . $meta['original_image'] );
+                    $files[ $original_image_path ] = $file;
                 }
             }
 
@@ -1278,40 +1259,6 @@ if ( !class_exists( 'MediaSync' ) ) :
             } else {
                 return '/' . rtrim($base_path, '/') . '/';
             }
-        }
-
-
-        /**
-         * Show debugging stats.
-         *
-         * @since 1.2.0
-         * @param string $event When are we showing these stats
-         * @return void
-         */
-        static public function media_sync_render_debug_stats($event)
-        {
-            if(!$event || !self::media_sync_is_debug()) {
-                return null;
-            }
-
-            $mem_usage = memory_get_usage();
-            $mem_limit = self::media_sync_get_memory_limit();
-            $limit_percentage = $mem_usage * 100 / $mem_limit;
-            ?>
-            <div class="media-sync-debugging-stats">
-                <div class="media-sync-debugging-title">Debugging <strong><?= $event ?></strong>:</div>
-                <div class="media-sync-debugging-stat-row">
-                    Peak memory usage: <?= memory_get_peak_usage(true) / 1024 / 1024 ?> MB / <?= memory_get_peak_usage(true) / 1024 ?> KB
-                </div>
-                <div class="media-sync-debugging-stat-row">
-                    Memory usage: <?= round($mem_usage / 1024 / 1024) ?> MB / <?= round($mem_usage / 1024) ?> KB
-                    (<?= round($limit_percentage) ?>% of the available memory: <?= round($mem_limit / 1024 / 1024) ?> MB / <?= round($mem_limit / 1024) ?> KB)
-                </div>
-                <div class="media-sync-debugging-stat-row">
-                    Time since start: <?= self::$start_time > 0 ? microtime(true) - self::$start_time : 0 ?> seconds
-                </div>
-            </div>
-            <?php
         }
 
 
@@ -1346,28 +1293,6 @@ if ( !class_exists( 'MediaSync' ) ) :
             }
 
             return $bytes;
-        }
-
-
-        /**
-         * Should debugging be used.
-         *
-         * @since 1.2.0
-         * @return boolean
-         */
-        static public function media_sync_is_debug()
-        {
-            if (self::filter_input_boolean(INPUT_GET, 'debug')) {
-                return true;
-            }
-
-            if(!!get_option('ms_sg_use_debug', 0)) {
-                return true;
-            }
-
-            // return defined('WP_DEBUG') && WP_DEBUG;
-
-            return false;
         }
 
         

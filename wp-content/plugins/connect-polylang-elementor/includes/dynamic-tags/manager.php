@@ -19,7 +19,9 @@ class Manager {
 	 */
 	private function __construct() {
 
-		$hook = version_compare( ELEMENTOR_VERSION, '3.5.0', '>=' ) ? 'elementor/dynamic_tags/register' : 'elementor/dynamic_tags/register_tags';
+		$hook = cpel_elementor_min_version( '3.5.0' )
+			? 'elementor/dynamic_tags/register'
+			: 'elementor/dynamic_tags/register_tags';
 
 		add_action( $hook, array( $this, 'register_dynamic_tags' ) );
 
@@ -35,10 +37,10 @@ class Manager {
 	public function register_dynamic_tags( $dynamic_tags ) {
 
 		// Register our tag group.
-		Plugin::instance()->dynamic_tags->register_group( self::TAG_GROUP, array( 'title' => __( 'Languages', 'polylang' ) ) );
+		Plugin::instance()->dynamic_tags->register_group( self::TAG_GROUP, array( 'title' => __( 'Languages', 'polylang' ) ) ); // phpcs:ignore WordPress.WP.I18n.TextDomainMismatch
 
 		// Register the tags.
-		if ( version_compare( ELEMENTOR_VERSION, '3.5.0', '>=' ) ) {
+		if ( cpel_elementor_min_version( '3.5.0' ) ) {
 			$dynamic_tags->register( new LanguageName() );
 			$dynamic_tags->register( new LanguageCode() );
 			$dynamic_tags->register( new LanguageFlag() );

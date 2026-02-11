@@ -1,4 +1,4 @@
-jQuery(document).ready(function($) {
+jQuery(document).ready(function ($) {
 	try {
 
 		var plugin = $('.main-media-sync-page');
@@ -9,7 +9,6 @@ jQuery(document).ready(function($) {
 
 			var btn = $(this);
 			var form = files.find('form');
-			var isDebug = !!form.find('input[name="is_debug"]').val();
 			var dryRun = !!form.find('input[name="dry_run"]').prop('checked');
 			var filePostDate = form.find('input[name="file_post_date"]:checked').val();
 			var batchSize = parseInt(form.find('input[name="batch_size"]').val());
@@ -26,7 +25,7 @@ jQuery(document).ready(function($) {
 			var counter = 0;
 
 			function setActiveStatus(isActive) {
-				if(isActive) {
+				if (isActive) {
 					// Disable submit button while request is being executed
 					btn.prop('disabled', true);
 
@@ -44,8 +43,8 @@ jQuery(document).ready(function($) {
 			function outputError(errorMessage = null, error = null, isItemError = false) {
 				console.error("[Media Sync] [Import] " + errorMessage, (error ? error : ''));
 
-				if(!isItemError) {
-					var errors = "[Media Sync] " + errorMessage + (error ? "\nE:\n" + error : '');
+				if (!isItemError) {
+					var errors = errorMessage + (error ? "\n" + error : '');
 					plugin.find('.js-media-sync-error-placeholder').removeClass('hidden').html(errors);
 					setActiveStatus(false);
 				}
@@ -64,7 +63,6 @@ jQuery(document).ready(function($) {
 			// Reset stuff
 			plugin.find('.media-sync-progress').css('width', 0);
 			plugin.find('.notice-files-imported').removeClass('is-visible');
-			plugin.find('.js-media-sync-html-responses').html('');
 			plugin.find('.js-media-sync-error-placeholder').addClass('hidden').html('');
 
 
@@ -100,101 +98,94 @@ jQuery(document).ready(function($) {
 						'file_post_date': filePostDate,
 						'media_items': batch
 					},
-					dataType: isDebug ? 'html' : 'json',
+					dataType: 'json',
 					method: 'POST'
 				}).done(function (data) {
 					try {
-
-						if(!data) {
+						if (!data) {
 							outputError('No response received');
 							return false;
 						}
 
-						if (isDebug) {
-							plugin.find('.js-media-sync-html-responses').append(data);
-						} else {
+						var error = data.hasOwnProperty('error') && data.error ? data.error : null;
+						var errorMessage = data.hasOwnProperty('errorMessage') && data.errorMessage ? data.errorMessage : null;
 
-							var error = data.hasOwnProperty('error') && data.error ? data.error : null;
-							var errorMessage = data.hasOwnProperty('errorMessage') && data.errorMessage ? data.errorMessage : null;
+						if (error || errorMessage) {
+							outputError('[Backend error] ' + errorMessage, error);
+							return false;
+						}
 
-							if(error || errorMessage) {
-								outputError('[Backend error] ' + errorMessage, error);
-								return false;
+						if (!(data.hasOwnProperty('results') && data.results && data.results.length > 0)) {
+							setActiveStatus(false);
+							return false;
+						}
+
+						$.each(data.results, function (index, item) {
+							var itemError = item.hasOwnProperty('error') && item.error ? item.error : null;
+							var itemErrorMessage = item.hasOwnProperty('errorMessage') && item.errorMessage ? item.errorMessage : null;
+
+							if (itemError || itemErrorMessage) {
+								outputError('[Item error] ' + itemErrorMessage, itemError, true);
 							}
 
-							if(!(data.hasOwnProperty('results') && data.results && data.results.length > 0)) {
-								setActiveStatus(false);
-								return false;
-							}
+							if (item.hasOwnProperty('row_id') && item.row_id) {
+								var statusClass = 'error';
 
-							$.each(data.results, function (index, item) {
-								var itemError = item.hasOwnProperty('error') && item.error ? item.error : null;
-								var itemErrorMessage = item.hasOwnProperty('errorMessage') && item.errorMessage ? item.errorMessage : null;
+								if (item.inserted === true) {
+									counter++;
+									statusClass = 'success';
 
-								if(itemError || itemErrorMessage) {
-									outputError('[Item error] ' + itemErrorMessage, itemError, true);
-								}
-
-								if (item.hasOwnProperty('row_id') && item.row_id) {
-									var statusClass = 'error';
-
-									if (item.inserted === true) {
-										counter++;
-										statusClass = 'success';
-
-										console.log("[Media Sync] [" + counter + "] " + (dryRun ? "DRY RUN: " : "Successfully imported: ") + item.row_id);
-									} else {
-										// If we didn't already output the error
-										if(!itemError && !itemErrorMessage) {
-											console.error("[Media Sync] Error importing: " + item.row_id);
-										}
-									}
-
-									try {
-										var fileRow = files.find('[id="' + item.row_id + '"]');
-
-										if(itemError || itemErrorMessage) {
-											var errors = (itemErrorMessage ? itemErrorMessage : '') + (itemError ? '\nE:\n' + itemError : '');
-											fileRow.find('.column-primary').append('<div class="error media-sync-file-error">' + errors + '</div>');
-										}
-
-										// Highlight imported or failed row
-										fileRow.addClass('highlight-' + statusClass);
-									} catch (highlightError) {
-										console.log('[Media Sync] Could not highlight imported row.', highlightError);
+									console.log("[Media Sync] [" + counter + "] " + (dryRun ? "DRY RUN: " : "Successfully imported: ") + item.row_id);
+								} else {
+									// If we didn't already output the error
+									if (!itemError && !itemErrorMessage) {
+										console.error("[Media Sync] Error importing: " + item.row_id);
 									}
 								}
-							});
 
-							var animatedCounter = counter;
+								try {
+									var fileRow = files.find('[id="' + item.row_id + '"]');
 
-							// Not really correct progress indicator, it's just animated
-							jQuery({Counter: animatedCounter}).animate({Counter: counter}, {
-								duration: 1000,
-								easing: 'linear',
-								step: function () {
-									// Update "imported" count
-									files.find('.js-media-sync-imported-count').html(Math.ceil(this.Counter));
-								},
-								complete: function () {
-									// Update "imported" count again (sometimes it doesn't set correct value above)
-									files.find('.js-media-sync-imported-count').html(counter);
+									if (itemError || itemErrorMessage) {
+										var errors = (itemErrorMessage ? itemErrorMessage : '') + (itemError ? '\nE:\n' + itemError : '');
+										fileRow.find('.column-primary').append('<div class="error media-sync-file-error">' + errors + '</div>');
+									}
+
+									// Highlight imported or failed row
+									fileRow.addClass('highlight-' + statusClass);
+								} catch (highlightError) {
+									console.log('[Media Sync] Could not highlight imported row.', highlightError);
 								}
-							});
-
-
-							// Update progress bar
-							plugin.find('.media-sync-progress').css('width', ((counter / total) * 100) + '%');
-
-							// If all items are imported successfully (last item)
-							if (counter === total) {
-
-								setActiveStatus(false);
-
-								// Show success message
-								plugin.find('.notice-files-imported').addClass('is-visible');
 							}
+						});
 
+						var animatedCounter = counter;
+
+						// Not really correct progress indicator, it's just animated
+						jQuery({ Counter: animatedCounter }).animate({ Counter: counter }, {
+							duration: 1000,
+							easing: 'linear',
+							step: function () {
+								// Update "imported" count
+								files.find('.js-media-sync-imported-count').html(Math.ceil(this.Counter));
+							},
+							complete: function () {
+								// Update "imported" count again (sometimes it doesn't set correct value above)
+								files.find('.js-media-sync-imported-count').html(counter);
+							}
+						});
+
+
+						// Update progress bar
+						plugin.find('.media-sync-progress').css('width', ((counter / total) * 100) + '%');
+
+						// If all items are imported successfully (last item)
+						if (counter === total) {
+
+							setActiveStatus(false);
+
+							// Show success message
+							plugin.find('.notice-files-imported').addClass('is-visible');
 						}
 
 						// Run again to go through all batches
@@ -202,15 +193,18 @@ jQuery(document).ready(function($) {
 						// but async/await or Promise would be much better
 						runAjax();
 
-					} catch(e) {
+					} catch (e) {
 						outputError('Error processing results', e);
 						return false;
 					}
 				}).fail(function (jqXHR, textStatus, errorThrown) {
-
-					plugin.find('.js-media-sync-html-responses').append(jqXHR.responseText);
-
-					outputError('[AJAX error] ' + textStatus, errorThrown);
+					// If JSON parsing failed (e.g. mixed content), try to extract JSON manually
+					var errorMessage = parseResponseError(jqXHR.responseText);
+					if (errorMessage && typeof errorMessage === 'string') {
+						outputError(errorMessage);
+						return false;
+					}
+					outputError(textStatus, errorThrown);
 					return false;
 				});
 			}
@@ -226,3 +220,58 @@ jQuery(document).ready(function($) {
 		alert("[Media Sync]\n" + e);
 	}
 });
+
+function parseResponseError(responseRaw) {
+	try {
+		if (!responseRaw) {
+			return "";
+		}
+
+		var jsonStartIndex = responseRaw.indexOf('{');
+		if (jsonStartIndex === -1) {
+			return "";
+		}
+
+		var jsonText = responseRaw;
+		if (jsonStartIndex > 0) {
+			jsonText = responseRaw.substring(jsonStartIndex);
+		}
+
+		var parsed = null;
+
+		// First attempt: Parse from first '{' to the end
+		try {
+			parsed = JSON.parse(jsonText);
+		} catch (e) {
+			// Parsing failed. This likely means there is garbage AFTER the JSON as well.
+		}
+
+		// Second attempt: Find the last '}' and parse the substring
+		if (!parsed) {
+			var jsonEndIndex = jsonText.lastIndexOf('}');
+			if (jsonEndIndex !== -1) {
+				try {
+					parsed = JSON.parse(jsonText.substring(0, jsonEndIndex + 1));
+				} catch (e) {
+					// Still failed
+				}
+			}
+		}
+
+		if (parsed && parsed.success === false) {
+			var msg = parsed.data;
+			if (typeof msg !== 'string') {
+				try {
+					msg = JSON.stringify(msg);
+				} catch (e) {
+					msg = 'Unknown error';
+				}
+			}
+			return msg;
+		}
+
+		return "";
+	} catch (e) {
+		return "";
+	}
+}

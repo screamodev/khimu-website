@@ -24,7 +24,7 @@ class LanguageName extends Tag {
 	}
 
 	public function render() {
-		echo wp_kses_post( $this->get_language_field( 'name' ) );
+		echo esc_html( $this->get_language_field( 'name' ) );
 	}
 
 }

@@ -15,7 +15,9 @@ class Manager {
 	 */
 	private function __construct() {
 
-		$hook = version_compare( ELEMENTOR_VERSION, '3.5.0', '>=' ) ? 'elementor/finder/register' : 'elementor/finder/categories/init';
+		$hook = cpel_elementor_min_version( '3.5.0' )
+			? 'elementor/finder/register'
+			: 'elementor/finder/categories/init';
 
 		add_action( $hook, array( $this, 'elementor_finder_add_items' ) );
 
@@ -31,7 +33,7 @@ class Manager {
 	 */
 	function elementor_finder_add_items( $categories_manager ) {
 
-		if ( version_compare( ELEMENTOR_VERSION, '3.5.0', '>=' ) ) {
+		if ( cpel_elementor_min_version( '3.5.0' ) ) {
 			$categories_manager->register( new PolylangCategory() );
 		} else {
 			$categories_manager->add_category( 'cpel', new PolylangCategory() );

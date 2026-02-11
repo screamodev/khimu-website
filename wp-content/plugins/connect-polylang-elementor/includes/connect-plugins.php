@@ -89,8 +89,15 @@ class ConnectPlugins {
 			}
 		}
 
-		// Elementor editor menu links to translations.
-		add_action( 'elementor/editor/after_enqueue_scripts', array( $this, 'elementor_editor_script' ) );
+		// Check if Elementor is installed and its version is greater than 3.25.0.
+		if ( cpel_elementor_min_version( '3.25.0' ) ) {
+			// Elementor 3.25.0 introduced a new way to handle language switcher controls.
+			add_action( 'elementor/documents/register_controls', array( $this, 'register_language_switcher_controls' ) );
+		} else {
+			// Deprecated way to handle language switcher controls.
+			// Elementor editor menu links to translations.
+			add_action( 'elementor/editor/after_enqueue_scripts', array( $this, 'elementor_editor_script' ) );
+		}
 		add_action( 'elementor/editor/after_enqueue_styles', array( $this, 'elementor_editor_style' ) );
 
 		// Elementor Site Editor template tweaks.
@@ -222,14 +229,19 @@ class ConnectPlugins {
 			return $false;
 		}
 
-		// Translate post_id.
-		$attr['id'] = pll_get_post( absint( $attr['id'] ) ) ?: $attr['id']; //phpcs:ignore WordPress.PHP.DisallowShortTernary
+		// Translate post_id safely.
+		if ( isset( $attr['id'] ) && '' !== $attr['id'] ) {
+			$id = absint( $attr['id'] );
+			if ( $id ) {
+				$attr['id'] = pll_get_post( $id ) ?: $id; //phpcs:ignore WordPress.PHP.DisallowShortTernary
+			}
+		}
 		// Skip next call.
 		$attr['skip'] = 1;
 
 		$output = '';
 		foreach ( $attr as $key => $val ) {
-			$output .= " $key=\"$val\"";
+			$output .= ' ' . esc_attr( sanitize_key( $key ) ) . '="' . esc_attr( $val ) . '"';
 		}
 
 		return do_shortcode( '[elementor-template' . $output . ']' );
@@ -291,18 +303,18 @@ class ConnectPlugins {
 	public function elementor_kit_translation( $value ) {
 
 		$translation = null;
-
 		// Is API REST '/wp-json/elementor/v1/globals'.
 		if ( defined( 'REST_REQUEST' ) && REST_REQUEST && isset( $_SERVER['HTTP_REFERER'] ) ) {
 			// Referrer is Elementor Editor?
-			wp_parse_str( wp_parse_url( $_SERVER['HTTP_REFERER'], PHP_URL_QUERY ), $query );
+			$referer = esc_url_raw( $_SERVER['HTTP_REFERER'] );
+			wp_parse_str( wp_parse_url( $referer, PHP_URL_QUERY ), $query );
 
 			if ( isset( $query['action'], $query['post'] ) && 'elementor' === $query['action'] ) {
-				$translation = pll_get_post( $value, pll_get_post_language( intval( $query['post'] ) ) );
+				$translation = pll_get_post( $value, pll_get_post_language( absint( $query['post'] ) ) );
 			}
 		} elseif ( cpel_is_elementor_editor() ) {
-
-			$translation = pll_get_post( $value, pll_get_post_language( intval( $_GET['post'] ) ) );
+			$post_id     = isset( $_GET['post'] ) ? absint( $_GET['post'] ) : 0;
+			$translation = $post_id ? pll_get_post( $value, pll_get_post_language( $post_id ) ) : null;
 
 		} elseif ( ! is_admin() ) {
 
@@ -493,7 +505,9 @@ class ConnectPlugins {
 		global $pagenow;
 
 		return '_elementor_css' === $meta_key && 'post-new.php' === $pagenow
-			&& isset( $_GET['from_post'], $_GET['new_lang'] ) ? false : $null;
+			&& isset( $_GET['from_post'], $_GET['new_lang'] )
+			&& ! empty( absint( wp_unslash( $_GET['from_post'] ) ) )
+			&& ! empty( sanitize_key( wp_unslash( $_GET['new_lang'] ) ) ) ? false : $null;
 
 	}
 
@@ -583,7 +597,7 @@ class ConnectPlugins {
 	 */
 	public function add_search_form_home_url_filter( $element ) {
 
-		if ( 'search-form' === $element->get_name() ) {
+		if ( 'search' === $element->get_name() || 'search-form' === $element->get_name() ) {
 			add_filter( 'home_url', array( $this, 'search_form_home_url_filter' ), 10, 2 );
 		}
 
@@ -599,7 +613,7 @@ class ConnectPlugins {
 	 */
 	public function remove_search_form_home_url_filter( $element ) {
 
-		if ( 'search-form' === $element->get_name() ) {
+		if ( 'search' === $element->get_name() || 'search-form' === $element->get_name() ) {
 			remove_filter( 'home_url', array( $this, 'search_form_home_url_filter' ) );
 		}
 
@@ -722,6 +736,43 @@ class ConnectPlugins {
 			return;
 		}
 
+		// New language switcher styles for Elementor 3.25.0+.
+		if ( cpel_elementor_min_version( '3.25.0' ) ) {
+
+			$style = '
+.elementor-control-cpel-languages a {
+	display: flex;
+	gap: 8px;
+	align-items: center;
+	padding: 8px 5px;
+	border: none;
+	color: inherit;
+	line-height: 1.25em;
+	font-weight: 400;
+	text-decoration: none;
+	transition: none;
+}
+
+.elementor-control-cpel-languages a.current, .elementor-control-cpel-languages a:hover {
+	background-color: var(--e-a-bg-hover);
+	color: inherit;
+}
+
+.elementor-control-cpel-languages i {
+	font-size: 16px;
+}
+
+.elementor-control-cpel-languages .flag {
+	margin-left: auto;
+	font-size: 16px;
+}';
+
+			wp_add_inline_style( 'elementor-editor', $style );
+
+			return;
+		}
+
+		// Old language switcher styles for Elementor < 3.25.0
 		$style = '' .
 			".elementor-panel .elementor-panel-menu-item.elementor-panel-menu-item-cpel-current {\n" .
 			"	background: #eceeef;\n" .
@@ -801,7 +852,7 @@ class ConnectPlugins {
 	 */
 	private function fix_url_domain( $url, $post_id ) {
 
-		$current_host = wp_parse_url( pll_current_language( 'home_url' ) ?: trailingslashit( "//{$_SERVER['HTTP_HOST']}" ), PHP_URL_HOST ); //phpcs:ignore WordPress.PHP.DisallowShortTernary
+		$current_host = wp_parse_url( pll_current_language( 'home_url' ) ?: trailingslashit( '//' . sanitize_text_field( wp_unslash( $_SERVER['HTTP_HOST'] ) ) ), PHP_URL_HOST ); //phpcs:ignore WordPress.PHP.DisallowShortTernary
 		$post_host    = wp_parse_url( pll_get_post_language( $post_id, 'home_url' ), PHP_URL_HOST );
 
 		if ( $current_host !== $post_host ) {
@@ -843,4 +894,106 @@ class ConnectPlugins {
 
 	}
 
+	/**
+	 * Register language switcher controls in Elementor's document settings panel.
+	 * This function adds a "Languages" section where users can manage translations for the current post.
+	 *
+	 * @param \Elementor\Base\Document $document The Elementor document object.
+	 * @since  2.5.0
+	 */
+	public function register_language_switcher_controls( $document ) {
+
+		global $typenow, $post;
+
+		// Exit if is not translatable.
+		if ( ! pll_is_translated_post_type( $typenow ) ) {
+			return;
+		}
+
+		// Get the current post ID being edited in Elementor.
+		$post_id = $post->ID;
+
+		// Retrieve available languages from Polylang.
+		$languages    = pll_languages_list( array( 'fields' => '' ) );
+		$translations = pll_get_post_translations( $post_id );
+		$raw_html     = '';
+
+		// Start adding a new section in Elementor settings panel.
+		$document->start_controls_section(
+			'cpel_language_section',
+			array(
+				'label' => esc_html__( 'Languages', 'polylang' ), // phpcs:ignore WordPress.WP.I18n.TextDomainMismatch
+				'tab'   => \Elementor\Controls_Manager::TAB_SETTINGS,
+			)
+		);
+
+		// Loop through each available language.
+		foreach ( $languages as $language ) {
+			$lang_parts = array(
+				'class' => 'cpel-language',
+				'href'  => '',
+				'icon'  => '',
+				'text'  => '',
+				'flag'  => str_replace( '<img ', '<img class="flag" ', $language->flag ),
+			);
+
+			// Check if a translation exists for the current language.
+			if ( isset( $translations[ $language->slug ] ) ) {
+				// Get the post ID of the translated post.
+				$translation_id = $translations[ $language->slug ];
+
+				$lang_parts['icon'] = '<i class="eicon-document-file"></i>';
+				$lang_parts['text'] = '<span class="text">' . esc_html( get_the_title( $translation_id ) ) . '</span>';
+
+				if ( $translation_id === $post_id ) {
+					$lang_parts['class'] .= ' current';
+				} else {
+					// Get edit link for the translated post.
+					$edit_link = get_edit_post_link( $translation_id, 'edit' );
+
+					// Modify edit link if it's built with Elementor.
+					if ( get_post_meta( $translation_id, '_elementor_edit_mode', true ) ) {
+						$edit_link = add_query_arg( 'action', 'elementor', $edit_link );
+					}
+
+					$lang_parts['href'] = $edit_link;
+				}
+			} else {
+				// Generate the create translation link.
+				$args        = array(
+					'post_type' => get_post_type( $post_id ),
+					'from_post' => $post_id,
+					'new_lang'  => $language->slug,
+					'_wpnonce'  => wp_create_nonce( 'new-post-translation' ),
+				);
+				$create_link = add_query_arg( $args, admin_url( 'post-new.php' ) );
+
+				$lang_parts['class'] .= ' add-new';
+				$lang_parts['icon']   = '<i class="eicon-plus"></i>';
+				$lang_parts['href']   = $create_link;
+				$lang_parts['text']   = '<span class="text">' . sprintf( esc_html__( 'Add a translation in %s', 'polylang' ), strtolower( esc_html( $language->name ) ) ) . '</span>';  // phpcs:ignore WordPress.WP.I18n
+			}
+
+			$raw_html .= sprintf(
+				'<li><a class="%s" %s>%s %s %s</a></li>',
+				$lang_parts['class'],
+				$lang_parts['href'] ? sprintf( 'href="%s" target="_blank"', esc_url( $lang_parts['href'] ) ) : '',
+				$lang_parts['icon'],
+				$lang_parts['text'],
+				$lang_parts['flag']
+			);
+		}
+
+		$document->add_control(
+			'cpel_languages',
+			array(
+				'type'            => \Elementor\Controls_Manager::RAW_HTML,
+				'raw'             => '<ul>' . $raw_html . '</ul>',
+				'content_classes' => 'elementor-control-cpel-languages',
+			)
+		);
+
+		// End the controls section.
+		$document->end_controls_section();
+	}
 }

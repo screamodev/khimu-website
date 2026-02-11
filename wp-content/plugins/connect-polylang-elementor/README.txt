@@ -1,17 +1,15 @@
 === Connect Polylang for Elementor ===
-Contributors: daveshine, p4fbradjohnson, deckerweb, wpautobahn, pacotole, creapuntome
+Contributors: creapuntome, pacotole, daveshine, narinder-singh, p4fbradjohnson
 Donate link: https://github.com/sponsors/creame
-Tags: elementor, polylang, multilingual, language switcher, languages, templates, widget, finder, dynamic tags
+Tags: elementor, polylang, multilingual, language switcher, dynamic tags
 Requires at least: 5.4
-Tested up to: 6.7
+Tested up to: 6.9
 Requires PHP: 5.6
-Stable tag: 2.4.6
+Stable tag: 2.5.5
 License: GPL-2.0-or-later
 License URI: https://opensource.org/licenses/GPL-2.0
 
 Connect Polylang with Elementor: translated templates, language switcher widget, language visibility conditions and more
-
-
 
 == Description ==
 
@@ -32,6 +30,9 @@ A native Elementor Widget to easily build a nice and fully customizable language
 * Show or hide flags, language name, language code.
 * Vertical list, Horizontal list or **styled dropdown**.
 * **SVG scalable flags**.
+
+https://www.youtube.com/watch?v=7DUh-bggJBs&feature=youtu.be
+
 
 #### 👁️ Language Visibility Conditions
 Allow to **show or hide every widget**, section or column **by language**.
@@ -58,6 +59,10 @@ From Elementor Finder you can access to Polylang settings pages and go the site 
 * Add language url trailing slash.
 * Hide language on wp-admin for global widgets.
 * Other integration fixes.
+
+
+[AI-powered translation for Polylang](https://coolplugins.net/product/autopoly-ai-translation-for-polylang/?ref=creame&utm_source=cpel_plugin&utm_medium=readme&utm_campaign=get_pro&utm_content=bottom_link) — AutoPoly instantly translates your Elementor, Gutenberg, and ACF content in one click while keeping your design exactly the same. [Check it now (affiliated link)](https://coolplugins.net/product/autopoly-ai-translation-for-polylang/?ref=creame&utm_source=cpel_plugin&utm_medium=readme&utm_campaign=get_pro&utm_content=bottom_link)
+
 
 ### How to use
 You can manage translated templates in two ways:
@@ -134,8 +139,8 @@ Please, send your suggestions and feedback - Thank you for using or trying out t
 
 1. Setup Polylang at first, add at least TWO languages, one of them make your default language (in Polylang)
 2. Add content to your default Polylang language - if Polylang asks you to apply existing content to it, you should most likely click "ok" and proceed - it works really fine :)
-3. After that setup an Elementor Theme Builder template - asign it to your Polylang default language, apply conditions in Elementor
-4. Next, setup a translation template for the template of 3.) -- asign your second Polylang language, DO NOT apply conditions in Elementor
+3. After that setup an Elementor Theme Builder template - assign it to your Polylang default language, apply conditions in Elementor
+4. Next, setup a translation template for the template of 3.) -- assign your second Polylang language, DO NOT apply conditions in Elementor
 
 
 = Where is the Elementor Widget to be found? =
@@ -185,20 +190,55 @@ There are quite a few:
 * [**Polylang Slug**](https://github.com/grappler/polylang-slug) - Allows same slug for multiple languages in Polylang
 * [**Lingotek Translation**](https://wordpress.org/plugins/lingotek-translation/) - Native Polylang integration - Lingotek brings convenient cloud-based localization and translation for WordPress
 * [**Elementor Datepicker Localization**](https://github.com/creame/elementor-datepicker-localization) - Allow form datetime fields in your site language
-* [**Country Flags for Elementor**](https://wordpress.org/plugins/country-flags-for-elementor/) - Native Elementor widget
 
 
+= How can I translate Polylang pages automatically? =
+Use [AutoPoly ](https://coolplugins.net/product/autopoly-ai-translation-for-polylang/?ref=creame&utm_source=cpel_plugin&utm_medium=readme&utm_campaign=get_pro&utm_content=bottom_link) to auto-translate your Elementor and Gutenberg pages with AI in one click. [Check it now (affiliated link)](https://coolplugins.net/product/autopoly-ai-translation-for-polylang/?ref=creame&utm_source=cpel_plugin&utm_medium=readme&utm_campaign=get_pro&utm_content=bottom_link)
+
+= Where do I report security bugs found in this plugin? =
+Please report security bugs found in the source code of the undefined plugin through the [Patchstack Vulnerability Disclosure  Program](https://patchstack.com/database/vdp/ad44f834-19c4-470b-860f-d19657e7902a). The Patchstack team will assist you with verification, CVE assignment, and notify the developers of this plugin.
 
 == Screenshots ==
-
-1. Language Switcher examples
-2. Widget Visibility Conditions
-3. Dynamic Tag example
-4. Elementor Editor translations integration
-
-
+1. Add the language switcher in Elementor and customize its appearance.
+2. Create and link translated pages directly inside Elementor.
+3. Preview how the Polylang–Elementor language switcher looks on the frontend.
 
 == Changelog ==
+
+= 2.5.5 =
+* Tweaks: Enhanced editor language switcher control
+* Tweaks: Remove load_plugin_textdomain
+* Compatibility: Tested with Elementor 3.34.0
+
+= 2.5.4 =
+* Added: Registered with Patchstack Vulnerability Disclosure Program
+* Added: New screenshots
+* Tweaks: Added affiliated links.
+* Tweaks: Minor text improvements.
+* Compatibility: Tested with WordPress 6.9, Elementor v3.33.2 and Polylang v3.7.5.
+* Tweaks: Updated readme video and made small textual adjustments.
+* Removed: Old screenshots and outdated links
+
+= 2.5.3 =
+* Fix language visibility don't work with cache.
+
+= 2.5.2 =
+* Fix SVG flags use base64 encode.
+
+= 2.5.1 =
+* Fix New Search widget (Elem. >= 3.24) use correct search url (thanks to [@giovanni-caprilli](https://github.com/giovanni-caprilli))
+
+= 2.5.0 =
+* **NEW editor language switcher controls** for Elementor Editor Top Bar 3.25.0 and later (not v4).
+Now can switch between pages & templates translations from "Page Settings" and in settings panel, on "Languages" section.
+This utilizes Elementor 3.25.0's updated approach to managing Page Settings Panel Controls.
+(thanks to [@narinder9](https://github.com/narinder9) for the [main work](https://github.com/creame/connect-polylang-elementor/pull/21)).
+* Fix Language Switcher controls in page settings not working in Elementor 3.25.0 and greater.
+* Bump tested versions WordPress 6.8 & Elementor 3.30.2
+
+= 2.4.7 =
+* Quick fix for fatal error with Polylang >=3.7 [Issue](https://wordpress.org/support/topic/critical-error-on-this-website-due-to-plugin-conflict/) (thanks to [@narinder9](https://github.com/narinder9)
+ for the [fix](https://github.com/creame/connect-polylang-elementor/commit/1d0d20a60ee8ac8c9486f5fcc03e28134769033c)).
 
 = 2.4.6 =
 * Bump tested versions WordPress 6.7 & Elementor 3.27.
@@ -282,7 +322,7 @@ There are quite a few:
 * Minor tweaks on Language Switcher dropdown styles.
 
 = 2.0.3 =
-* Updated language switcher dropdown animated & toogle on mobile.
+* Updated language switcher dropdown animated & toggle on mobile.
 * Added Elementor icon in posts list status.
 * Fixed language switcher underline style.
 * Fixed SVG flags if encoded is disabled.
@@ -301,9 +341,9 @@ Fixed critical error loading plugin classes when there are uppercase letters in 
 * New language visibility conditions for widgets, sections and columns.
 * New dynamic tags for language name, language code, language flag (icon or svg scalable) and language url.
 * Better Polylang/Elementor integration:
-  * Automatically generate display conditios on new template translation.
+  * Automatically generate display conditions on new template translation.
   * Automatically generate CSS file on new template translation.
-  * Update display conditios un change template language.
+  * Update display conditions un change template language.
   * Fix home and search links to point to the current language.
   * Hide langue on wp-admin for global widgets.
 
@@ -331,7 +371,7 @@ Fixed critical error loading plugin classes when there are uppercase letters in 
 
 = 1.0.1 - 2020-06-17 =
 * Stability update for edge cases were experiencing fatal errors
-* Thanks to sebastienserre for correct fatal unknow pll_the_languages();
+* Thanks to @sebastienserre for correct fatal unknow pll_the_languages();
 
 = 1.0.0 - 2018-11-28 =
 * Official public release on WordPress.org
@@ -356,7 +396,7 @@ Fixed critical error loading plugin classes when there are uppercase letters in 
 = 0.7.0 - 2018-11-24 =
 * *Second alpha version*
 * New: Added Elementor Finder integration for Polylang plugin links and resources
-* New: Make plugin translateable - added German translations
+* New: Make plugin translatable - added German translations
 * New: Added Readme file, plus `composer.json`
 * New: First public alpha release on GitHub
 
@@ -366,11 +406,10 @@ Fixed critical error loading plugin classes when there are uppercase letters in 
 * New: Template tweaks work in form of plugin code - coding standards improvements
 
 
-
 == Upgrade Notice ==
 
 = 2.0.4 =
-**Warning** breaking changes with v1. Language Switcher and Dynamic Tags has been renamed and neeed to re-added again in your templates.
+**Warning** breaking changes with v1. Language Switcher and Dynamic Tags has been renamed and need to re-added again in your templates.
 
 = 1.0.2 =
 Fix Elementor template display conditions reset and other minor fixes.

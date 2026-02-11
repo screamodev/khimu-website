@@ -107,7 +107,7 @@ class PolylangCategory extends Base_Category {
 				'actions'     => array(
 					array(
 						'name' => 'settings',
-						'url'  => esc_url_raw( admin_url( 'admin.php?page=mlang&pll_action=edit&lang=' . $lang_data->term_id ) ),
+						'url'  => esc_url_raw( admin_url( 'admin.php?page=mlang&pll_action=edit&lang=' . absint( $lang_data->term_id ) ) ),
 						'icon' => 'settings',
 					),
 				),

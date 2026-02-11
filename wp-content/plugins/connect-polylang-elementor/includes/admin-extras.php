@@ -72,13 +72,8 @@ class AdminExtras {
 			array_unshift( $cpel_links, $link_polylang, $link_elementor );
 		}
 
-		/** Display plugin settings links */
-		return apply_filters(
-			'cpel/filter/plugins_page/settings_links',
-			$cpel_links,
-			$link_polylang, // additional param.
-			$link_elementor // additional param.
-		);
+		// Output the links.
+		return apply_filters( 'cpel/filter/plugins_page/settings_links', $cpel_links );
 
 	}
 
@@ -95,8 +90,13 @@ class AdminExtras {
 
 		if ( CPEL_BASENAME === $cpel_file ) {
 
-			$cpel_links[] = '<a href="https://paypal.me/pacotole" title="Support this plugin\'s development">Donate</a>';
-			$cpel_links[] = '<a href="mailto:wespeakcomputer@gmail.com" title="Request personal one on one training on using Polylang + Elementor">Personal one-on-one training</a>';
+			$cpel_links[] = sprintf(
+				'<a href="%1$s" title="%2$s" target="_blank" rel="noopener noreferrer">%3$s <small><b>(%4$s)</b></small></a>',
+				esc_url( 'https://coolplugins.net/product/autopoly-ai-translation-for-polylang/?ref=creame&utm_source=cpel_plugin&utm_medium=inside&utm_campaign=get_pro&utm_content=plugins_list' ),
+				esc_html__( 'AI Translation For Polylang', 'connect-polylang-elementor' ),
+				esc_html__( 'AI Translation', 'connect-polylang-elementor' ),
+				esc_html__( 'Affiliated', 'connect-polylang-elementor' ),
+			);
 
 		}
 

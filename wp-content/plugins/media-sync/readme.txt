@@ -3,9 +3,9 @@ Contributors: erolsk8, simonkane
 Donate link: https://mediasyncplugin.com/?utm_source=readme&utm_medium=base_plugin&utm_campaign=donate_link
 Tags: media, uploads, import, ftp, server
 Requires at least: 5.3
-Tested up to: 6.8
+Tested up to: 6.9
 Requires PHP: 7.1
-Stable tag: 1.4.8
+Stable tag: 1.4.9
 License: GPLv2+
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -77,6 +77,11 @@ Please first try to turn on debugging in Settings -> Media Sync and check [Netwo
 
 
 == Changelog ==
+
+= 1.4.9 =
+* Fix regex to avoid PHP warnings.
+* Better error handling for expected memory or timeout issues when scanning for more files than your server is able to handle.
+* Tested for WordPress 6.9.
 
 = 1.4.8 =
 * Tested for WordPress 6.8

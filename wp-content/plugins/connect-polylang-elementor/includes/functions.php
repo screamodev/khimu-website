@@ -17,6 +17,20 @@ function cpel_is_elementor_active() {
 }
 
 /**
+ * Check Elementor version
+ *
+ * @since 2.0.0
+ *
+ * @param string $ver version to compare.
+ * @return bool
+ */
+function cpel_elementor_min_version( $ver ) {
+
+	return cpel_is_elementor_active() && version_compare( ELEMENTOR_VERSION, $ver, '>=' );
+
+}
+
+/**
  * Is Elementor Pro plugin active or not?
  *
  * @since  1.0.0
@@ -92,7 +106,10 @@ function cpel_is_polylang_multidomain() {
  */
 function cpel_is_elementor_editor() {
 
-	return is_admin() && isset( $_GET['action'], $_GET['post'] ) && 'elementor' === $_GET['action'];
+	return is_admin()
+		&& isset( $_GET['action'], $_GET['post'] )
+		&& 'elementor' === sanitize_key( wp_unslash( $_GET['action'] ) )
+		&& absint( $_GET['post'] ) > 0;
 
 }
 

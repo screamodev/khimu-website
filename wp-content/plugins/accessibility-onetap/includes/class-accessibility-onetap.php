@@ -83,6 +83,7 @@ class Accessibility_Onetap {
 		$this->load_dependencies();
 		$this->set_locale();
 		$this->define_admin_hooks();
+		$this->define_alt_text_admin_hooks();
 		$this->define_settings_options();
 		$this->define_public_hooks();
 	}
@@ -113,6 +114,11 @@ class Accessibility_Onetap {
 		require_once plugin_dir_path( __DIR__ ) . 'includes/class-accessibility-onetap-loader.php';
 
 		/**
+		 * Load the helper functions for template handling (e.g., accessibility_onetap_load_template()).
+		 */
+		require_once plugin_dir_path( __DIR__ ) . 'includes/helpers-template.php';
+
+		/**
 		 * The class responsible for defining internationalization functionality
 		 * of the plugin.
 		 */
@@ -139,6 +145,11 @@ class Accessibility_Onetap {
 		require_once plugin_dir_path( __DIR__ ) . 'admin/class-accessibility-onetap-admin.php';
 
 		/**
+		 * The class responsible for defining all actions that occur in the admin area alt text.
+		 */
+		require_once plugin_dir_path( __DIR__ ) . 'admin/class-onetap-free-alt-text.php';
+
+		/**
 		 * The class responsible for defining all actions that occur in the public-facing
 		 * side of the site.
 		 */
@@ -150,17 +161,17 @@ class Accessibility_Onetap {
 	/**
 	 * Define the locale for this plugin for internationalization.
 	 *
-	 * Uses the Accessibility_Onetap_I18n class in order to set the domain and to register the hook
-	 * with WordPress.
+	 * Note: As of WordPress 4.6, translations are automatically loaded
+	 * when the Text Domain header is set in the main plugin file.
+	 * No manual hook registration is needed.
 	 *
 	 * @since    1.0.0
 	 * @access   private
 	 */
 	private function set_locale() {
-
-		$plugin_i18n = new Accessibility_Onetap_I18n();
-
-		$this->loader->add_action( 'plugins_loaded', $plugin_i18n, 'load_plugin_textdomain' );
+		// Translations are automatically loaded by WordPress 4.6+
+		// when Text Domain is set in the plugin header.
+		// No action needed.
 	}
 
 	/**
@@ -178,13 +189,31 @@ class Accessibility_Onetap {
 
 			$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_styles' );
 			$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts' );
-			$this->loader->add_action( 'admin_notices', $plugin_admin, 'display_admin_notice' );
 			$this->loader->add_action( 'allowed_redirect_hosts', $plugin_admin, 'onetap_allow_external_redirect_host' );
 			$this->loader->add_action( 'admin_init', $plugin_admin, 'onetap_redirect_admin_page_to_pricing', 999999 );
 			$this->loader->add_action( 'wp_ajax_onetap_action_dismiss_notice', $plugin_admin, 'dismiss_notice_ajax_callback' );
 			$this->loader->add_filter( 'plugin_row_meta', $plugin_admin, 'add_row_meta', 10, 2 );
+			$this->loader->add_action( 'admin_init', $plugin_admin, 'register_settings_for_accessibility_status' );
 
 		}
+	}
+
+	/**
+	 * Register all hooks related to alt text management functionality in the admin area.
+	 *
+	 * Sets up AJAX handlers for managing image alt text, including saving and updating
+	 * alt text for images to improve accessibility compliance.
+	 *
+	 * @since    1.0.0
+	 * @access   private
+	 */
+	private function define_alt_text_admin_hooks() {
+
+		// Initialize the alt text management class with plugin details.
+		$plugin_admin = new Onetap_Free_Alt_Text( $this->get_plugin_name(), $this->get_version() );
+
+		// Register AJAX action for saving alt text.
+		$this->loader->add_action( 'wp_ajax_onetap_save_alt_text', $plugin_admin, 'handle_ajax_save_alt_text' );
 	}
 
 	/**
@@ -224,7 +253,12 @@ class Accessibility_Onetap {
 			$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_scripts' );
 			$this->loader->add_action( 'wp_footer', $plugin_public, 'render_accessibility_template' );
 			$this->loader->add_filter( 'body_class', $plugin_public, 'add_custom_body_class' );
+			$this->loader->add_action( 'init', $plugin_public, 'register_shortcodes' );
 
+			// Exclude CSS and JS from WP Rocket optimization.
+			$this->loader->add_filter( 'rocket_exclude_css', $plugin_public, 'exclude_css_from_wp_rocket' );
+			$this->loader->add_filter( 'rocket_exclude_js', $plugin_public, 'exclude_js_from_wp_rocket' );
+			$this->loader->add_filter( 'rocket_exclude_defer_js', $plugin_public, 'exclude_js_from_wp_rocket_defer' );
 		}
 	}
 

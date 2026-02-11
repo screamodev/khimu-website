@@ -197,7 +197,7 @@ abstract class PLL_Admin_Base extends PLL_Base {
 		$block_screens = array( 'widgets', 'site-editor' );
 
 		if ( ! empty( $screen->post_type ) && $this->model->is_translated_post_type( $screen->post_type ) ) {
-			$scripts['post'] = array( array( 'edit', 'upload' ), array( 'jquery', 'wp-ajax-response' ), false, true );
+			$scripts['post'] = array( array( 'edit' ), array( 'jquery', 'wp-ajax-response' ), false, true );
 
 			// Classic editor.
 			if ( ! method_exists( $screen, 'is_block_editor' ) || ! $screen->is_block_editor() ) {
@@ -206,6 +206,10 @@ abstract class PLL_Admin_Base extends PLL_Base {
 
 			// Block editor with legacy metabox in WP 5.0+.
 			$block_screens[] = 'post';
+		}
+
+		if ( $this->options['media_support'] ) {
+			$scripts['media'] = array( array( 'upload' ), array( 'jquery' ), false, true );
 		}
 
 		if ( $this->is_block_editor( $screen ) ) {
@@ -304,15 +308,15 @@ abstract class PLL_Admin_Base extends PLL_Base {
 	 * @return array
 	 */
 	public function get_ajax_filter_data(): array {
-		global $post_ID, $tag_ID;
+		global $post, $tag;
 
 		$params = array( 'pll_ajax_backend' => 1 );
-		if ( ! empty( $post_ID ) ) {
-			$params = array_merge( $params, array( 'pll_post_id' => (int) $post_ID ) );
+		if ( $post instanceof WP_Post && $this->model->post_types->is_translated( $post->post_type ) ) {
+			$params['pll_post_id'] = $post->ID;
 		}
 
-		if ( ! empty( $tag_ID ) ) {
-			$params = array_merge( $params, array( 'pll_term_id' => (int) $tag_ID ) );
+		if ( $tag instanceof WP_Term && $this->model->taxonomies->is_translated( $tag->taxonomy ) ) {
+			$params['pll_term_id'] = $tag->term_id;
 		}
 
 		/**

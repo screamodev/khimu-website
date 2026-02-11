@@ -10,7 +10,7 @@
  * Plugin Name:       Connect Polylang for Elementor
  * Plugin URI:        https://github.com/creame/connect-polylang-elementor
  * Description:       Connect Polylang with Elementor. Display templates in the correct language, language switcher widget, language visibility conditions and dynamic tags.
- * Version:           2.4.6
+ * Version:           2.5.5
  * Author:            Creame
  * Author URI:        https://crea.me/
  * License:           GPL-2.0-or-later
@@ -19,8 +19,9 @@
  * Domain Path:       /languages/
  * Requires WP:       5.4
  * Requires PHP:      5.6
- * Elementor tested up to: 3.27.6
- * Elementor Pro tested up to: 3.27.4
+ * Requires Plugins:  polylang, elementor
+ * Elementor tested up to: 3.34.0
+ * Elementor Pro tested up to: 3.34.0
  *
  * Copyright (c) 2021 Paco Toledo - CREAME
  * Copyright (c) 2018-2021 David Decker - DECKERWEB
@@ -36,7 +37,7 @@ defined( 'ABSPATH' ) || exit;
  *
  * @since 2.0.0
  */
-define( 'CPEL_PLUGIN_VERSION', '2.4.6' );
+define( 'CPEL_PLUGIN_VERSION', '2.5.5' );
 define( 'CPEL_FILE', __FILE__ );
 define( 'CPEL_DIR', plugin_dir_path( CPEL_FILE ) );
 define( 'CPEL_BASENAME', plugin_basename( CPEL_FILE ) );
@@ -76,7 +77,6 @@ spl_autoload_register(
 
 // Initialize plugin.
 add_action( 'plugins_loaded', 'ConnectPolylangElementor\\setup', 20 );
-add_action( 'init', 'ConnectPolylangElementor\\load_textdomain' );
 
 // Fixes CROSS Domain issues (add before Elementor & Polylang start).
 add_filter( 'plugins_url', 'ConnectPolylangElementor\\fix_cross_domain_assets' );
@@ -113,19 +113,6 @@ function setup() {
 }
 
 /**
- * Load textdomain.
- *
- * @since 2.0.0
- *
- * @return void
- */
-function load_textdomain() {
-
-	load_plugin_textdomain( 'connect-polylang-elementor', false, dirname( CPEL_BASENAME ) . '/languages' );
-
-}
-
-/**
  * Fixes cross origin domain issues with Elementor and Polylang
  *
  * Must be run before loading Elementor.
@@ -152,12 +139,13 @@ function fix_cross_domain_assets( $url ) {
 	// Is a multidomain configuration.
 	if ( isset( $pll_options['force_lang'] ) && 3 === $pll_options['force_lang'] && ! empty( $pll_options['domains'] ) ) {
 
-		$srv_host = wp_parse_url( "//{$_SERVER['HTTP_HOST']}", PHP_URL_HOST );
+		$srv_host = wp_parse_url( '//' . sanitize_text_field( wp_unslash( $_SERVER['HTTP_HOST'] ) ), PHP_URL_HOST );
 		$url_host = wp_parse_url( $url, PHP_URL_HOST );
 
 		if ( $url_host ) {
 			foreach ( $pll_options['domains'] as $domain ) {
-				if ( false !== strpos( $domain, $srv_host ) ) {
+				$domain_host = wp_parse_url( $domain, PHP_URL_HOST );
+				if ( $domain_host === $srv_host ) {
 					$url = str_replace( $url_host, $srv_host, $url );
 					break;
 				}
@@ -180,7 +168,7 @@ function fix_cross_domain_assets( $url ) {
  */
 function fix_elementor_editor_context( $class ) {
 
-	return 'PLL_Frontend' === $class && is_admin() && isset( $_GET['action'] ) && 'elementor' === $_GET['action'] ? 'PLL_Admin' : $class;
+	return 'PLL_Frontend' === $class && is_admin() && isset( $_GET['action'] ) && 'elementor' === sanitize_key( wp_unslash( $_GET['action'] ) ) ? 'PLL_Admin' : $class;
 
 }
 

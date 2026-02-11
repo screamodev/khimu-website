@@ -122,20 +122,6 @@
     padding: 11px 0;
 }
 
-/* Raw debug results */
-.main-media-sync-page .media-sync-html-response-holder {
-    border: 1px dotted #ccd0d4;
-    font-family: monospace;
-    padding: 8px 12px;
-    margin: 1em 0;
-}
-.main-media-sync-page .media-sync-html-response-title {
-    margin: 0.5em 0;
-}
-.main-media-sync-page .media-sync-html-response-item-error {
-    color: #dc3545;
-}
-
 /* Table Holder */
 .main-media-sync-page .media-sync-table-holder {
     position: relative;
@@ -315,16 +301,6 @@
 
 .main-media-sync-page .widefat tbody th.check-column {
     padding-top: 9px;
-}
-
-
-.media-sync-debugging-stats {
-    border: 1px dotted #ccd0d4;
-    padding: 8px 12px;
-    margin: 15px 0;
-}
-.media-sync-debugging-stats .media-sync-debugging-title {
-    margin-bottom: 6px;
 }
 
 

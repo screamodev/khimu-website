@@ -53,6 +53,81 @@ class Accessibility_Onetap_Public {
 	}
 
 	/**
+	 * Get setting value with fallback to default config.
+	 *
+	 * @param array  $settings The settings array from database.
+	 * @param string $key The setting key to retrieve.
+	 * @param string $sanitize_function The sanitization function to apply (optional).
+	 * @return mixed The setting value or default config value.
+	 */
+	private function get_setting_with_fallback( $settings, $key, $sanitize_function = null ) {
+		$value = isset( $settings[ $key ] ) ? $settings[ $key ] : Accessibility_Onetap_Config::get_setting( $key );
+
+		if ( $sanitize_function && function_exists( $sanitize_function ) ) {
+			return $sanitize_function( $value );
+		}
+
+		return $value;
+	}
+
+	/**
+	 * Helper method to get module settings efficiently.
+	 *
+	 * This method retrieves all module settings from the database and returns them
+	 * as an associative array to avoid code repetition across multiple methods.
+	 *
+	 * @since    1.0.0
+	 * @return   array    Array of module settings with standardized keys.
+	 */
+	private function get_module_settings() {
+		// Get the 'modules' option from the database.
+		$onetap_modules = get_option( 'onetap_modules' );
+
+		// Define module mapping for consistent key naming.
+		$module_mapping = array(
+			'accessibility-profiles' => 'accessibility_profiles',
+			'bigger-text'            => 'bigger_text',
+			'highlight-links'        => 'highlight_links',
+			'line-height'            => 'line_height',
+			'readable-font'          => 'readable_font',
+			'cursor'                 => 'cursor',
+			'text-magnifier'         => 'text_magnifier',
+			'dyslexic-font'          => 'dyslexic_font',
+			'text-align'             => 'text_align',
+			'align-left'             => 'align_left',
+			'align-center'           => 'align_center',
+			'align-right'            => 'align_right',
+			'letter-spacing'         => 'letter_spacing',
+			'font-weight'            => 'font_weight',
+			'dark-contrast'          => 'dark_contrast',
+			'light-contrast'         => 'light_contrast',
+			'high-contrast'          => 'high_contrast',
+			'monochrome'             => 'monochrome',
+			'saturation'             => 'saturation',
+			'reading-line'           => 'reading_line',
+			'reading-mask'           => 'reading_mask',
+			'read-page'              => 'read_page',
+			'keyboard-navigation'    => 'keyboard_navigation',
+			'hide-images'            => 'hide_images',
+			'mute-sounds'            => 'mute_sounds',
+			'highlight-titles'       => 'highlight_titles',
+			'highlight-all'          => 'highlight_all',
+			'stop-animations'        => 'stop_animations',
+		);
+
+		$module_settings = array();
+
+		// Loop through module mapping to get settings.
+		foreach ( $module_mapping as $db_key => $config_key ) {
+			$module_settings[ $config_key ] = isset( $onetap_modules[ $db_key ] )
+				? esc_html( $onetap_modules[ $db_key ] )
+				: Accessibility_Onetap_Config::get_module( $config_key );
+		}
+
+		return $module_settings;
+	}
+
+	/**
 	 * Register the stylesheets for the public-facing side of the site.
 	 *
 	 * @since    1.0.0
@@ -61,64 +136,110 @@ class Accessibility_Onetap_Public {
 		// Enqueue the main plugin stylesheet for the front-end.
 		wp_enqueue_style( $this->plugin_name, plugins_url( $this->plugin_name ) . '/assets/css/accessibility-onetap-front-end.min.css', array(), $this->version, 'all' );
 
-		// Enqueue the Elementor icons stylesheet.
-		wp_enqueue_style( $this->plugin_name . '-eicons', plugins_url( $this->plugin_name ) . '/assets/fonts/eicons/css/elementor-icons.min.css', array(), $this->version, 'all' );
-
 		// Get the plugin settings, specifically the color option.
-		$settings = get_option( 'onetap_settings' );
+		$onetap_settings = get_option( 'onetap_settings' );
 
 		// Use the user-defined color setting, or fall back to the default if not set.
-		$setting_color                      = isset( $settings['color'] ) ? esc_html( $settings['color'] ) : Accessibility_Onetap_Config::get_setting( 'color' );
-		$setting_position_top_bottom        = isset( $settings['position-top-bottom'] ) ? absint( $settings['position-top-bottom'] ) : Accessibility_Onetap_Config::get_setting( 'position_top_bottom' );
-		$setting_position_left_right        = isset( $settings['position-left-right'] ) ? absint( $settings['position-left-right'] ) : Accessibility_Onetap_Config::get_setting( 'position_left_right' );
-		$setting_widget_position            = isset( $settings['widge-position'] ) ? esc_html( $settings['widge-position'] ) : Accessibility_Onetap_Config::get_setting( 'widget_position' );
-		$setting_position_top_bottom_tablet = isset( $settings['position-top-bottom-tablet'] ) ? absint( $settings['position-top-bottom-tablet'] ) : Accessibility_Onetap_Config::get_setting( 'position_top_bottom_tablet' );
-		$setting_position_left_right_tablet = isset( $settings['position-left-right-tablet'] ) ? absint( $settings['position-left-right-tablet'] ) : Accessibility_Onetap_Config::get_setting( 'position_left_right_tablet' );
-		$setting_widget_position_tablet     = isset( $settings['widge-position-tablet'] ) ? esc_html( $settings['widge-position-tablet'] ) : Accessibility_Onetap_Config::get_setting( 'widget_position_tablet' );
-		$setting_position_top_bottom_mobile = isset( $settings['position-top-bottom-mobile'] ) ? absint( $settings['position-top-bottom-mobile'] ) : Accessibility_Onetap_Config::get_setting( 'position_top_bottom_mobile' );
-		$setting_position_left_right_mobile = isset( $settings['position-left-right-mobile'] ) ? absint( $settings['position-left-right-mobile'] ) : Accessibility_Onetap_Config::get_setting( 'position_left_right_mobile' );
-		$setting_widget_position_mobile     = isset( $settings['widge-position-mobile'] ) ? esc_html( $settings['widge-position-mobile'] ) : Accessibility_Onetap_Config::get_setting( 'widget_position_mobile' );
-		$setting_hide_powered_by_onetap     = isset( $settings['hide-powered-by-onetap'] ) ? esc_html( $settings['hide-powered-by-onetap'] ) : Accessibility_Onetap_Config::get_setting( 'hide_powered_by_onetap' );
+		$onetap_setting_color                          = $this->get_setting_with_fallback( $onetap_settings, 'color', 'esc_html' );
+		$onetap_setting_position_top_bottom            = $this->get_setting_with_fallback( $onetap_settings, 'position-top-bottom', 'absint' );
+		$onetap_setting_position_left_right            = $this->get_setting_with_fallback( $onetap_settings, 'position-left-right', 'absint' );
+		$onetap_setting_widget_position                = $this->get_setting_with_fallback( $onetap_settings, 'widge-position', 'esc_html' );
+		$onetap_setting_position_top_bottom_tablet     = $this->get_setting_with_fallback( $onetap_settings, 'position-top-bottom-tablet', 'absint' );
+		$onetap_setting_position_left_right_tablet     = $this->get_setting_with_fallback( $onetap_settings, 'position-left-right-tablet', 'absint' );
+		$onetap_setting_widget_position_tablet         = $this->get_setting_with_fallback( $onetap_settings, 'widge-position-tablet', 'esc_html' );
+		$onetap_setting_position_top_bottom_mobile     = $this->get_setting_with_fallback( $onetap_settings, 'position-top-bottom-mobile', 'absint' );
+		$onetap_setting_position_left_right_mobile     = $this->get_setting_with_fallback( $onetap_settings, 'position-left-right-mobile', 'absint' );
+		$onetap_setting_widget_position_mobile         = $this->get_setting_with_fallback( $onetap_settings, 'widge-position-mobile', 'esc_html' );
+		$onetap_setting_toggle_device_position_desktop = $this->get_setting_with_fallback( $onetap_settings, 'toggle-device-position-desktop', 'esc_html' );
+		$onetap_setting_toggle_device_position_tablet  = $this->get_setting_with_fallback( $onetap_settings, 'toggle-device-position-tablet', 'esc_html' );
+		$onetap_setting_toggle_device_position_mobile  = $this->get_setting_with_fallback( $onetap_settings, 'toggle-device-position-mobile', 'esc_html' );
+		$onetap_setting_hide_powered_by_onetap         = $this->get_setting_with_fallback( $onetap_settings, 'hide-powered-by-onetap', 'esc_html' );
+
+		// Get general settings for compatibility check (new plugin version).
+		$onetap_general_settings                 = get_option( 'onetap_general_settings' );
+		$general_settings_hide_powered_by_onetap = isset( $onetap_general_settings['hide_powered_by_onetap'] ) ? $onetap_general_settings['hide_powered_by_onetap'] : 'off';
+
+		// Compatibility check: try new plugin setting first, then fallback to legacy plugin setting.
+		$onetap_setting_hide_powered_by_onetap = ( 'on' === $general_settings_hide_powered_by_onetap || 'on' === $onetap_setting_hide_powered_by_onetap ) ? 'on' : 'off';
+
+		// Get module settings using helper method.
+		$module_settings = $this->get_module_settings();
 
 		// Define custom CSS to apply the color setting to specific elements.
 		$style = "
 		.onetap-container-toggle .onetap-toggle svg,
-		nav.onetap-accessibility.onetap-plugin-onetap .onetap-container .onetap-accessibility-settings header.onetap-header-top .onetap-site-container .onetap-site-info .onetap-image svg,
-		nav.onetap-accessibility.onetap-plugin-onetap .onetap-container .onetap-accessibility-settings .onetap-features-container .onetap-features .onetap-box-feature.onetap-active .onetap-icon .onetap-icon-animation svg,
-		nav.onetap-accessibility.onetap-plugin-onetap .onetap-container .onetap-accessibility-settings .onetap-features-container .onetap-features .onetap-box-feature.onetap-lv1 .onetap-icon .onetap-icon-animation svg, nav.onetap-accessibility.onetap-plugin-onetap .onetap-container .onetap-accessibility-settings .onetap-features-container .onetap-features .onetap-box-feature.onetap-lv2 .onetap-icon .onetap-icon-animation svg, nav.onetap-accessibility.onetap-plugin-onetap .onetap-container .onetap-accessibility-settings .onetap-features-container .onetap-features .onetap-box-feature.onetap-lv3 .onetap-icon .onetap-icon-animation svg {
-			fill: {$setting_color} !important;
-		}
-		nav.onetap-accessibility.onetap-plugin-onetap .onetap-container .onetap-accessibility-settings header.onetap-header-top::before,
-		nav.onetap-accessibility.onetap-plugin-onetap .onetap-container .onetap-accessibility-settings .onetap-reset-settings span,
-		nav.onetap-accessibility.onetap-plugin-onetap .onetap-container .onetap-accessibility-settings .onetap-features-container .onetap-features .onetap-box-feature.onetap-lv1 .onetap-title p.onetap-option-levels span.onetap-level.onetap-level1,
-		nav.onetap-accessibility.onetap-plugin-onetap .onetap-container .onetap-accessibility-settings header.onetap-header-top::before, nav.onetap-accessibility.onetap-plugin-onetap .onetap-container .onetap-accessibility-settings .onetap-reset-settings span, nav.onetap-accessibility.onetap-plugin-onetap .onetap-container .onetap-accessibility-settings .onetap-features-container .onetap-features .onetap-box-feature.onetap-lv2 .onetap-title p.onetap-option-levels span.onetap-level.onetap-level1, nav.onetap-accessibility.onetap-plugin-onetap .onetap-container .onetap-accessibility-settings .onetap-features-container .onetap-features .onetap-box-feature.onetap-lv2 .onetap-title p.onetap-option-levels span.onetap-level.onetap-level2,
+		nav.onetap-accessibility.onetap-plugin-onetap .onetap-container .onetap-accessibility-settings header.onetap-header-top .onetap-site-container .onetap-site-info .onetap-image svg {
+			fill: {$onetap_setting_color} !important;
+		}		
+		nav.onetap-accessibility.onetap-plugin-onetap .onetap-container .onetap-accessibility-settings .onetap-features-container .onetap-features .onetap-box-feature.onetap-lv2 .onetap-title p.onetap-option-levels span.onetap-level.onetap-level1, nav.onetap-accessibility.onetap-plugin-onetap .onetap-container .onetap-accessibility-settings .onetap-features-container .onetap-features .onetap-box-feature.onetap-lv2 .onetap-title p.onetap-option-levels span.onetap-level.onetap-level2,
 		nav.onetap-accessibility.onetap-plugin-onetap .onetap-container .onetap-accessibility-settings .onetap-features-container .onetap-features .onetap-box-feature.onetap-lv3 .onetap-title p.onetap-option-levels span.onetap-level.onetap-level1, nav.onetap-accessibility.onetap-plugin-onetap .onetap-container .onetap-accessibility-settings .onetap-features-container .onetap-features .onetap-box-feature.onetap-lv3 .onetap-title p.onetap-option-levels span.onetap-level.onetap-level2, nav.onetap-accessibility.onetap-plugin-onetap .onetap-container .onetap-accessibility-settings .onetap-features-container .onetap-features .onetap-box-feature.onetap-lv3 .onetap-title p.onetap-option-levels span.onetap-level.onetap-level3,
-		.onetap-container-toggle .onetap-toggle img {
-			background: {$setting_color} !important;
+		.onetap-container-toggle .onetap-toggle img,
+		nav.onetap-accessibility.onetap-plugin-onetap .onetap-container .toolbar-hide-duration .box-hide-duration .box-btn-action button.hide-toolbar,
+		nav.onetap-accessibility.onetap-plugin-onetap .onetap-container .onetap-accessibility-settings .onetap-features-container .onetap-features .onetap-box-features .onetap-box-step-controls .onetap-new-level .onetap-btn,
+		nav.onetap-accessibility.onetap-plugin-onetap .onetap-container .onetap-accessibility-settings .onetap-reset-settings button,
+		nav.onetap-accessibility.onetap-plugin-onetap .onetap-container .onetap-accessibility-settings header.onetap-header-top .onetap-site-container,
+		nav.onetap-accessibility.onetap-plugin-onetap .onetap-container .onetap-accessibility-settings div.onetap-multi-functional-feature .onetap-box-functions .onetap-functional-feature.onetap-active .onetap-right .box-swich label.switch input+.slider,
+		nav.onetap-accessibility.onetap-plugin-onetap .onetap-container .onetap-accessibility-settings div.onetap-multi-functional-feature .onetap-box-functions .onetap-functional-feature .onetap-right .box-swich label.switch input:checked+.slider,
+		nav.onetap-accessibility.onetap-plugin-onetap .onetap-container .onetap-accessibility-settings div.onetap-multi-functional-feature .onetap-box-functions .onetap-functional-feature.onetap-active div.onetap-right div.box-swich label.switch span.slider.round:hover,
+		nav.onetap-accessibility.onetap-plugin-onetap .onetap-container .onetap-accessibility-settings .onetap-features-container .onetap-features .onetap-box-features .onetap-box-step-controls .onetap-new-level .onetap-title .box-btn .onetap-btn,
+		nav.onetap-accessibility.onetap-plugin-onetap .onetap-container .onetap-accessibility-settings div.onetap-multi-functional-feature .onetap-box-functions .onetap-functional-feature.onetap-active .onetap-left svg,
+		nav.onetap-accessibility.onetap-plugin-onetap .onetap-container .onetap-accessibility-settings .onetap-features-container .onetap-features .onetap-box-features .onetap-box-feature.onetap-active .onetap-icon .onetap-icon-animation svg {
+			background: {$onetap_setting_color} !important;
+		}
+		nav.onetap-accessibility.onetap-plugin-onetap .onetap-container .onetap-accessibility-settings .onetap-features-container .onetap-features .onetap-box-features .onetap-box-step-controls .onetap-new-level .onetap-btn,
+		nav.onetap-accessibility.onetap-plugin-onetap .onetap-container .onetap-accessibility-settings .onetap-features-container .onetap-features .onetap-box-features .onetap-box-step-controls .onetap-new-level .onetap-title .box-btn .onetap-btn {
+			color: {$onetap_setting_color} !important;
+		}			
+		nav.onetap-accessibility.onetap-plugin-onetap .onetap-container .toolbar-hide-duration .box-hide-duration form label input[type='radio']:checked {
+			accent-color: {$onetap_setting_color} !important;
+			box-shadow: 0 0 0 1px {$onetap_setting_color} !important;
+			background: {$onetap_setting_color} !important;
 		}
 		.onetap-container-toggle .onetap-toggle img.design-border1 {
-			box-shadow: 0 0 0 4px {$setting_color};
-		}	
-		nav.onetap-accessibility.onetap-plugin-onetap .onetap-container .onetap-accessibility-settings .onetap-features-container .onetap-features .onetap-box-feature:hover {
-			border-color: {$setting_color} !important;
-			box-shadow: 0 0 0 1px {$setting_color} !important;
+			box-shadow: 0 0 0 4px {$onetap_setting_color};
 		}
-		nav.onetap-accessibility.onetap-plugin-onetap .onetap-container .onetap-accessibility-settings .onetap-features-container .onetap-features .onetap-box-feature:hover .onetap-title h3,
-		nav.onetap-accessibility.onetap-plugin-onetap .onetap-container .onetap-accessibility-settings .onetap-features-container .onetap-features .onetap-box-feature.onetap-active .onetap-title h3,
-		nav.onetap-accessibility.onetap-plugin-onetap .onetap-container .onetap-accessibility-settings .onetap-features-container .onetap-features .onetap-box-feature.onetap-lv1 .onetap-title h3, nav.onetap-accessibility.onetap-plugin-onetap .onetap-container .onetap-accessibility-settings .onetap-features-container .onetap-features .onetap-box-feature.onetap-lv2 .onetap-title h3, nav.onetap-accessibility.onetap-plugin-onetap .onetap-container .onetap-accessibility-settings .onetap-features-container .onetap-features .onetap-box-feature.onetap-lv3 .onetap-title h3 {
-			color: {$setting_color} !important;
+
+		nav.onetap-accessibility.onetap-plugin-onetap .onetap-container .toolbar-hide-duration .box-hide-duration form label.active,
+		nav.onetap-accessibility.onetap-plugin-onetap .onetap-container .toolbar-hide-duration .box-hide-duration form label:hover {
+			border: 2px solid {$onetap_setting_color} !important;
+			outline: none !important;
+		}			
+		nav.onetap-accessibility.onetap-plugin-onetap .onetap-container .onetap-accessibility-settings div.onetap-multi-functional-feature .onetap-box-functions .onetap-functional-feature .onetap-right .box-swich label.switch:focus .slider,			
+		nav.onetap-accessibility.onetap-plugin-onetap .onetap-container .onetap-accessibility-settings .onetap-reset-settings button:focus {
+			outline: 2px solid {$onetap_setting_color} !important;
 		}
-		";
+		nav.onetap-accessibility.onetap-plugin-onetap .onetap-container .onetap-accessibility-settings .onetap-features-container .onetap-features .onetap-box-features .onetap-box-feature:hover,
+		nav.onetap-accessibility.onetap-plugin-onetap .onetap-container .onetap-accessibility-settings .onetap-features-container .onetap-features .onetap-box-features .onetap-box-feature:focus-visible,
+		nav.onetap-accessibility.onetap-plugin-onetap .onetap-container .onetap-accessibility-settings .onetap-features-container .onetap-features .onetap-box-features button.onetap-box-feature.onetap-inactive:hover,
+		nav.onetap-accessibility.onetap-plugin-onetap .onetap-container .onetap-accessibility-settings .onetap-features-container .onetap-features .onetap-box-features .onetap-box-feature.onetap-active,
+		nav.onetap-accessibility.onetap-plugin-onetap .onetap-container .onetap-accessibility-settings .onetap-features-container .onetap-features .onetap-box-features .onetap-box-feature.onetap-inactive:focus-visible {
+			border-color: {$onetap_setting_color} !important;
+			box-shadow: 0 0 0 1px {$onetap_setting_color} !important;
+		}
+
+		nav.onetap-accessibility.onetap-plugin-onetap .onetap-container .toolbar-hide-duration .box-hide-duration .box-btn-action button.hide-toolbar {
+			border-color: {$onetap_setting_color} !important;
+		}";
 
 		// Mobile.
-		if ( 'middle-right' === $setting_widget_position_mobile ) {
+		if ( 'on' === $onetap_setting_toggle_device_position_mobile ) {
+			$style .= '
+			@media only screen and (max-width: 576px) {
+				.onetap-container-toggle .onetap-toggle.hide-on-mobile {
+					display: none !important;
+				}
+			}			
+			';
+		}
+
+		if ( 'middle-right' === $onetap_setting_widget_position_mobile ) {
 			$style .= "
 			@media only screen and (max-width: 576px) {
 				.onetap-container-toggle .onetap-toggle {
 					right: 0 !important;
-					margin-right: {$setting_position_left_right_mobile}px !important;
+					margin-right: {$onetap_setting_position_left_right_mobile}px !important;
 					bottom: 50% !important;
-					margin-bottom: {$setting_position_top_bottom_mobile}px !important;
+					margin-bottom: {$onetap_setting_position_top_bottom_mobile}px !important;
 				}
 				nav.onetap-accessibility.onetap-plugin-onetap {
 					right: -580px !important;
@@ -131,14 +252,14 @@ class Accessibility_Onetap_Public {
 				}			
 			}			
 			";
-		} elseif ( 'middle-left' === $setting_widget_position_mobile ) {
+		} elseif ( 'middle-left' === $onetap_setting_widget_position_mobile ) {
 			$style .= "
 			@media only screen and (max-width: 576px) {
 				.onetap-container-toggle .onetap-toggle {
 					left: 0 !important;
-					margin-left: {$setting_position_left_right_mobile}px !important;				
+					margin-left: {$onetap_setting_position_left_right_mobile}px !important;				
 					bottom: 50% !important;
-					margin-bottom: {$setting_position_top_bottom_mobile}px !important;
+					margin-bottom: {$onetap_setting_position_top_bottom_mobile}px !important;
 				}
 				nav.onetap-accessibility.onetap-plugin-onetap {
 					left: -580px !important;
@@ -151,14 +272,14 @@ class Accessibility_Onetap_Public {
 				}
 			}
 			";
-		} elseif ( 'bottom-right' === $setting_widget_position_mobile ) {
+		} elseif ( 'bottom-right' === $onetap_setting_widget_position_mobile ) {
 			$style .= "
 			@media only screen and (max-width: 576px) {
 				.onetap-container-toggle .onetap-toggle {
 					right: 0 !important;
-					margin-right: {$setting_position_left_right_mobile}px !important;					
+					margin-right: {$onetap_setting_position_left_right_mobile}px !important;					
 					bottom: 0 !important;
-					margin-bottom: {$setting_position_top_bottom_mobile}px !important;
+					margin-bottom: {$onetap_setting_position_top_bottom_mobile}px !important;
 				}
 				nav.onetap-accessibility.onetap-plugin-onetap {
 					right: -580px !important;
@@ -171,14 +292,14 @@ class Accessibility_Onetap_Public {
 				}			
 			}			
 			";
-		} elseif ( 'bottom-left' === $setting_widget_position_mobile ) {
+		} elseif ( 'bottom-left' === $onetap_setting_widget_position_mobile ) {
 			$style .= "
 			@media only screen and (max-width: 576px) {
 				.onetap-container-toggle .onetap-toggle {
 					left: 0 !important;
-					margin-left: {$setting_position_left_right_mobile}px !important;					
+					margin-left: {$onetap_setting_position_left_right_mobile}px !important;					
 					bottom: 0 !important;
-					margin-bottom: {$setting_position_top_bottom_mobile}px !important;
+					margin-bottom: {$onetap_setting_position_top_bottom_mobile}px !important;
 				}
 				nav.onetap-accessibility.onetap-plugin-onetap {
 					left: -580px !important;
@@ -191,14 +312,15 @@ class Accessibility_Onetap_Public {
 				}			
 			}			
 			";
-		} elseif ( 'top-right' === $setting_widget_position_mobile ) {
+		} elseif ( 'top-right' === $onetap_setting_widget_position_mobile ) {
 			$style .= "
 			@media only screen and (max-width: 576px) {
 				.onetap-container-toggle .onetap-toggle {
+					bottom: unset !important;
 					top: 0 !important;
-					margin-top: {$setting_position_top_bottom_mobile}px !important;
+					margin-top: {$onetap_setting_position_top_bottom_mobile}px !important;
 					right: 0 !important;
-					margin-right: {$setting_position_left_right_mobile}px !important;				
+					margin-right: {$onetap_setting_position_left_right_mobile}px !important;				
 				}
 				nav.onetap-accessibility.onetap-plugin-onetap {
 					right: -580px !important;
@@ -211,20 +333,41 @@ class Accessibility_Onetap_Public {
 				}			
 			}			
 			";
-		} elseif ( 'top-left' === $setting_widget_position_mobile ) {
+		} elseif ( 'top-left' === $onetap_setting_widget_position_mobile ) {
 			$style .= "
 			@media only screen and (max-width: 576px) {
 				.onetap-container-toggle .onetap-toggle {
+					bottom: unset !important;
 					top: 0 !important;
-					margin-top: {$setting_position_top_bottom_mobile}px !important;
+					margin-top: {$onetap_setting_position_top_bottom_mobile}px !important;
 					left: 0 !important;
-					margin-left: {$setting_position_left_right_mobile}px !important;					
+					margin-left: {$onetap_setting_position_left_right_mobile}px !important;					
 				}
 				nav.onetap-accessibility.onetap-plugin-onetap {
 					left: -580px !important;
 				}
 				nav.onetap-accessibility.onetap-plugin-onetap.onetap-toggle-open {
 					left: 0 !important;
+				}			
+				nav.onetap-accessibility.onetap-plugin-onetap .onetap-container .onetap-accessibility-settings header.onetap-header-top .onetap-close {
+					right: 20px !important;
+				}			
+			}			
+			";
+		} else {
+			$style .= "
+			@media only screen and (max-width: 576px) {
+				.onetap-container-toggle .onetap-toggle {
+					right: 0 !important;
+					margin-right: {$onetap_setting_position_left_right_mobile}px !important;					
+					bottom: 0 !important;
+					margin-bottom: {$onetap_setting_position_top_bottom_mobile}px !important;
+				}
+				nav.onetap-accessibility.onetap-plugin-onetap {
+					right: -580px !important;
+				}
+				nav.onetap-accessibility.onetap-plugin-onetap.onetap-toggle-open {
+					right: 0 !important;
 				}			
 				nav.onetap-accessibility.onetap-plugin-onetap .onetap-container .onetap-accessibility-settings header.onetap-header-top .onetap-close {
 					right: 20px !important;
@@ -234,14 +377,24 @@ class Accessibility_Onetap_Public {
 		}
 
 		// Tablet.
-		if ( 'middle-right' === $setting_widget_position_tablet ) {
+		if ( 'on' === $onetap_setting_toggle_device_position_tablet ) {
+			$style .= '
+			@media only screen and (min-width: 576px) and (max-width: 991.98px) {
+				.onetap-container-toggle .onetap-toggle.hide-on-tablet {
+					display: none !important;
+				}
+			}			
+			';
+		}
+
+		if ( 'middle-right' === $onetap_setting_widget_position_tablet ) {
 			$style .= "
 			@media only screen and (min-width: 576px) and (max-width: 991.98px) {
 				.onetap-container-toggle .onetap-toggle {
 					right: 0 !important;
-					margin-right: {$setting_position_left_right_tablet}px !important;
+					margin-right: {$onetap_setting_position_left_right_tablet}px !important;
 					bottom: 50% !important;
-					margin-bottom: {$setting_position_top_bottom_tablet}px !important;
+					margin-bottom: {$onetap_setting_position_top_bottom_tablet}px !important;
 				}
 				nav.onetap-accessibility.onetap-plugin-onetap {
 					right: -580px !important;
@@ -254,14 +407,14 @@ class Accessibility_Onetap_Public {
 				}			
 			}			
 			";
-		} elseif ( 'middle-left' === $setting_widget_position_tablet ) {
+		} elseif ( 'middle-left' === $onetap_setting_widget_position_tablet ) {
 			$style .= "
 			@media only screen and (min-width: 576px) and (max-width: 991.98px) {
 				.onetap-container-toggle .onetap-toggle {
 					left: 0 !important;
-					margin-left: {$setting_position_left_right_tablet}px !important;				
+					margin-left: {$onetap_setting_position_left_right_tablet}px !important;				
 					bottom: 50% !important;
-					margin-bottom: {$setting_position_top_bottom_tablet}px !important;
+					margin-bottom: {$onetap_setting_position_top_bottom_tablet}px !important;
 				}
 				nav.onetap-accessibility.onetap-plugin-onetap {
 					left: -580px !important;
@@ -274,14 +427,14 @@ class Accessibility_Onetap_Public {
 				}
 			}
 			";
-		} elseif ( 'bottom-right' === $setting_widget_position_tablet ) {
+		} elseif ( 'bottom-right' === $onetap_setting_widget_position_tablet ) {
 			$style .= "
 			@media only screen and (min-width: 576px) and (max-width: 991.98px) {
 				.onetap-container-toggle .onetap-toggle {
 					right: 0 !important;
-					margin-right: {$setting_position_left_right_tablet}px !important;					
+					margin-right: {$onetap_setting_position_left_right_tablet}px !important;					
 					bottom: 0 !important;
-					margin-bottom: {$setting_position_top_bottom_tablet}px !important;
+					margin-bottom: {$onetap_setting_position_top_bottom_tablet}px !important;
 				}
 				nav.onetap-accessibility.onetap-plugin-onetap {
 					right: -580px !important;
@@ -294,14 +447,14 @@ class Accessibility_Onetap_Public {
 				}			
 			}			
 			";
-		} elseif ( 'bottom-left' === $setting_widget_position_tablet ) {
+		} elseif ( 'bottom-left' === $onetap_setting_widget_position_tablet ) {
 			$style .= "
 			@media only screen and (min-width: 576px) and (max-width: 991.98px) {
 				.onetap-container-toggle .onetap-toggle {
 					left: 0 !important;
-					margin-left: {$setting_position_left_right_tablet}px !important;					
+					margin-left: {$onetap_setting_position_left_right_tablet}px !important;					
 					bottom: 0 !important;
-					margin-bottom: {$setting_position_top_bottom_tablet}px !important;
+					margin-bottom: {$onetap_setting_position_top_bottom_tablet}px !important;
 				}
 				nav.onetap-accessibility.onetap-plugin-onetap {
 					left: -580px !important;
@@ -314,14 +467,15 @@ class Accessibility_Onetap_Public {
 				}			
 			}			
 			";
-		} elseif ( 'top-right' === $setting_widget_position_tablet ) {
+		} elseif ( 'top-right' === $onetap_setting_widget_position_tablet ) {
 			$style .= "
 			@media only screen and (min-width: 576px) and (max-width: 991.98px) {
 				.onetap-container-toggle .onetap-toggle {
+					bottom: unset !important;
 					top: 0 !important;
-					margin-top: {$setting_position_top_bottom_tablet}px !important;
+					margin-top: {$onetap_setting_position_top_bottom_tablet}px !important;
 					right: 0 !important;
-					margin-right: {$setting_position_left_right_tablet}px !important;				
+					margin-right: {$onetap_setting_position_left_right_tablet}px !important;				
 				}
 				nav.onetap-accessibility.onetap-plugin-onetap {
 					right: -580px !important;
@@ -334,14 +488,15 @@ class Accessibility_Onetap_Public {
 				}			
 			}			
 			";
-		} elseif ( 'top-left' === $setting_widget_position_tablet ) {
+		} elseif ( 'top-left' === $onetap_setting_widget_position_tablet ) {
 			$style .= "
 			@media only screen and (min-width: 576px) and (max-width: 991.98px) {
 				.onetap-container-toggle .onetap-toggle {
+					bottom: unset !important;
 					top: 0 !important;
-					margin-top: {$setting_position_top_bottom_tablet}px !important;
+					margin-top: {$onetap_setting_position_top_bottom_tablet}px !important;
 					left: 0 !important;
-					margin-left: {$setting_position_left_right_tablet}px !important;					
+					margin-left: {$onetap_setting_position_left_right_tablet}px !important;					
 				}
 				nav.onetap-accessibility.onetap-plugin-onetap {
 					left: -580px !important;
@@ -354,17 +509,47 @@ class Accessibility_Onetap_Public {
 				}			
 			}			
 			";
+		} else {
+			$style .= '
+			@media only screen and (min-width: 576px) and (max-width: 991.98px) {
+				.onetap-container-toggle .onetap-toggle {
+					right: 0 !important;
+					margin-right: 20px !important;					
+					bottom: 0 !important;
+					margin-bottom: 20px !important;
+				}
+				nav.onetap-accessibility.onetap-plugin-onetap {
+					right: -580px !important;
+				}
+				nav.onetap-accessibility.onetap-plugin-onetap.onetap-toggle-open {
+					right: 0 !important;
+				}			
+				nav.onetap-accessibility.onetap-plugin-onetap .onetap-container .onetap-accessibility-settings header.onetap-header-top .onetap-close {
+					right: 20px !important;
+				}			
+			}			
+			';
 		}
 
 		// Desktop.
-		if ( 'middle-right' === $setting_widget_position ) {
+		if ( 'on' === $onetap_setting_toggle_device_position_desktop ) {
+			$style .= '
+			@media only screen and (min-width: 992px) {
+				.onetap-container-toggle .onetap-toggle.hide-on-desktop {
+					display: none !important;
+				}
+			}			
+			';
+		}
+
+		if ( 'middle-right' === $onetap_setting_widget_position ) {
 			$style .= "
 			@media only screen and (min-width: 992px) {
 				.onetap-container-toggle .onetap-toggle {
 					right: 0 !important;
-					margin-right: {$setting_position_left_right}px !important;
+					margin-right: {$onetap_setting_position_left_right}px !important;
 					bottom: 50% !important;
-					margin-bottom: {$setting_position_top_bottom}px !important;
+					margin-bottom: {$onetap_setting_position_top_bottom}px !important;
 				}
 				nav.onetap-accessibility.onetap-plugin-onetap {
 					right: -580px !important;
@@ -377,14 +562,14 @@ class Accessibility_Onetap_Public {
 				}			
 			}			
 			";
-		} elseif ( 'middle-left' === $setting_widget_position ) {
+		} elseif ( 'middle-left' === $onetap_setting_widget_position ) {
 			$style .= "
 			@media only screen and (min-width: 992px) {
 				.onetap-container-toggle .onetap-toggle {
 					left: 0 !important;
-					margin-left: {$setting_position_left_right}px !important;				
+					margin-left: {$onetap_setting_position_left_right}px !important;				
 					bottom: 50% !important;
-					margin-bottom: {$setting_position_top_bottom}px !important;
+					margin-bottom: {$onetap_setting_position_top_bottom}px !important;
 				}
 				nav.onetap-accessibility.onetap-plugin-onetap {
 					left: -580px !important;
@@ -397,14 +582,14 @@ class Accessibility_Onetap_Public {
 				}
 			}
 			";
-		} elseif ( 'bottom-right' === $setting_widget_position ) {
+		} elseif ( 'bottom-right' === $onetap_setting_widget_position ) {
 			$style .= "
 			@media only screen and (min-width: 992px) {
 				.onetap-container-toggle .onetap-toggle {
 					right: 0 !important;
-					margin-right: {$setting_position_left_right}px !important;					
+					margin-right: {$onetap_setting_position_left_right}px !important;	
 					bottom: 0 !important;
-					margin-bottom: {$setting_position_top_bottom}px !important;
+					margin-bottom: {$onetap_setting_position_top_bottom}px !important;
 				}
 				nav.onetap-accessibility.onetap-plugin-onetap {
 					right: -580px !important;
@@ -417,14 +602,14 @@ class Accessibility_Onetap_Public {
 				}			
 			}			
 			";
-		} elseif ( 'bottom-left' === $setting_widget_position ) {
+		} elseif ( 'bottom-left' === $onetap_setting_widget_position ) {
 			$style .= "
 			@media only screen and (min-width: 992px) {
 				.onetap-container-toggle .onetap-toggle {
 					left: 0 !important;
-					margin-left: {$setting_position_left_right}px !important;					
+					margin-left: {$onetap_setting_position_left_right}px !important;					
 					bottom: 0 !important;
-					margin-bottom: {$setting_position_top_bottom}px !important;
+					margin-bottom: {$onetap_setting_position_top_bottom}px !important;
 				}
 				nav.onetap-accessibility.onetap-plugin-onetap {
 					left: -580px !important;
@@ -437,14 +622,15 @@ class Accessibility_Onetap_Public {
 				}			
 			}			
 			";
-		} elseif ( 'top-right' === $setting_widget_position ) {
+		} elseif ( 'top-right' === $onetap_setting_widget_position ) {
 			$style .= "
-			@media only screen and (min-width: 992px) {
+			@media only screen and (min-width: 992px) {			
 				.onetap-container-toggle .onetap-toggle {
+					bottom: unset !important;
 					top: 0 !important;
-					margin-top: {$setting_position_top_bottom}px !important;
+					margin-top: {$onetap_setting_position_top_bottom}px !important;
 					right: 0 !important;
-					margin-right: {$setting_position_left_right}px !important;				
+					margin-right: {$onetap_setting_position_left_right}px !important;				
 				}
 				nav.onetap-accessibility.onetap-plugin-onetap {
 					right: -580px !important;
@@ -457,14 +643,15 @@ class Accessibility_Onetap_Public {
 				}			
 			}			
 			";
-		} elseif ( 'top-left' === $setting_widget_position ) {
+		} elseif ( 'top-left' === $onetap_setting_widget_position ) {
 			$style .= "
-			@media only screen and (min-width: 992px) {
+			@media only screen and (min-width: 992px) {					
 				.onetap-container-toggle .onetap-toggle {
+					bottom: unset !important;
 					top: 0 !important;
-					margin-top: {$setting_position_top_bottom}px !important;
+					margin-top: {$onetap_setting_position_top_bottom}px !important;
 					left: 0 !important;
-					margin-left: {$setting_position_left_right}px !important;					
+					margin-left: {$onetap_setting_position_left_right}px !important;					
 				}
 				nav.onetap-accessibility.onetap-plugin-onetap {
 					left: -580px !important;
@@ -477,11 +664,133 @@ class Accessibility_Onetap_Public {
 				}			
 			}			
 			";
+		} else {
+			$style .= '
+			@media only screen and (min-width: 992px) {
+				.onetap-container-toggle .onetap-toggle {
+					right: 0 !important;
+					margin-right: 20px !important;					
+					bottom: 0 !important;
+					margin-bottom: 20px !important;
+				}
+				nav.onetap-accessibility.onetap-plugin-onetap {
+					right: -580px !important;
+				}
+				nav.onetap-accessibility.onetap-plugin-onetap.onetap-toggle-open {
+					right: 0 !important;
+				}			
+				nav.onetap-accessibility.onetap-plugin-onetap .onetap-container .onetap-accessibility-settings header.onetap-header-top .onetap-close {
+					right: 20px !important;
+				}			
+			}			
+			';
 		}
 
-		if ( 'on' === $setting_hide_powered_by_onetap ) {
+		// If accessibility_profiles OFF.
+		if ( 'on' !== $module_settings['accessibility_profiles'] ) {
+			$style .= '
+			nav.onetap-accessibility.onetap-plugin-onetap .onetap-container .onetap-accessibility-settings div.onetap-multi-functional-feature {
+				display: none !important;
+			}
+
+			nav.onetap-accessibility.onetap-plugin-onetap .onetap-container .onetap-accessibility-settings .onetap-features-container.onetap-feature-content-modules {
+				padding: 0 14px 0 14px !important;
+				margin-top: -85px !important;
+				margin-bottom: 24px !important;
+			}
+				
+			nav.onetap-accessibility.onetap-plugin-onetap .onetap-container .onetap-accessibility-settings .onetap-features-container.onetap-feature-content-secondary {
+				margin-top: 24px !important;
+			}';
+		}
+
+		if ( 'on' !== $module_settings['bigger_text'] ) {
+			$style .= '
+			nav.onetap-accessibility.onetap-plugin-onetap .onetap-container .onetap-accessibility-settings .onetap-features-container .onetap-features .onetap-box-features .onetap-box-step-controls.onetap-font-size {
+				display: none !important;
+			}';
+		}
+
+		if ( 'on' !== $module_settings['line_height'] ) {
+			$style .= '
+			nav.onetap-accessibility.onetap-plugin-onetap .onetap-container .onetap-accessibility-settings .onetap-features-container .onetap-features .onetap-box-features .onetap-box-step-controls.onetap-line-height {
+				display: none !important;
+			}';
+		}
+
+		if ( 'on' !== $module_settings['bigger_text'] &&
+			'on' !== $module_settings['readable_font'] &&
+			'on' !== $module_settings['line_height'] &&
+			'on' !== $module_settings['cursor'] &&
+			'on' !== $module_settings['letter_spacing'] &&
+			'on' !== $module_settings['text_align'] &&
+			'on' !== $module_settings['font_weight']
+		) {
+			$style .= '
+			nav.onetap-accessibility.onetap-plugin-onetap .onetap-container .onetap-accessibility-settings .onetap-features-container.onetap-feature-content-modules {
+				display: none !important;
+			}
+				
+			nav.onetap-accessibility.onetap-plugin-onetap .onetap-container .onetap-accessibility-settings .onetap-features-container.onetap-feature-content-modules.onetap-feature-content-secondary {
+				display: block !important;
+			}';
+		}
+
+		if ( 'on' !== $module_settings['text_align'] &&
+			'on' !== $module_settings['letter_spacing'] &&
+			'on' !== $module_settings['font_weight']
+		) {
+			$style .= '
+			nav.onetap-accessibility.onetap-plugin-onetap .onetap-container .onetap-accessibility-settings .onetap-features-container.onetap-feature-content-modules.onetap-feature-content-secondary {
+				display: none !important;
+			}';
+		}
+
+		if ( 'on' !== $module_settings['dark_contrast'] &&
+			'on' !== $module_settings['light_contrast'] &&
+			'on' !== $module_settings['high_contrast'] &&
+			'on' !== $module_settings['monochrome'] &&
+			'on' !== $module_settings['saturation']
+		) {
+			$style .= '
+			nav.onetap-accessibility.onetap-plugin-onetap .onetap-container .onetap-accessibility-settings .onetap-features-container.onetap-feature-color-modules {
+				display: none !important;
+			}';
+		}
+
+		if ( 'on' !== $module_settings['reading_line'] &&
+			'on' !== $module_settings['reading_mask'] &&
+			'on' !== $module_settings['hide_images'] &&
+			'on' !== $module_settings['highlight_all'] &&
+			'on' !== $module_settings['stop_animations']
+		) {
+			$style .= '
+			nav.onetap-accessibility.onetap-plugin-onetap .onetap-container .onetap-accessibility-settings .onetap-features-container.onetap-feature-orientation-modules {
+				display: none !important;
+			}
+
+			nav.onetap-accessibility.onetap-plugin-onetap .onetap-container .onetap-accessibility-settings .onetap-features-container.onetap-feature-orientation-modules.onetap-feature-content-secondary {
+				display: block !important;
+			}';
+		}
+
+		if ( 'on' !== $module_settings['highlight_titles'] &&
+			'on' !== $module_settings['highlight_all'] &&
+			'on' !== $module_settings['stop_animations']
+		) {
+			$style .= '
+			nav.onetap-accessibility.onetap-plugin-onetap .onetap-container .onetap-accessibility-settings .onetap-features-container.onetap-feature-orientation-modules.onetap-feature-content-secondary {
+				display: none !important;
+			}';
+		}
+
+		if ( 'on' === $onetap_setting_hide_powered_by_onetap ) {
 			$style .= '
 			header.onetap-header-top .onetap-site-container .onetap-site-info .onetap-desc {
+				display: none !important;
+			}
+
+			header.onetap-header-top .onetap-site-container .onetap-site-info .onetap-statement button::before {
 				display: none !important;
 			}
 			';
@@ -514,6 +823,28 @@ class Accessibility_Onetap_Public {
 			$plugin_version = $plugin_info['Version'];
 		}
 
+		// Register hotkeys.js library.
+		wp_enqueue_script(
+			'onetap-hotkeys-library',
+			plugins_url( $this->plugin_name ) . '/assets/js/hotkeys.js',
+			array( 'jquery' ),
+			$this->version,
+			true
+		);
+
+		// Localize script for configurable options.
+		wp_localize_script(
+			'onetap-hotkeys-library',
+			'accessibilityHotkeys',
+			array(
+				'hotKeyMenu'     => 'm',
+				'hotKeyHeadings' => 'h',
+				'hotKeyForms'    => 'f',
+				'hotKeyButtons'  => 'b',
+				'hotKeyGraphics' => 'g',
+			)
+		);
+
 		// Register the script but do not enqueue it yet.
 		wp_register_script(
 			$this->plugin_name, // Handle for the script.
@@ -529,46 +860,33 @@ class Accessibility_Onetap_Public {
 		// Enqueue the script after it has been registered.
 		wp_enqueue_script( $this->plugin_name );
 
-		// Get the 'onetap_settings' option from the database.
-		$settings                           = get_option( 'onetap_settings' );
-		$setting_language                   = isset( $settings['language'] ) ? esc_html( $settings['language'] ) : Accessibility_Onetap_Config::get_setting( 'language' );
-		$setting_color                      = isset( $settings['color'] ) ? esc_html( $settings['color'] ) : Accessibility_Onetap_Config::get_setting( 'color' );
-		$setting_position_top_bottom        = isset( $settings['position-top-bottom'] ) ? absint( $settings['position-top-bottom'] ) : Accessibility_Onetap_Config::get_setting( 'position_top_bottom' );
-		$setting_position_left_right        = isset( $settings['position-left-right'] ) ? absint( $settings['position-left-right'] ) : Accessibility_Onetap_Config::get_setting( 'position_left_right' );
-		$setting_widget_position            = isset( $settings['widge-position'] ) ? esc_html( $settings['widge-position'] ) : Accessibility_Onetap_Config::get_setting( 'widget_position' );
-		$setting_position_top_bottom_tablet = isset( $settings['position-top-bottom-tablet'] ) ? absint( $settings['position-top-bottom-tablet'] ) : Accessibility_Onetap_Config::get_setting( 'position_top_bottom_tablet' );
-		$setting_position_left_right_tablet = isset( $settings['position-left-right-tablet'] ) ? absint( $settings['position-left-right-tablet'] ) : Accessibility_Onetap_Config::get_setting( 'position_left_right_tablet' );
-		$setting_widget_position_tablet     = isset( $settings['widge-position-tablet'] ) ? esc_html( $settings['widge-position-tablet'] ) : Accessibility_Onetap_Config::get_setting( 'widget_position_tablet' );
-		$setting_position_top_bottom_mobile = isset( $settings['position-top-bottom-mobile'] ) ? absint( $settings['position-top-bottom-mobile'] ) : Accessibility_Onetap_Config::get_setting( 'position_top_bottom_mobile' );
-		$setting_position_left_right_mobile = isset( $settings['position-left-right-mobile'] ) ? absint( $settings['position-left-right-mobile'] ) : Accessibility_Onetap_Config::get_setting( 'position_left_right_mobile' );
-		$setting_widget_position_mobile     = isset( $settings['widge-position-mobile'] ) ? esc_html( $settings['widge-position-mobile'] ) : Accessibility_Onetap_Config::get_setting( 'widget_position_mobile' );
-		$setting_hide_powered_by_onetap     = isset( $settings['hide-powered-by-onetap'] ) ? esc_html( $settings['hide-powered-by-onetap'] ) : Accessibility_Onetap_Config::get_setting( 'hide_powered_by_onetap' );
+		// Get the 'settings' option from the database.
+		$onetap_settings                               = get_option( 'onetap_settings' );
+		$onetap_setting_language                       = $this->get_setting_with_fallback( $onetap_settings, 'language', 'esc_html' );
+		$onetap_setting_color                          = $this->get_setting_with_fallback( $onetap_settings, 'color', 'esc_html' );
+		$onetap_setting_position_top_bottom            = $this->get_setting_with_fallback( $onetap_settings, 'position-top-bottom', 'absint' );
+		$onetap_setting_position_left_right            = $this->get_setting_with_fallback( $onetap_settings, 'position-left-right', 'absint' );
+		$onetap_setting_widget_position                = $this->get_setting_with_fallback( $onetap_settings, 'widge-position', 'esc_html' );
+		$onetap_setting_position_top_bottom_tablet     = $this->get_setting_with_fallback( $onetap_settings, 'position-top-bottom-tablet', 'absint' );
+		$onetap_setting_position_left_right_tablet     = $this->get_setting_with_fallback( $onetap_settings, 'position-left-right-tablet', 'absint' );
+		$onetap_setting_widget_position_tablet         = $this->get_setting_with_fallback( $onetap_settings, 'widge-position-tablet', 'esc_html' );
+		$onetap_setting_position_top_bottom_mobile     = $this->get_setting_with_fallback( $onetap_settings, 'position-top-bottom-mobile', 'absint' );
+		$onetap_setting_position_left_right_mobile     = $this->get_setting_with_fallback( $onetap_settings, 'position-left-right-mobile', 'absint' );
+		$onetap_setting_widget_position_mobile         = $this->get_setting_with_fallback( $onetap_settings, 'widge-position-mobile', 'esc_html' );
+		$onetap_setting_toggle_device_position_desktop = $this->get_setting_with_fallback( $onetap_settings, 'toggle-device-position-desktop', 'esc_html' );
+		$onetap_setting_toggle_device_position_tablet  = $this->get_setting_with_fallback( $onetap_settings, 'toggle-device-position-tablet', 'esc_html' );
+		$onetap_setting_toggle_device_position_mobile  = $this->get_setting_with_fallback( $onetap_settings, 'toggle-device-position-mobile', 'esc_html' );
+		$onetap_setting_hide_powered_by_onetap         = $this->get_setting_with_fallback( $onetap_settings, 'hide-powered-by-onetap', 'esc_html' );
 
-		// Get the 'onetap_modules' option from the database.
-		$modules                     = get_option( 'apop_modules' );
-		$modules_bigger_text         = isset( $modules['bigger-text'] ) ? esc_html( $modules['bigger-text'] ) : Accessibility_Onetap_Config::get_module( 'bigger_text' );
-		$modules_cursor              = isset( $modules['cursor'] ) ? esc_html( $modules['cursor'] ) : Accessibility_Onetap_Config::get_module( 'cursor' );
-		$modules_line_height         = isset( $modules['line-height'] ) ? esc_html( $modules['line-height'] ) : Accessibility_Onetap_Config::get_module( 'line_height' );
-		$modules_letter_spacing      = isset( $modules['letter-spacing'] ) ? esc_html( $modules['letter-spacing'] ) : Accessibility_Onetap_Config::get_module( 'letter_spacing' );
-		$modules_readable_font       = isset( $modules['readable-font'] ) ? esc_html( $modules['readable-font'] ) : Accessibility_Onetap_Config::get_module( 'readable_font' );
-		$modules_dyslexic_font       = isset( $modules['dyslexic-font'] ) ? esc_html( $modules['dyslexic-font'] ) : Accessibility_Onetap_Config::get_module( 'dyslexic_font' );
-		$modules_text_align          = isset( $modules['text-align'] ) ? esc_html( $modules['text-align'] ) : Accessibility_Onetap_Config::get_module( 'text_align' );
-		$modules_text_magnifier      = isset( $modules['text-magnifier'] ) ? esc_html( $modules['text-magnifier'] ) : Accessibility_Onetap_Config::get_module( 'text_magnifier' );
-		$modules_highlight_links     = isset( $modules['highlight-links'] ) ? esc_html( $modules['highlight-links'] ) : Accessibility_Onetap_Config::get_module( 'highlight_links' );
-		$modules_invert_colors       = isset( $modules['invert-colors'] ) ? esc_html( $modules['invert-colors'] ) : Accessibility_Onetap_Config::get_module( 'invert_colors' );
-		$modules_brightness          = isset( $modules['brightness'] ) ? esc_html( $modules['brightness'] ) : Accessibility_Onetap_Config::get_module( 'brightness' );
-		$modules_contrast            = isset( $modules['contrast'] ) ? esc_html( $modules['contrast'] ) : Accessibility_Onetap_Config::get_module( 'contrast' );
-		$modules_grayscale           = isset( $modules['grayscale'] ) ? esc_html( $modules['grayscale'] ) : Accessibility_Onetap_Config::get_module( 'grayscale' );
-		$modules_saturnation         = isset( $modules['saturation'] ) ? esc_html( $modules['saturation'] ) : Accessibility_Onetap_Config::get_module( 'saturation' );
-		$modules_reading_line        = isset( $modules['reading-line'] ) ? esc_html( $modules['reading-line'] ) : Accessibility_Onetap_Config::get_module( 'reading_line' );
-		$modules_keyboard_navigation = isset( $modules['keyboard-navigation'] ) ? esc_html( $modules['keyboard-navigation'] ) : Accessibility_Onetap_Config::get_module( 'keyboard_navigation' );
-		$modules_highlight_titles    = isset( $modules['highlight-titles'] ) ? esc_html( $modules['highlight-titles'] ) : Accessibility_Onetap_Config::get_module( 'highlight_titles' );
-		$modules_reading_mask        = isset( $modules['reading-mask'] ) ? esc_html( $modules['reading-mask'] ) : Accessibility_Onetap_Config::get_module( 'reading_mask' );
-		$modules_hide_images         = isset( $modules['hide-images'] ) ? esc_html( $modules['hide-images'] ) : Accessibility_Onetap_Config::get_module( 'hide_images' );
-		$modules_highlight_all       = isset( $modules['highlight-all'] ) ? esc_html( $modules['highlight-all'] ) : Accessibility_Onetap_Config::get_module( 'highlight_all' );
-		$modules_read_page           = isset( $modules['read-page'] ) ? esc_html( $modules['read-page'] ) : Accessibility_Onetap_Config::get_module( 'read_page' );
-		$modules_mute_sounds         = isset( $modules['mute-sounds'] ) ? esc_html( $modules['mute-sounds'] ) : Accessibility_Onetap_Config::get_module( 'mute_sounds' );
-		$modules_stop_animations     = isset( $modules['stop-animations'] ) ? esc_html( $modules['stop-animations'] ) : Accessibility_Onetap_Config::get_module( 'stop_animations' );
+		// Get general settings for compatibility check (new plugin version).
+		$onetap_general_settings                 = get_option( 'onetap_modules' );
+		$general_settings_hide_powered_by_onetap = isset( $onetap_general_settings['hide_powered_by_onetap'] ) ? $onetap_general_settings['hide_powered_by_onetap'] : 'off';
+
+		// Compatibility check: try new plugin setting first, then fallback to legacy plugin setting.
+		$onetap_setting_hide_powered_by_onetap = ( 'on' === $general_settings_hide_powered_by_onetap || 'on' === $onetap_setting_hide_powered_by_onetap ) ? 'on' : 'off';
+
+		// Get module settings using helper method.
+		$module_settings = $this->get_module_settings();
 
 		$list_languages = array(
 			'en'    => 'English',
@@ -606,22 +924,223 @@ class Accessibility_Onetap_Public {
 			'hi'    => 'हिन्दी',
 			'uk'    => 'Українська',
 			'sr'    => 'Srpski',
-		);						
+		);
+
+		// Get plugin settings.
+		$plugin_settings = get_option( 'onetap_settings' );
+
+		// Get active language.
+		$language = isset( $plugin_settings['language'] ) ? $plugin_settings['language'] : 'en';
+
+		// Language list with English names and image filenames.
+		$language_list = array(
+			'en'    => array(
+				'name'  => 'English',
+				'image' => 'english.png',
+			),
+			'de'    => array(
+				'name'  => 'German',
+				'image' => 'german.png',
+			),
+			'es'    => array(
+				'name'  => 'Spanish',
+				'image' => 'spanish.png',
+			),
+			'fr'    => array(
+				'name'  => 'French',
+				'image' => 'french.png',
+			),
+			'it'    => array(
+				'name'  => 'Italian',
+				'image' => 'italia.png',
+			),
+			'pl'    => array(
+				'name'  => 'Polish',
+				'image' => 'poland.png',
+			),
+			'se'    => array(
+				'name'  => 'Swedish',
+				'image' => 'swedish.png',
+			),
+			'fi'    => array(
+				'name'  => 'Finnish',
+				'image' => 'finnland.png',
+			),
+			'pt'    => array(
+				'name'  => 'Portuguese',
+				'image' => 'portugal.png',
+			),
+			'ro'    => array(
+				'name'  => 'Romanian',
+				'image' => 'rumania.png',
+			),
+			'si'    => array(
+				'name'  => 'Slovenian',
+				'image' => 'slowakia.png',
+			),
+			'sk'    => array(
+				'name'  => 'Slovak',
+				'image' => 'slowenien.png',
+			),
+			'nl'    => array(
+				'name'  => 'Dutch',
+				'image' => 'netherland.png',
+			),
+			'dk'    => array(
+				'name'  => 'Danish',
+				'image' => 'danish.png',
+			),
+			'gr'    => array(
+				'name'  => 'Greek',
+				'image' => 'greece.png',
+			),
+			'cz'    => array(
+				'name'  => 'Czech',
+				'image' => 'czech.png',
+			),
+			'hu'    => array(
+				'name'  => 'Hungarian',
+				'image' => 'hungarian.png',
+			),
+			'lt'    => array(
+				'name'  => 'Lithuanian',
+				'image' => 'lithuanian.png',
+			),
+			'lv'    => array(
+				'name'  => 'Latvian',
+				'image' => 'latvian.png',
+			),
+			'ee'    => array(
+				'name'  => 'Estonian',
+				'image' => 'estonian.png',
+			),
+			'hr'    => array(
+				'name'  => 'Croatian',
+				'image' => 'croatia.png',
+			),
+			'ie'    => array(
+				'name'  => 'Irish',
+				'image' => 'ireland.png',
+			),
+			'bg'    => array(
+				'name'  => 'Bulgarian',
+				'image' => 'bulgarian.png',
+			),
+			'no'    => array(
+				'name'  => 'Norwegian',
+				'image' => 'norwegan.png',
+			),
+			'tr'    => array(
+				'name'  => 'Turkish',
+				'image' => 'turkish.png',
+			),
+			'id'    => array(
+				'name'  => 'Indonesian',
+				'image' => 'indonesian.png',
+			),
+			'pt-br' => array(
+				'name'  => 'Portuguese (Brazil)',
+				'image' => 'brasilian.png',
+			),
+			'ja'    => array(
+				'name'  => 'Japanese',
+				'image' => 'japanese.png',
+			),
+			'ko'    => array(
+				'name'  => 'Korean',
+				'image' => 'korean.png',
+			),
+			'zh'    => array(
+				'name'  => 'Chinese (Simplified)',
+				'image' => 'chinese-simplified.png',
+			),
+			'ar'    => array(
+				'name'  => 'Arabic',
+				'image' => 'arabic.png',
+			),
+			'ru'    => array(
+				'name'  => 'Russian',
+				'image' => 'russian.png',
+			),
+			'hi'    => array(
+				'name'  => 'Hindi',
+				'image' => 'hindi.png',
+			),
+			'uk'    => array(
+				'name'  => 'Ukrainian',
+				'image' => 'ukrainian.png',
+			),
+			'sr'    => array(
+				'name'  => 'Serbian',
+				'image' => 'serbian.png',
+			),
+			'gb'    => array(
+				'name'  => 'English (UK)',
+				'image' => 'england.png',
+			),
+			'ir'    => array(
+				'name'  => 'Persian',
+				'image' => 'iran.png',
+			),
+			'il'    => array(
+				'name'  => 'Hebrew',
+				'image' => 'israel.png',
+			),
+			'mk'    => array(
+				'name'  => 'Macedonian',
+				'image' => 'macedonia.png',
+			),
+			'th'    => array(
+				'name'  => 'Thai',
+				'image' => 'thailand.png',
+			),
+			'vn'    => array(
+				'name'  => 'Vietnamese',
+				'image' => 'vietnam.png',
+			),
+		);
 
 		wp_localize_script(
 			$this->plugin_name,
-			'accessibilityOnetapAjaxObject',
+			'onetapAjaxObject',
 			array(
-				'ajaxUrl'     => admin_url( 'admin-ajax.php' ),
-				'nonce'       => wp_create_nonce( 'ajax-nonce' ),
-				'languages'   => array(
+				'ajaxUrl'         => admin_url( 'admin-ajax.php' ),
+				'nonce'           => wp_create_nonce( 'ajax-nonce' ),
+				'activeLanguage'  => $language,
+				'localizedLabels' => get_option( 'onetap_localized_labels' ),
+				'languageList'    => $language_list,
+				'pluginInfo'      => array(
+					'version'   => ACCESSIBILITY_ONETAP_VERSION,
+					'pluginUrl' => ACCESSIBILITY_ONETAP_PLUGINS_URL,
+					'imagesUrl' => ACCESSIBILITY_ONETAP_PLUGINS_URL . 'assets/images/',
+				),
+				'languages'       => array(
 					'en'    => array(
+						'global'                 => array(
+							'back'    => 'Back',
+							'default' => 'Default',
+						),
+						'hideToolbar'            => array(
+							'title'   => 'How long do you want to hide the toolbar?',
+							'radio1'  => 'Only for this session',
+							'radio2'  => '24 hours',
+							'radio3'  => 'A Week',
+							'button1' => 'Not Now',
+							'button2' => 'Hide Toolbar',
+						),
+						'unsupportedPageReader'  => array(
+							'title' => 'Browser needs to be updated',
+							'desc'  => 'Your browser doesn’t support speech output. Please update your browser or use one with speech synthesis enabled (e.g. Chrome, Edge, Safari).',
+							'link'  => 'How to Update?',
+						),
 						'header'                 => array(
 							'language'      => 'English',
 							'listLanguages' => $list_languages,
 							'title'         => 'Accessibility Adjustments',
 							'desc'          => 'Powered by',
 							'anchor'        => 'OneTap',
+							'statement'     => 'Statement',
+							'hideToolbar'   => 'Hide Toolbar',
 						),
 						'multiFunctionalFeature' => array(
 							'title'              => 'Select your accessibility profile',
@@ -656,57 +1175,65 @@ class Accessibility_Onetap_Public {
 								'off'   => 'OFF',
 							),
 						),
-						'content'                => array(
-							'biggerText'    => 'Bigger Text',
-							'cursor'        => 'Cursor',
-							'lineHeight'    => 'Line Height',
-							'letterSpacing' => 'Letter Spacing',
-							'readableFont'  => 'Readable Font',
-							'dyslexicFont'  => 'Dyslexic Font',
+						'titles'                 => array(
+							'contentModules'     => 'Content Modules',
+							'colorModules'       => 'Color Modules',
+							'orientationModules' => 'Orientation Modules',
 						),
-						'contentBottom'          => array(
-							'textAlign'      => 'Align Text',
-							'textMagnifier'  => 'Text Magnifier',
-							'highlightLinks' => 'Highlight Links',
-						),
-						'colors'                 => array(
-							'invertColors' => 'Invert Colors',
-							'brightness'   => 'Brightness',
-							'contrast'     => 'Contrast',
-							'grayscale'    => 'Grayscale',
-							'saturation'   => 'Saturation',
-						),
-						'orientation'            => array(
+						'features'               => array(
+							'biggerText'         => 'Font Size',
+							'highlightLinks'     => 'Highlight Links',
+							'lineHeight'         => 'Line Height',
+							'readableFont'       => 'Readable Font',
+							'cursor'             => 'Big Cursor',
+							'textMagnifier'      => 'Text Magnifier',
+							'dyslexicFont'       => 'Dyslexic Font',
+							'alignCenter'        => 'Align Text',
+							'letterSpacing'      => 'Letter Spacing',
+							'fontWeight'         => 'Font Weight',
+							'darkContrast'       => 'Dark Contrast',
+							'lightContrast'      => 'Light Contrast',
+							'highContrast'       => 'High Contrast',
+							'monochrome'         => 'Monochrome',
+							'saturation'         => 'Saturation',
 							'readingLine'        => 'Reading Line',
-							'keyboardNavigation' => 'Keyboard Navigation',
-							'highlightTitles'    => 'Highlight Titles',
 							'readingMask'        => 'Reading Mask',
+							'readPage'           => 'Read Page',
+							'keyboardNavigation' => 'Keyboard Navigation',
 							'hideImages'         => 'Hide Images',
-							'highlightAll'       => 'Highlight All',
-						),
-						'orientationBottom'      => array(
-							'readPage'       => 'Read Page',
-							'muteSounds'     => 'Mute Sounds',
-							'stopAnimations' => 'Stop Animations',
-						),
-						'divider'                => array(
-							'content'    => 'content',
-							'colors'     => 'colors',
-							'navigation' => 'orientation',
-						),
-						'resetSettings'          => 'Reset Settings',
-						'footer'                 => array(
-							'accessibilityStatement' => 'Accessibility statement',
-							'version'                => 'Version ' . $plugin_version,
+							'muteSounds'         => 'Mute Sounds',
+							'highlightTitles'    => 'Highlight Titles',
+							'highlightAll'       => 'Highlight Content',
+							'stopAnimations'     => 'Stop Animations',
+							'resetSettings'      => 'Reset Settings',
 						),
 					),
 					'de'    => array(
+						'global'                 => array(
+							'back'    => 'Zurück',
+							'default' => 'Standard',
+						),
+						'hideToolbar'            => array(
+							'title'   => 'Wie lange möchten Sie die Barrierefreiheits-Symbolleiste ausblenden?',
+							'radio1'  => 'Nur für diese Sitzung',
+							'radio2'  => '24 Stunden',
+							'radio3'  => 'Eine Woche',
+							'button1' => 'Nicht jetzt',
+							'button2' => 'Symbolleiste ausblenden',
+						),
+						'unsupportedPageReader'  => array(
+							'title' => 'Browser muss aktualisiert werden',
+							'desc'  => 'Ihr Browser unterstützt keine Sprachausgabe. Bitte aktualisieren Sie Ihren Browser oder verwenden Sie einen mit aktivierter Sprachsynthese (z. B. Chrome, Edge, Safari).',
+							'link'  => 'Wie aktualisieren?',
+						),
 						'header'                 => array(
 							'language'      => 'Deutsch',
 							'listLanguages' => $list_languages,
 							'title'         => 'Barrierefreie Anpassungen',
 							'desc'          => 'Unterstützt durch',
 							'anchor'        => 'OneTap',
+							'statement'     => 'Erklärung',
+							'hideToolbar'   => 'Symbolleiste ausblenden',
 						),
 						'multiFunctionalFeature' => array(
 							'title'              => 'Wählen Sie Ihr Barrierefreiheitsprofil',
@@ -741,57 +1268,65 @@ class Accessibility_Onetap_Public {
 								'off'   => 'AUS',
 							),
 						),
-						'content'                => array(
-							'biggerText'    => 'Größerer Text',
-							'cursor'        => 'Cursor',
-							'lineHeight'    => 'Zeilenhöhe',
-							'letterSpacing' => 'Buchstabenabstand',
-							'readableFont'  => 'Lesbare Schriftart',
-							'dyslexicFont'  => 'Dyslexische Schriftart',
+						'titles'                 => array(
+							'contentModules'     => 'Inhaltsmodule',
+							'colorModules'       => 'Farbmodule',
+							'orientationModules' => 'Orientierungsmodule',
 						),
-						'contentBottom'          => array(
-							'textAlign'      => 'Textausrichtung',
-							'textMagnifier'  => 'Textvergrößerung',
-							'highlightLinks' => 'Links hervorheben',
-						),
-						'colors'                 => array(
-							'invertColors' => 'Farben umkehren',
-							'brightness'   => 'Helligkeit',
-							'contrast'     => 'Kontrast',
-							'grayscale'    => 'Graustufen',
-							'saturation'   => 'Sättigung',
-						),
-						'orientation'            => array(
+						'features'               => array(
+							'biggerText'         => 'Schriftgröße',
+							'highlightLinks'     => 'Links hervorheben',
+							'lineHeight'         => 'Zeilenhöhe',
+							'readableFont'       => 'Lesbare Schriftart',
+							'cursor'             => 'Großer Cursor',
+							'textMagnifier'      => 'Textvergrößerung',
+							'dyslexicFont'       => 'Dyslexische Schriftart',
+							'alignCenter'        => 'Zentriert ausrichten',
+							'letterSpacing'      => 'Buchstabenabstand',
+							'fontWeight'         => 'Schriftstärke',
+							'darkContrast'       => 'Dunkler Kontrast',
+							'lightContrast'      => 'Heller Kontrast',
+							'highContrast'       => 'Hoher Kontrast',
+							'monochrome'         => 'Monochrom',
+							'saturation'         => 'Sättigung',
 							'readingLine'        => 'Leselinie',
-							'keyboardNavigation' => 'Tastaturnavigation',
-							'highlightTitles'    => 'Titel hervorheben',
 							'readingMask'        => 'Lese-Maske',
+							'readPage'           => 'Seite lesen',
+							'keyboardNavigation' => 'Tastaturnavigation',
 							'hideImages'         => 'Bilder ausblenden',
-							'highlightAll'       => 'Alles hervorheben',
-						),
-						'orientationBottom'      => array(
-							'readPage'       => 'Seite lesen',
-							'muteSounds'     => 'Geräusche stummschalten',
-							'stopAnimations' => 'Animationen stoppen',
-						),
-						'divider'                => array(
-							'content'    => 'Inhalt',
-							'colors'     => 'Farben',
-							'navigation' => 'Navigation',
-						),
-						'resetSettings'          => 'Einstellungen zurücksetzen',
-						'footer'                 => array(
-							'accessibilityStatement' => 'Barrierefreiheits-Erklärung',
-							'version'                => 'Version ' . $plugin_version,
+							'muteSounds'         => 'Geräusche stummschalten',
+							'highlightTitles'    => 'Titel hervorheben',
+							'highlightAll'       => 'Inhalt hervorheben',
+							'stopAnimations'     => 'Animationen stoppen',
+							'resetSettings'      => 'Einstellungen zurücksetzen',
 						),
 					),
 					'es'    => array(
+						'global'                 => array(
+							'back'    => 'Volver',
+							'default' => 'Predeterminado',
+						),
+						'hideToolbar'            => array(
+							'title'   => '¿Cuánto tiempo desea ocultar la barra de accesibilidad?',
+							'radio1'  => 'Solo para esta sesión',
+							'radio2'  => '24 horas',
+							'radio3'  => 'Una semana',
+							'button1' => 'Ahora no',
+							'button2' => 'Ocultar barra',
+						),
+						'unsupportedPageReader'  => array(
+							'title' => 'El navegador necesita actualización',
+							'desc'  => 'Tu navegador no admite salida de voz. Actualiza tu navegador o usa uno con síntesis de voz habilitada (por ejemplo, Chrome, Edge, Safari).',
+							'link'  => '¿Cómo actualizar?',
+						),
 						'header'                 => array(
 							'language'      => 'Español',
 							'listLanguages' => $list_languages,
 							'title'         => 'Ajustes de Accesibilidad',
 							'desc'          => 'Desarrollado por',
 							'anchor'        => 'OneTap',
+							'statement'     => 'Declaración',
+							'hideToolbar'   => 'Ocultar barra de herramientas',
 						),
 						'multiFunctionalFeature' => array(
 							'title'              => 'Seleccione su perfil de accesibilidad',
@@ -826,57 +1361,65 @@ class Accessibility_Onetap_Public {
 								'off'   => 'APG',
 							),
 						),
-						'content'                => array(
-							'biggerText'    => 'Texto más grande',
-							'cursor'        => 'Cursor',
-							'lineHeight'    => 'Altura de línea',
-							'letterSpacing' => 'Espaciado de letras',
-							'readableFont'  => 'Fuente legible',
-							'dyslexicFont'  => 'Fuente para dislexia',
+						'titles'                 => array(
+							'contentModules'     => 'Módulos de contenido',
+							'colorModules'       => 'Módulos de color',
+							'orientationModules' => 'Módulos de orientación',
 						),
-						'contentBottom'          => array(
-							'textAlign'      => 'Alineación de texto',
-							'textMagnifier'  => 'Lupa de texto',
-							'highlightLinks' => 'Resaltar enlaces',
-						),
-						'colors'                 => array(
-							'invertColors' => 'Invertir colores',
-							'brightness'   => 'Brillo',
-							'contrast'     => 'Contraste',
-							'grayscale'    => 'Escala de grises',
-							'saturation'   => 'Saturación',
-						),
-						'orientation'            => array(
+						'features'               => array(
+							'biggerText'         => 'Tamaño de fuente',
+							'highlightLinks'     => 'Resaltar enlaces',
+							'lineHeight'         => 'Altura de línea',
+							'readableFont'       => 'Fuente legible',
+							'cursor'             => 'Cursor grande',
+							'textMagnifier'      => 'Lupa de texto',
+							'dyslexicFont'       => 'Fuente para dislexia',
+							'alignCenter'        => 'Alinear al centro',
+							'letterSpacing'      => 'Espaciado de letras',
+							'fontWeight'         => 'Grosor de fuente',
+							'darkContrast'       => 'Contraste oscuro',
+							'lightContrast'      => 'Contraste claro',
+							'highContrast'       => 'Alto contraste',
+							'monochrome'         => 'Monocromo',
+							'saturation'         => 'Saturación',
 							'readingLine'        => 'Línea de lectura',
-							'keyboardNavigation' => 'Navegación por teclado',
-							'highlightTitles'    => 'Resaltar títulos',
 							'readingMask'        => 'Máscara de lectura',
+							'readPage'           => 'Leer página',
+							'keyboardNavigation' => 'Navegación por teclado',
 							'hideImages'         => 'Ocultar imágenes',
-							'highlightAll'       => 'Resaltar todo',
-						),
-						'orientationBottom'      => array(
-							'readPage'       => 'Leer página',
-							'muteSounds'     => 'Silenciar sonidos',
-							'stopAnimations' => 'Detener animaciones',
-						),
-						'divider'                => array(
-							'content'    => 'Contenido',
-							'colors'     => 'Colores',
-							'navigation' => 'Navegación',
-						),
-						'resetSettings'          => 'Restablecer configuraciones',
-						'footer'                 => array(
-							'accessibilityStatement' => 'Declaración de accesibilidad',
-							'version'                => 'Versión ' . $plugin_version,
+							'muteSounds'         => 'Silenciar sonidos',
+							'highlightTitles'    => 'Resaltar títulos',
+							'highlightAll'       => 'Resaltar contenido',
+							'stopAnimations'     => 'Detener animaciones',
+							'resetSettings'      => 'Restablecer configuraciones',
 						),
 					),
 					'fr'    => array(
+						'global'                 => array(
+							'back'    => 'Retour',
+							'default' => 'Par défaut',
+						),
+						'hideToolbar'            => array(
+							'title'   => 'Combien de temps souhaitez-vous masquer la barre d’accessibilité ?',
+							'radio1'  => 'Seulement pour cette session',
+							'radio2'  => '24 heures',
+							'radio3'  => 'Une semaine',
+							'button1' => 'Pas maintenant',
+							'button2' => 'Masquer la barre',
+						),
+						'unsupportedPageReader'  => array(
+							'title' => 'Le navigateur doit être mis à jour',
+							'desc'  => 'Votre navigateur ne prend pas en charge la synthèse vocale. Veuillez le mettre à jour ou utiliser un navigateur compatible (par exemple Chrome, Edge, Safari).',
+							'link'  => 'Comment le mettre à jour ?',
+						),
 						'header'                 => array(
 							'language'      => 'Français',
 							'listLanguages' => $list_languages,
 							'title'         => 'Réglages d\'accessibilité',
 							'desc'          => 'Développé par',
 							'anchor'        => 'OneTap',
+							'statement'     => 'Déclaration',
+							'hideToolbar'   => 'Masquer la barre d’outils',
 						),
 						'multiFunctionalFeature' => array(
 							'title'              => 'Sélectionnez votre profil d\'accessibilité',
@@ -911,57 +1454,65 @@ class Accessibility_Onetap_Public {
 								'off'   => 'DÉSACT',
 							),
 						),
-						'content'                => array(
-							'biggerText'    => 'Texte plus grand',
-							'cursor'        => 'Curseur',
-							'lineHeight'    => 'Hauteur de ligne',
-							'letterSpacing' => 'Espacement des lettres',
-							'readableFont'  => 'Police lisible',
-							'dyslexicFont'  => 'Police pour dyslexie',
+						'titles'                 => array(
+							'contentModules'     => 'Modules de contenu',
+							'colorModules'       => 'Modules de couleur',
+							'orientationModules' => 'Modules d\'orientation',
 						),
-						'contentBottom'          => array(
-							'textAlign'      => 'Alignement du texte',
-							'textMagnifier'  => 'Loupe de texte',
-							'highlightLinks' => 'Surligner les liens',
-						),
-						'colors'                 => array(
-							'invertColors' => 'Inverser les couleurs',
-							'brightness'   => 'Luminosité',
-							'contrast'     => 'Contraste',
-							'grayscale'    => 'Niveaux de gris',
-							'saturation'   => 'Saturation',
-						),
-						'orientation'            => array(
+						'features'               => array(
+							'biggerText'         => 'Taille de police',
+							'highlightLinks'     => 'Surligner les liens',
+							'lineHeight'         => 'Hauteur de ligne',
+							'readableFont'       => 'Police lisible',
+							'cursor'             => 'Grand curseur',
+							'textMagnifier'      => 'Loupe de texte',
+							'dyslexicFont'       => 'Police pour dyslexie',
+							'alignCenter'        => 'Aligner au centre',
+							'letterSpacing'      => 'Espacement des lettres',
+							'fontWeight'         => 'Épaisseur de police',
+							'darkContrast'       => 'Contraste sombre',
+							'lightContrast'      => 'Contraste clair',
+							'highContrast'       => 'Contraste élevé',
+							'monochrome'         => 'Monochrome',
+							'saturation'         => 'Saturation',
 							'readingLine'        => 'Ligne de lecture',
-							'keyboardNavigation' => 'Navigation au clavier',
-							'highlightTitles'    => 'Surligner les titres',
 							'readingMask'        => 'Masque de lecture',
+							'readPage'           => 'Lire la page',
+							'keyboardNavigation' => 'Navigation au clavier',
 							'hideImages'         => 'Masquer les images',
-							'highlightAll'       => 'Surligner tout',
-						),
-						'orientationBottom'      => array(
-							'readPage'       => 'Lire la page',
-							'muteSounds'     => 'Couper les sons',
-							'stopAnimations' => 'Arrêter les animations',
-						),
-						'divider'                => array(
-							'content'    => 'Contenu',
-							'colors'     => 'Couleurs',
-							'navigation' => 'Navigation',
-						),
-						'resetSettings'          => 'Réinitialiser les paramètres',
-						'footer'                 => array(
-							'accessibilityStatement' => 'Déclaration d\'accessibilité',
-							'version'                => 'Version ' . $plugin_version,
+							'muteSounds'         => 'Couper les sons',
+							'highlightTitles'    => 'Surligner les titres',
+							'highlightAll'       => 'Surligner le contenu',
+							'stopAnimations'     => 'Arrêter les animations',
+							'resetSettings'      => 'Réinitialiser les paramètres',
 						),
 					),
 					'it'    => array(
+						'global'                 => array(
+							'back'    => 'Indietro',
+							'default' => 'Predefinito',
+						),
+						'hideToolbar'            => array(
+							'title'   => 'Per quanto tempo vuoi nascondere la barra di accessibilità?',
+							'radio1'  => 'Solo per questa sessione',
+							'radio2'  => '24 ore',
+							'radio3'  => 'Una settimana',
+							'button1' => 'Non ora',
+							'button2' => 'Nascondi barra',
+						),
+						'unsupportedPageReader'  => array(
+							'title' => 'Il browser deve essere aggiornato',
+							'desc'  => 'Il tuo browser non supporta la sintesi vocale. Aggiorna il browser o utilizza uno che supporti la sintesi vocale (es. Chrome, Edge, Safari).',
+							'link'  => 'Come aggiornare?',
+						),
 						'header'                 => array(
 							'language'      => 'Italiano',
 							'listLanguages' => $list_languages,
 							'title'         => 'Impostazioni di accessibilità',
 							'desc'          => 'Sviluppato da',
 							'anchor'        => 'OneTap',
+							'statement'     => 'Dichiarazione',
+							'hideToolbar'   => 'Nascondi barra degli strumenti',
 						),
 						'multiFunctionalFeature' => array(
 							'title'              => 'Seleziona il tuo profilo di accessibilità',
@@ -996,57 +1547,65 @@ class Accessibility_Onetap_Public {
 								'off'   => 'DISATTIVO',
 							),
 						),
-						'content'                => array(
-							'biggerText'    => 'Testo più grande',
-							'cursor'        => 'Cursore',
-							'lineHeight'    => 'Altezza della linea',
-							'letterSpacing' => 'Spaziatura delle lettere',
-							'readableFont'  => 'Carattere leggibile',
-							'dyslexicFont'  => 'Carattere per dislessia',
+						'titles'                 => array(
+							'contentModules'     => 'Moduli di contenuto',
+							'colorModules'       => 'Moduli di colore',
+							'orientationModules' => 'Moduli di orientamento',
 						),
-						'contentBottom'          => array(
-							'textAlign'      => 'Allinea il testo',
-							'textMagnifier'  => 'Lente di ingrandimento del testo',
-							'highlightLinks' => 'Evidenzia i link',
-						),
-						'colors'                 => array(
-							'invertColors' => 'Inverti i colori',
-							'brightness'   => 'Luminosità',
-							'contrast'     => 'Contrasto',
-							'grayscale'    => 'Tonalità di grigio',
-							'saturation'   => 'Saturazione',
-						),
-						'orientation'            => array(
+						'features'               => array(
+							'biggerText'         => 'Dimensione del carattere',
+							'highlightLinks'     => 'Evidenzia i link',
+							'lineHeight'         => 'Altezza della linea',
+							'readableFont'       => 'Carattere leggibile',
+							'cursor'             => 'Cursore grande',
+							'textMagnifier'      => 'Lente di ingrandimento del testo',
+							'dyslexicFont'       => 'Carattere per dislessia',
+							'alignCenter'        => 'Allinea al centro',
+							'letterSpacing'      => 'Spaziatura delle lettere',
+							'fontWeight'         => 'Spessore del carattere',
+							'darkContrast'       => 'Contrasto scuro',
+							'lightContrast'      => 'Contrasto chiaro',
+							'highContrast'       => 'Alto contrasto',
+							'monochrome'         => 'Monocromatico',
+							'saturation'         => 'Saturazione',
 							'readingLine'        => 'Linea di lettura',
-							'keyboardNavigation' => 'Navigazione con tastiera',
-							'highlightTitles'    => 'Evidenzia i titoli',
 							'readingMask'        => 'Maschera di lettura',
+							'readPage'           => 'Leggi la pagina',
+							'keyboardNavigation' => 'Navigazione con tastiera',
 							'hideImages'         => 'Nascondi le immagini',
-							'highlightAll'       => 'Evidenzia tutto',
-						),
-						'orientationBottom'      => array(
-							'readPage'       => 'Leggi la pagina',
-							'muteSounds'     => 'Disattiva i suoni',
-							'stopAnimations' => 'Ferma le animazioni',
-						),
-						'divider'                => array(
-							'content'    => 'Contenuto',
-							'colors'     => 'Colori',
-							'navigation' => 'Navigazione',
-						),
-						'resetSettings'          => 'Ripristina le impostazioni',
-						'footer'                 => array(
-							'accessibilityStatement' => 'Dichiarazione di accessibilità',
-							'version'                => 'Versione ' . $plugin_version,
+							'muteSounds'         => 'Disattiva i suoni',
+							'highlightTitles'    => 'Evidenzia i titoli',
+							'highlightAll'       => 'Evidenzia il contenuto',
+							'stopAnimations'     => 'Ferma le animazioni',
+							'resetSettings'      => 'Ripristina le impostazioni',
 						),
 					),
 					'pl'    => array(
+						'global'                 => array(
+							'back'    => 'Wstecz',
+							'default' => 'Domyślne',
+						),
+						'hideToolbar'            => array(
+							'title'   => 'Na jak długo chcesz ukryć pasek dostępności?',
+							'radio1'  => 'Tylko na tę sesję',
+							'radio2'  => '24 godziny',
+							'radio3'  => 'Tydzień',
+							'button1' => 'Nie teraz',
+							'button2' => 'Ukryj pasek',
+						),
+						'unsupportedPageReader'  => array(
+							'title' => 'Przeglądarka wymaga aktualizacji',
+							'desc'  => 'Twoja przeglądarka nie obsługuje syntezy mowy. Zaktualizuj przeglądarkę lub użyj takiej, która obsługuje syntezę mowy (np. Chrome, Edge, Safari).',
+							'link'  => 'Jak zaktualizować?',
+						),
 						'header'                 => array(
 							'language'      => 'Polski',
 							'listLanguages' => $list_languages,
 							'title'         => 'Ustawienia dostępności',
 							'desc'          => 'Zbudowane przez',
 							'anchor'        => 'OneTap',
+							'statement'     => 'Oświadczenie',
+							'hideToolbar'   => 'Ukryj pasek narzędzi',
 						),
 						'multiFunctionalFeature' => array(
 							'title'              => 'Wybierz swój profil dostępności',
@@ -1081,57 +1640,65 @@ class Accessibility_Onetap_Public {
 								'off'   => 'WYŁĄCZONE',
 							),
 						),
-						'content'                => array(
-							'biggerText'    => 'Większy tekst',
-							'cursor'        => 'Kursor',
-							'lineHeight'    => 'Wysokość linii',
-							'letterSpacing' => 'Odstępy między literami',
-							'readableFont'  => 'Czytelna czcionka',
-							'dyslexicFont'  => 'Czcionka dla dyslektyków',
+						'titles'                 => array(
+							'contentModules'     => 'Moduły treści',
+							'colorModules'       => 'Moduły kolorów',
+							'orientationModules' => 'Moduły orientacji',
 						),
-						'contentBottom'          => array(
-							'textAlign'      => 'Wyrównaj tekst',
-							'textMagnifier'  => 'Lupa tekstu',
-							'highlightLinks' => 'Wyróżnij linki',
-						),
-						'colors'                 => array(
-							'invertColors' => 'Odwróć kolory',
-							'brightness'   => 'Jasność',
-							'contrast'     => 'Kontrast',
-							'grayscale'    => 'Skala szarości',
-							'saturation'   => 'Nasycenie',
-						),
-						'orientation'            => array(
+						'features'               => array(
+							'biggerText'         => 'Rozmiar czcionki',
+							'highlightLinks'     => 'Wyróżnij linki',
+							'lineHeight'         => 'Wysokość linii',
+							'readableFont'       => 'Czytelna czcionka',
+							'cursor'             => 'Duży kursor',
+							'textMagnifier'      => 'Lupa tekstu',
+							'dyslexicFont'       => 'Czcionka dla dyslektyków',
+							'alignCenter'        => 'Wyśrodkuj',
+							'letterSpacing'      => 'Odstępy między literami',
+							'fontWeight'         => 'Grubość czcionki',
+							'darkContrast'       => 'Ciemny kontrast',
+							'lightContrast'      => 'Jasny kontrast',
+							'highContrast'       => 'Wysoki kontrast',
+							'monochrome'         => 'Monochromatyczny',
+							'saturation'         => 'Nasycenie',
 							'readingLine'        => 'Linia czytania',
-							'keyboardNavigation' => 'Nawigacja klawiaturą',
-							'highlightTitles'    => 'Wyróżnij tytuły',
 							'readingMask'        => 'Maska czytania',
+							'readPage'           => 'Przeczytaj stronę',
+							'keyboardNavigation' => 'Nawigacja klawiaturą',
 							'hideImages'         => 'Ukryj obrazy',
-							'highlightAll'       => 'Wyróżnij wszystko',
-						),
-						'orientationBottom'      => array(
-							'readPage'       => 'Przeczytaj stronę',
-							'muteSounds'     => 'Wycisz dźwięki',
-							'stopAnimations' => 'Zatrzymaj animacje',
-						),
-						'divider'                => array(
-							'content'    => 'Treść',
-							'colors'     => 'Kolory',
-							'navigation' => 'Nawigacja',
-						),
-						'resetSettings'          => 'Resetuj ustawienia',
-						'footer'                 => array(
-							'accessibilityStatement' => 'Deklaracja dostępności',
-							'version'                => 'Wersja ' . $plugin_version,
+							'muteSounds'         => 'Wycisz dźwięki',
+							'highlightTitles'    => 'Wyróżnij tytuły',
+							'highlightAll'       => 'Wyróżnij treść',
+							'stopAnimations'     => 'Zatrzymaj animacje',
+							'resetSettings'      => 'Resetuj ustawienia',
 						),
 					),
 					'se'    => array(
+						'global'                 => array(
+							'back'    => 'Tillbaka',
+							'default' => 'Standard',
+						),
+						'hideToolbar'            => array(
+							'title'   => 'Hur länge vill du dölja tillgänglighetsverktygsfältet?',
+							'radio1'  => 'Endast för denna session',
+							'radio2'  => '24 timmar',
+							'radio3'  => 'En vecka',
+							'button1' => 'Inte nu',
+							'button2' => 'Dölj verktygsfältet',
+						),
+						'unsupportedPageReader'  => array(
+							'title' => 'Webbläsaren behöver uppdateras',
+							'desc'  => 'Din webbläsare stöder inte talsyntes. Uppdatera din webbläsare eller använd en som stöder talsyntes (t.ex. Chrome, Edge, Safari).',
+							'link'  => 'Hur uppdaterar man?',
+						),
 						'header'                 => array(
 							'language'      => 'Svenska',
 							'listLanguages' => $list_languages,
 							'title'         => 'Tillgänglighetsinställningar',
 							'desc'          => 'Byggd av',
 							'anchor'        => 'OneTap',
+							'statement'     => 'Uttalande',
+							'hideToolbar'   => 'Dölj verktygsfält',
 						),
 						'multiFunctionalFeature' => array(
 							'title'              => 'Välj din tillgänglighetsprofil',
@@ -1166,57 +1733,65 @@ class Accessibility_Onetap_Public {
 								'off'   => 'AV',
 							),
 						),
-						'content'                => array(
-							'biggerText'    => 'Större text',
-							'cursor'        => 'Muspekare',
-							'lineHeight'    => 'Radhöjd',
-							'letterSpacing' => 'Bokstavsavstånd',
-							'readableFont'  => 'Läslig font',
-							'dyslexicFont'  => 'Font för dyslexi',
+						'titles'                 => array(
+							'contentModules'     => 'Innehållsmoduler',
+							'colorModules'       => 'Färgmoduler',
+							'orientationModules' => 'Orientationsmoduler',
 						),
-						'contentBottom'          => array(
-							'textAlign'      => 'Justera text',
-							'textMagnifier'  => 'Textförstorare',
-							'highlightLinks' => 'Markera länkar',
-						),
-						'colors'                 => array(
-							'invertColors' => 'Invertera färger',
-							'brightness'   => 'Ljusstyrka',
-							'contrast'     => 'Kontrast',
-							'grayscale'    => 'Gråskala',
-							'saturation'   => 'Mättnad',
-						),
-						'orientation'            => array(
+						'features'               => array(
+							'biggerText'         => 'Teckenstorlek',
+							'highlightLinks'     => 'Markera länkar',
+							'lineHeight'         => 'Radhöjd',
+							'readableFont'       => 'Läslig font',
+							'cursor'             => 'Stor muspekare',
+							'textMagnifier'      => 'Textförstorare',
+							'dyslexicFont'       => 'Font för dyslexi',
+							'alignCenter'        => 'Centrera',
+							'letterSpacing'      => 'Bokstavsavstånd',
+							'fontWeight'         => 'Teckenvikt',
+							'darkContrast'       => 'Mörk kontrast',
+							'lightContrast'      => 'Ljus kontrast',
+							'highContrast'       => 'Hög kontrast',
+							'monochrome'         => 'Monokrom',
+							'saturation'         => 'Mättnad',
 							'readingLine'        => 'Läsrad',
-							'keyboardNavigation' => 'Tangentbordsnavigering',
-							'highlightTitles'    => 'Markera titlar',
 							'readingMask'        => 'Läsmask',
+							'readPage'           => 'Läs sida',
+							'keyboardNavigation' => 'Tangentbordsnavigering',
 							'hideImages'         => 'Dölj bilder',
-							'highlightAll'       => 'Markera alla',
-						),
-						'orientationBottom'      => array(
-							'readPage'       => 'Läs sida',
-							'muteSounds'     => 'Stäng av ljud',
-							'stopAnimations' => 'Stoppa animationer',
-						),
-						'divider'                => array(
-							'content'    => 'Innehåll',
-							'colors'     => 'Färger',
-							'navigation' => 'Navigering',
-						),
-						'resetSettings'          => 'Återställ inställningar',
-						'footer'                 => array(
-							'accessibilityStatement' => 'Tillgänglighetsdeklaration',
-							'version'                => 'Version ' . $plugin_version,
+							'muteSounds'         => 'Stäng av ljud',
+							'highlightTitles'    => 'Markera titlar',
+							'highlightAll'       => 'Markera innehåll',
+							'stopAnimations'     => 'Stoppa animationer',
+							'resetSettings'      => 'Återställ inställningar',
 						),
 					),
 					'fi'    => array(
+						'global'                 => array(
+							'back'    => 'Takaisin',
+							'default' => 'Oletus',
+						),
+						'hideToolbar'            => array(
+							'title'   => 'Kuinka kauan haluat piilottaa saavutettavuuspalkin?',
+							'radio1'  => 'Vain tälle istunnolle',
+							'radio2'  => '24 tuntia',
+							'radio3'  => 'Viikko',
+							'button1' => 'Ei nyt',
+							'button2' => 'Piilota palkki',
+						),
+						'unsupportedPageReader'  => array(
+							'title' => 'Selain täytyy päivittää',
+							'desc'  => 'Selaimesi ei tue puhesynteesiä. Päivitä selain tai käytä sellaista, joka tukee puhesynteesiä (esim. Chrome, Edge, Safari).',
+							'link'  => 'Kuinka päivitetään?',
+						),
 						'header'                 => array(
 							'language'      => 'Suomi',
 							'listLanguages' => $list_languages,
 							'title'         => 'Saavutettavuusasetukset',
 							'desc'          => 'Rakennettu',
 							'anchor'        => 'OneTap',
+							'statement'     => 'Lausunto',
+							'hideToolbar'   => 'Piilota työkalupalkki',
 						),
 						'multiFunctionalFeature' => array(
 							'title'              => 'Valitse saavutettavuusprofiilisi',
@@ -1251,57 +1826,65 @@ class Accessibility_Onetap_Public {
 								'off'   => 'POIS',
 							),
 						),
-						'content'                => array(
-							'biggerText'    => 'Suurempi teksti',
-							'cursor'        => 'Hiiren osoitin',
-							'lineHeight'    => 'Riviväli',
-							'letterSpacing' => 'Kirjainväli',
-							'readableFont'  => 'Lukukelpoinen fontti',
-							'dyslexicFont'  => 'Dyslektikon fontti',
+						'titles'                 => array(
+							'contentModules'     => 'Sisältömoduulit',
+							'colorModules'       => 'Värimoduulit',
+							'orientationModules' => 'Orientointimoduulit',
 						),
-						'contentBottom'          => array(
-							'textAlign'      => 'Tekstin tasaus',
-							'textMagnifier'  => 'Tekstin suurennuslasia',
-							'highlightLinks' => 'Korosta linkkejä',
-						),
-						'colors'                 => array(
-							'invertColors' => 'Käännä värit',
-							'brightness'   => 'Kirkkaus',
-							'contrast'     => 'Kontrasti',
-							'grayscale'    => 'Harmaasävy',
-							'saturation'   => 'Kylläisyys',
-						),
-						'orientation'            => array(
+						'features'               => array(
+							'biggerText'         => 'Fonttikoko',
+							'highlightLinks'     => 'Korosta linkkejä',
+							'lineHeight'         => 'Riviväli',
+							'readableFont'       => 'Lukukelpoinen fontti',
+							'cursor'             => 'Suuri hiiren osoitin',
+							'textMagnifier'      => 'Tekstin suurennuslasia',
+							'dyslexicFont'       => 'Dyslektikon fontti',
+							'alignCenter'        => 'Keskitä',
+							'letterSpacing'      => 'Kirjainväli',
+							'fontWeight'         => 'Fontin paksuus',
+							'darkContrast'       => 'Tumma kontrasti',
+							'lightContrast'      => 'Vaalea kontrasti',
+							'highContrast'       => 'Korkea kontrasti',
+							'monochrome'         => 'Monokromi',
+							'saturation'         => 'Kylläisyys',
 							'readingLine'        => 'Lukulinja',
-							'keyboardNavigation' => 'Näppäimistö navigointi',
-							'highlightTitles'    => 'Korosta otsikoita',
 							'readingMask'        => 'Lukemismaski',
+							'readPage'           => 'Lue sivu',
+							'keyboardNavigation' => 'Näppäimistö navigointi',
 							'hideImages'         => 'Piilota kuvat',
-							'highlightAll'       => 'Korosta kaikki',
-						),
-						'orientationBottom'      => array(
-							'readPage'       => 'Lue sivu',
-							'muteSounds'     => 'Mykistä äänet',
-							'stopAnimations' => 'Pysäytä animaatiot',
-						),
-						'divider'                => array(
-							'content'    => 'Sisältö',
-							'colors'     => 'Värit',
-							'navigation' => 'Navigointi',
-						),
-						'resetSettings'          => 'Nollaa asetukset',
-						'footer'                 => array(
-							'accessibilityStatement' => 'Saavutettavuuslausunto',
-							'version'                => 'Versio ' . $plugin_version,
+							'muteSounds'         => 'Mykistä äänet',
+							'highlightTitles'    => 'Korosta otsikoita',
+							'highlightAll'       => 'Korosta sisältö',
+							'stopAnimations'     => 'Pysäytä animaatiot',
+							'resetSettings'      => 'Nollaa asetukset',
 						),
 					),
 					'pt'    => array(
+						'global'                 => array(
+							'back'    => 'Voltar',
+							'default' => 'Padrão',
+						),
+						'hideToolbar'            => array(
+							'title'   => 'Por quanto tempo deseja ocultar a barra de acessibilidade?',
+							'radio1'  => 'Apenas para esta sessão',
+							'radio2'  => '24 horas',
+							'radio3'  => 'Uma semana',
+							'button1' => 'Agora não',
+							'button2' => 'Ocultar barra',
+						),
+						'unsupportedPageReader'  => array(
+							'title' => 'Selain täytyy päivittää',
+							'desc'  => 'Selaimesi ei tue puhesynteesiä. Päivitä selain tai käytä sellaista, joka tukee puhesynteesiä (esim. Chrome, Edge, Safari).',
+							'link'  => 'Kuinka päivitetään?',
+						),
 						'header'                 => array(
 							'language'      => 'Português',
 							'listLanguages' => $list_languages,
 							'title'         => 'Configurações de Acessibilidade',
 							'desc'          => 'Construído por',
 							'anchor'        => 'OneTap',
+							'statement'     => 'Declaração',
+							'hideToolbar'   => 'Ocultar barra de ferramentas',
 						),
 						'multiFunctionalFeature' => array(
 							'title'              => 'Escolha seu perfil de acessibilidade',
@@ -1336,57 +1919,65 @@ class Accessibility_Onetap_Public {
 								'off'   => 'DESLIGADO',
 							),
 						),
-						'content'                => array(
-							'biggerText'    => 'Texto Maior',
-							'cursor'        => 'Cursor',
-							'lineHeight'    => 'Altura da Linha',
-							'letterSpacing' => 'Espaçamento das Letras',
-							'readableFont'  => 'Fonte Legível',
-							'dyslexicFont'  => 'Fonte para Dislexia',
+						'titles'                 => array(
+							'contentModules'     => 'Módulos de Conteúdo',
+							'colorModules'       => 'Módulos de Cor',
+							'orientationModules' => 'Módulos de Orientação',
 						),
-						'contentBottom'          => array(
-							'textAlign'      => 'Alinhar Texto',
-							'textMagnifier'  => 'Lupa de Texto',
-							'highlightLinks' => 'Destacar Links',
-						),
-						'colors'                 => array(
-							'invertColors' => 'Inverter Cores',
-							'brightness'   => 'Brilho',
-							'contrast'     => 'Contraste',
-							'grayscale'    => 'Escala de Cinza',
-							'saturation'   => 'Saturação',
-						),
-						'orientation'            => array(
+						'features'               => array(
+							'biggerText'         => 'Tamanho da Fonte',
+							'highlightLinks'     => 'Destacar Links',
+							'lineHeight'         => 'Altura da Linha',
+							'readableFont'       => 'Fonte Legível',
+							'cursor'             => 'Cursor Grande',
+							'textMagnifier'      => 'Lupa de Texto',
+							'dyslexicFont'       => 'Fonte para Dislexia',
+							'alignCenter'        => 'Centralizar',
+							'letterSpacing'      => 'Espaçamento das Letras',
+							'fontWeight'         => 'Peso da Fonte',
+							'darkContrast'       => 'Contraste Escuro',
+							'lightContrast'      => 'Contraste Claro',
+							'highContrast'       => 'Alto Contraste',
+							'monochrome'         => 'Monocromático',
+							'saturation'         => 'Saturação',
 							'readingLine'        => 'Linha de Leitura',
-							'keyboardNavigation' => 'Navegação pelo Teclado',
-							'highlightTitles'    => 'Destacar Títulos',
 							'readingMask'        => 'Máscara de Leitura',
+							'readPage'           => 'Ler Página',
+							'keyboardNavigation' => 'Navegação pelo Teclado',
 							'hideImages'         => 'Esconder Imagens',
-							'highlightAll'       => 'Destacar Tudo',
-						),
-						'orientationBottom'      => array(
-							'readPage'       => 'Ler Página',
-							'muteSounds'     => 'Silenciar Sons',
-							'stopAnimations' => 'Parar Animações',
-						),
-						'divider'                => array(
-							'content'    => 'Conteúdo',
-							'colors'     => 'Cores',
-							'navigation' => 'Navegação',
-						),
-						'resetSettings'          => 'Redefinir Configurações',
-						'footer'                 => array(
-							'accessibilityStatement' => 'Declaração de Acessibilidade',
-							'version'                => 'Versão ' . $plugin_version,
+							'muteSounds'         => 'Silenciar Sons',
+							'highlightTitles'    => 'Destacar Títulos',
+							'highlightAll'       => 'Destacar Conteúdo',
+							'stopAnimations'     => 'Parar Animações',
+							'resetSettings'      => 'Redefinir Configurações',
 						),
 					),
 					'ro'    => array(
+						'global'                 => array(
+							'back'    => 'Înapoi',
+							'default' => 'Implicit',
+						),
+						'hideToolbar'            => array(
+							'title'   => 'Cât timp doriți să ascundeți bara de accesibilitate?',
+							'radio1'  => 'Doar pentru această sesiune',
+							'radio2'  => '24 de ore',
+							'radio3'  => 'O săptămână',
+							'button1' => 'Nu acum',
+							'button2' => 'Ascunde bara',
+						),
+						'unsupportedPageReader'  => array(
+							'title' => 'Browserul trebuie actualizat',
+							'desc'  => 'Browserul tău nu suportă ieșirea vocală. Te rugăm să-l actualizezi sau să folosești unul care acceptă sinteza vocală (de exemplu, Chrome, Edge, Safari).',
+							'link'  => 'Cum se actualizează?',
+						),
 						'header'                 => array(
 							'language'      => 'Română',
 							'listLanguages' => $list_languages,
 							'title'         => 'Setări de Accesibilitate',
 							'desc'          => 'Creat de',
 							'anchor'        => 'OneTap',
+							'statement'     => 'Declarație',
+							'hideToolbar'   => 'Ascunde bara de instrumente',
 						),
 						'multiFunctionalFeature' => array(
 							'title'              => 'Alegeți profilul de accesibilitate',
@@ -1421,57 +2012,65 @@ class Accessibility_Onetap_Public {
 								'off'   => 'DEZACTIVAT',
 							),
 						),
-						'content'                => array(
-							'biggerText'    => 'Text mai mare',
-							'cursor'        => 'Cursor',
-							'lineHeight'    => 'Înălțimea liniei',
-							'letterSpacing' => 'Spațierea literelor',
-							'readableFont'  => 'Font lizibil',
-							'dyslexicFont'  => 'Font pentru dislexie',
+						'titles'                 => array(
+							'contentModules'     => 'Module de conținut',
+							'colorModules'       => 'Module de culori',
+							'orientationModules' => 'Module de orientare',
 						),
-						'contentBottom'          => array(
-							'textAlign'      => 'Aliniere text',
-							'textMagnifier'  => 'Lupă text',
-							'highlightLinks' => 'Subliniază link-uri',
-						),
-						'colors'                 => array(
-							'invertColors' => 'Inversare culori',
-							'brightness'   => 'Luminozitate',
-							'contrast'     => 'Contrast',
-							'grayscale'    => 'Nuante de gri',
-							'saturation'   => 'Saturație',
-						),
-						'orientation'            => array(
+						'features'               => array(
+							'biggerText'         => 'Dimensiunea fontului',
+							'highlightLinks'     => 'Subliniază link-uri',
+							'lineHeight'         => 'Înălțimea liniei',
+							'readableFont'       => 'Font lizibil',
+							'cursor'             => 'Cursor mare',
+							'textMagnifier'      => 'Lupă text',
+							'dyslexicFont'       => 'Font pentru dislexie',
+							'alignCenter'        => 'Centrare',
+							'letterSpacing'      => 'Spațierea literelor',
+							'fontWeight'         => 'Grosimea fontului',
+							'darkContrast'       => 'Contrast întunecat',
+							'lightContrast'      => 'Contrast deschis',
+							'highContrast'       => 'Contrast înalt',
+							'monochrome'         => 'Monocrom',
+							'saturation'         => 'Saturație',
 							'readingLine'        => 'Linie de citire',
-							'keyboardNavigation' => 'Navigare cu tastatura',
-							'highlightTitles'    => 'Subliniază titluri',
 							'readingMask'        => 'Mască de citire',
+							'readPage'           => 'Citește pagina',
+							'keyboardNavigation' => 'Navigare cu tastatura',
 							'hideImages'         => 'Ascunde imagini',
-							'highlightAll'       => 'Subliniază tot',
-						),
-						'orientationBottom'      => array(
-							'readPage'       => 'Citește pagina',
-							'muteSounds'     => 'Opresc sunetele',
-							'stopAnimations' => 'Oprire animații',
-						),
-						'divider'                => array(
-							'content'    => 'Conținut',
-							'colors'     => 'Culori',
-							'navigation' => 'Navigare',
-						),
-						'resetSettings'          => 'Resetați setările',
-						'footer'                 => array(
-							'accessibilityStatement' => 'Declarație de accesibilitate',
-							'version'                => 'Versiune ' . $plugin_version,
+							'muteSounds'         => 'Opresc sunetele',
+							'highlightTitles'    => 'Subliniază titluri',
+							'highlightAll'       => 'Subliniază conținut',
+							'stopAnimations'     => 'Oprire animații',
+							'resetSettings'      => 'Resetați setările',
 						),
 					),
 					'si'    => array(
+						'global'                 => array(
+							'back'    => 'Nazaj',
+							'default' => 'Privzeto',
+						),
+						'hideToolbar'            => array(
+							'title'   => 'Kako dolgo želite skriti orodno vrstico za dostopnost?',
+							'radio1'  => 'Samo za to sejo',
+							'radio2'  => '24 ur',
+							'radio3'  => 'En teden',
+							'button1' => 'Ne zdaj',
+							'button2' => 'Skrij orodno vrstico',
+						),
+						'unsupportedPageReader'  => array(
+							'title' => 'Brskalnik je treba posodobiti',
+							'desc'  => 'Vaš brskalnik ne podpira govorne sinteze. Posodobite svoj brskalnik ali uporabite takšnega, ki podpira govor (npr. Chrome, Edge, Safari).',
+							'link'  => 'Kako posodobiti?',
+						),
 						'header'                 => array(
 							'language'      => 'Slovenščina',
 							'listLanguages' => $list_languages,
 							'title'         => 'Nastavitve dostopnosti',
 							'desc'          => 'Narejeno',
 							'anchor'        => 'OneTap',
+							'statement'     => 'Izjava',
+							'hideToolbar'   => 'Skrij orodno vrstico',
 						),
 						'multiFunctionalFeature' => array(
 							'title'              => 'Izberite svoj dostopnostni profil',
@@ -1506,57 +2105,65 @@ class Accessibility_Onetap_Public {
 								'off'   => 'IZKLOP',
 							),
 						),
-						'content'                => array(
-							'biggerText'    => 'Večji besedilo',
-							'cursor'        => 'Kazalec',
-							'lineHeight'    => 'Višina vrstice',
-							'letterSpacing' => 'Razmik med črkami',
-							'readableFont'  => 'Bralna pisava',
-							'dyslexicFont'  => 'Pisava za disleksijo',
+						'titles'                 => array(
+							'contentModules'     => 'Moduli vsebine',
+							'colorModules'       => 'Moduli barv',
+							'orientationModules' => 'Moduli orientacije',
 						),
-						'contentBottom'          => array(
-							'textAlign'      => 'Poravnava besedila',
-							'textMagnifier'  => 'Lupa besedila',
-							'highlightLinks' => 'Poudari povezave',
-						),
-						'colors'                 => array(
-							'invertColors' => 'Obrni barve',
-							'brightness'   => 'Svetlost',
-							'contrast'     => 'Kontrast',
-							'grayscale'    => 'Siva skala',
-							'saturation'   => 'Saturacija',
-						),
-						'orientation'            => array(
+						'features'               => array(
+							'biggerText'         => 'Velikost pisave',
+							'highlightLinks'     => 'Poudari povezave',
+							'lineHeight'         => 'Višina vrstice',
+							'readableFont'       => 'Bralna pisava',
+							'cursor'             => 'Velik kazalec',
+							'textMagnifier'      => 'Lupa besedila',
+							'dyslexicFont'       => 'Pisava za disleksijo',
+							'alignCenter'        => 'Sredinska poravnava',
+							'letterSpacing'      => 'Razmik med črkami',
+							'fontWeight'         => 'Debelina pisave',
+							'darkContrast'       => 'Temen kontrast',
+							'lightContrast'      => 'Svetel kontrast',
+							'highContrast'       => 'Visok kontrast',
+							'monochrome'         => 'Monokrom',
+							'saturation'         => 'Saturacija',
 							'readingLine'        => 'Bralna linija',
-							'keyboardNavigation' => 'Navigacija s tipkovnico',
-							'highlightTitles'    => 'Poudari naslove',
 							'readingMask'        => 'Maska za branje',
+							'readPage'           => 'Preberi stran',
+							'keyboardNavigation' => 'Navigacija s tipkovnico',
 							'hideImages'         => 'Skrij slike',
-							'highlightAll'       => 'Poudari vse',
-						),
-						'orientationBottom'      => array(
-							'readPage'       => 'Preberi stran',
-							'muteSounds'     => 'Utišaj zvoke',
-							'stopAnimations' => 'Zaustavi animacije',
-						),
-						'divider'                => array(
-							'content'    => 'Vsebina',
-							'colors'     => 'Barve',
-							'navigation' => 'Navigacija',
-						),
-						'resetSettings'          => 'Ponastavi nastavitve',
-						'footer'                 => array(
-							'accessibilityStatement' => 'Izjava o dostopnosti',
-							'version'                => 'Različica ' . $plugin_version,
+							'muteSounds'         => 'Utišaj zvoke',
+							'highlightTitles'    => 'Poudari naslove',
+							'highlightAll'       => 'Poudari vsebino',
+							'stopAnimations'     => 'Zaustavi animacije',
+							'resetSettings'      => 'Ponastavi nastavitve',
 						),
 					),
 					'sk'    => array(
+						'global'                 => array(
+							'back'    => 'Späť',
+							'default' => 'Predvolené',
+						),
+						'hideToolbar'            => array(
+							'title'   => 'Ako dlho chcete skryť panel prístupnosti?',
+							'radio1'  => 'Len pre toto sedenie',
+							'radio2'  => '24 hodín',
+							'radio3'  => 'Jeden týždeň',
+							'button1' => 'Nie teraz',
+							'button2' => 'Skryť panel',
+						),
+						'unsupportedPageReader'  => array(
+							'title' => 'Prehliadač je potrebné aktualizovať',
+							'desc'  => 'Váš prehliadač nepodporuje výstup reči. Aktualizujte prehliadač alebo použite taký, ktorý podporuje syntézu reči (napr. Chrome, Edge, Safari).',
+							'link'  => 'Ako aktualizovať?',
+						),
 						'header'                 => array(
 							'language'      => 'Slovenčina',
 							'listLanguages' => $list_languages,
 							'title'         => 'Nastavenia prístupnosti',
 							'desc'          => 'Vytvorené',
 							'anchor'        => 'OneTap',
+							'statement'     => 'Vyhlásenie',
+							'hideToolbar'   => 'Skryť panel nástrojov',
 						),
 						'multiFunctionalFeature' => array(
 							'title'              => 'Vyberte svoj profil prístupnosti',
@@ -1591,57 +2198,65 @@ class Accessibility_Onetap_Public {
 								'off'   => 'DEAKTIVOVANÉ',
 							),
 						),
-						'content'                => array(
-							'biggerText'    => 'Bigger text',
-							'cursor'        => 'Kurzor',
-							'lineHeight'    => 'Výška riadku',
-							'letterSpacing' => 'Medzera medzi písmenami',
-							'readableFont'  => 'Čitateľný font',
-							'dyslexicFont'  => 'Font pre dyslexiu',
+						'titles'                 => array(
+							'contentModules'     => 'Moduly obsahu',
+							'colorModules'       => 'Moduly farieb',
+							'orientationModules' => 'Moduly orientácie',
 						),
-						'contentBottom'          => array(
-							'textAlign'      => 'Zarovnanie textu',
-							'textMagnifier'  => 'Lupa textu',
-							'highlightLinks' => 'Zvýrazniť odkazy',
-						),
-						'colors'                 => array(
-							'invertColors' => 'Invertovať farby',
-							'brightness'   => 'Jas',
-							'contrast'     => 'Kontrast',
-							'grayscale'    => 'Šedý odtieň',
-							'saturation'   => 'Saturácia',
-						),
-						'orientation'            => array(
+						'features'               => array(
+							'biggerText'         => 'Veľkosť písma',
+							'highlightLinks'     => 'Zvýrazniť odkazy',
+							'lineHeight'         => 'Výška riadku',
+							'readableFont'       => 'Čitateľný font',
+							'cursor'             => 'Veľký kurzor',
+							'textMagnifier'      => 'Lupa textu',
+							'dyslexicFont'       => 'Font pre dyslexiu',
+							'alignCenter'        => 'Vycentrovať',
+							'letterSpacing'      => 'Medzera medzi písmenami',
+							'fontWeight'         => 'Hrúbka písma',
+							'darkContrast'       => 'Tmavý kontrast',
+							'lightContrast'      => 'Svetlý kontrast',
+							'highContrast'       => 'Vysoký kontrast',
+							'monochrome'         => 'Monochróm',
+							'saturation'         => 'Saturácia',
 							'readingLine'        => 'Čítacia línia',
-							'keyboardNavigation' => 'Navigácia pomocou klávesnice',
-							'highlightTitles'    => 'Zvýrazniť nadpisy',
 							'readingMask'        => 'Maska na čítanie',
+							'readPage'           => 'Prečítajte stránku',
+							'keyboardNavigation' => 'Navigácia pomocou klávesnice',
 							'hideImages'         => 'Skryť obrázky',
-							'highlightAll'       => 'Zvýrazniť všetko',
-						),
-						'orientationBottom'      => array(
-							'readPage'       => 'Prečítajte stránku',
-							'muteSounds'     => 'Stlmiť zvuky',
-							'stopAnimations' => 'Zastaviť animácie',
-						),
-						'divider'                => array(
-							'content'    => 'Obsah',
-							'colors'     => 'Farby',
-							'navigation' => 'Navigácia',
-						),
-						'resetSettings'          => 'Obnoviť nastavenia',
-						'footer'                 => array(
-							'accessibilityStatement' => 'Vyhlásenie o prístupnosti',
-							'version'                => 'Verzia ' . $plugin_version,
+							'muteSounds'         => 'Stlmiť zvuky',
+							'highlightTitles'    => 'Zvýrazniť nadpisy',
+							'highlightAll'       => 'Zvýrazniť obsah',
+							'stopAnimations'     => 'Zastaviť animácie',
+							'resetSettings'      => 'Obnoviť nastavenia',
 						),
 					),
 					'nl'    => array(
+						'global'                 => array(
+							'back'    => 'Terug',
+							'default' => 'Standaard',
+						),
+						'hideToolbar'            => array(
+							'title'   => 'Hoe lang wilt u de toegankelijkheidstoolbalk verbergen?',
+							'radio1'  => 'Alleen voor deze sessie',
+							'radio2'  => '24 uur',
+							'radio3'  => 'Een week',
+							'button1' => 'Niet nu',
+							'button2' => 'Verberg werkbalk',
+						),
+						'unsupportedPageReader'  => array(
+							'title' => 'Browser moet worden bijgewerkt',
+							'desc'  => 'Je browser ondersteunt geen spraaksynthese. Werk je browser bij of gebruik een browser die spraaksynthese ondersteunt (bijv. Chrome, Edge, Safari).',
+							'link'  => 'Hoe bijwerken?',
+						),
 						'header'                 => array(
 							'language'      => 'Nederlands',
 							'listLanguages' => $list_languages,
 							'title'         => 'Toegankelijkheidsinstellingen',
 							'desc'          => 'Gemaakt door',
 							'anchor'        => 'OneTap',
+							'statement'     => 'Verklaring',
+							'hideToolbar'   => 'Werkbalk verbergen',
 						),
 						'multiFunctionalFeature' => array(
 							'title'              => 'Kies je toegankelijkheidsprofiel',
@@ -1676,57 +2291,65 @@ class Accessibility_Onetap_Public {
 								'off'   => 'UITGESCHAKELD',
 							),
 						),
-						'content'                => array(
-							'biggerText'    => 'Grotere tekst',
-							'cursor'        => 'Cursor',
-							'lineHeight'    => 'Regelhoogte',
-							'letterSpacing' => 'Letterafstand',
-							'readableFont'  => 'Leesbaar lettertype',
-							'dyslexicFont'  => 'Lettertype voor dyslexie',
+						'titles'                 => array(
+							'contentModules'     => 'Inhoudsmodules',
+							'colorModules'       => 'Kleurmodules',
+							'orientationModules' => 'Oriëntatiemodules',
 						),
-						'contentBottom'          => array(
-							'textAlign'      => 'Tekstuitlijning',
-							'textMagnifier'  => 'Tekst vergrootglas',
-							'highlightLinks' => 'Markeer links',
-						),
-						'colors'                 => array(
-							'invertColors' => 'Kleuren omdraaien',
-							'brightness'   => 'Helderheid',
-							'contrast'     => 'Contrast',
-							'grayscale'    => 'Grijstinten',
-							'saturation'   => 'Verzadiging',
-						),
-						'orientation'            => array(
+						'features'               => array(
+							'biggerText'         => 'Lettergrootte',
+							'highlightLinks'     => 'Markeer links',
+							'lineHeight'         => 'Regelhoogte',
+							'readableFont'       => 'Leesbaar lettertype',
+							'cursor'             => 'Grote cursor',
+							'textMagnifier'      => 'Tekst vergrootglas',
+							'dyslexicFont'       => 'Lettertype voor dyslexie',
+							'alignCenter'        => 'Centreren',
+							'letterSpacing'      => 'Letterafstand',
+							'fontWeight'         => 'Lettergewicht',
+							'darkContrast'       => 'Donker contrast',
+							'lightContrast'      => 'Licht contrast',
+							'highContrast'       => 'Hoog contrast',
+							'monochrome'         => 'Monochroom',
+							'saturation'         => 'Verzadiging',
 							'readingLine'        => 'Leeslijn',
-							'keyboardNavigation' => 'Navigatie via toetsenbord',
-							'highlightTitles'    => 'Markeer titels',
 							'readingMask'        => 'Leesmasker',
+							'readPage'           => 'Lees pagina',
+							'keyboardNavigation' => 'Navigatie via toetsenbord',
 							'hideImages'         => 'Verberg afbeeldingen',
-							'highlightAll'       => 'Markeer alles',
-						),
-						'orientationBottom'      => array(
-							'readPage'       => 'Lees pagina',
-							'muteSounds'     => 'Geluiden dempen',
-							'stopAnimations' => 'Stop animaties',
-						),
-						'divider'                => array(
-							'content'    => 'Inhoud',
-							'colors'     => 'Kleuren',
-							'navigation' => 'Navigatie',
-						),
-						'resetSettings'          => 'Instellingen herstellen',
-						'footer'                 => array(
-							'accessibilityStatement' => 'Toegankelijkheidsverklaring',
-							'version'                => 'Versie ' . $plugin_version,
+							'muteSounds'         => 'Geluiden dempen',
+							'highlightTitles'    => 'Markeer titels',
+							'highlightAll'       => 'Markeer inhoud',
+							'stopAnimations'     => 'Stop animaties',
+							'resetSettings'      => 'Instellingen herstellen',
 						),
 					),
 					'dk'    => array(
+						'global'                 => array(
+							'back'    => 'Tilbage',
+							'default' => 'Standard',
+						),
+						'hideToolbar'            => array(
+							'title'   => 'Hvor længe vil du skjule tilgængelighedsværktøjslinjen?',
+							'radio1'  => 'Kun for denne session',
+							'radio2'  => '24 timer',
+							'radio3'  => 'En uge',
+							'button1' => 'Ikke nu',
+							'button2' => 'Skjul værktøjslinje',
+						),
+						'unsupportedPageReader'  => array(
+							'title' => 'Browseren skal opdateres',
+							'desc'  => 'Din browser understøtter ikke taleoutput. Opdater din browser, eller brug en med understøttelse af talesyntese (f.eks. Chrome, Edge, Safari).',
+							'link'  => 'Sådan opdaterer du?',
+						),
 						'header'                 => array(
 							'language'      => 'Dansk',
 							'listLanguages' => $list_languages,
 							'title'         => 'Tilgængelighedsindstillinger',
 							'desc'          => 'Oprettet af',
 							'anchor'        => 'OneTap',
+							'statement'     => 'Erklæring',
+							'hideToolbar'   => 'Skjul værktøjslinje',
 						),
 						'multiFunctionalFeature' => array(
 							'title'              => 'Vælg din tilgængelighedsprofil',
@@ -1761,57 +2384,65 @@ class Accessibility_Onetap_Public {
 								'off'   => 'SLUKKET',
 							),
 						),
-						'content'                => array(
-							'biggerText'    => 'Større tekst',
-							'cursor'        => 'Cursor',
-							'lineHeight'    => 'Linjehøjde',
-							'letterSpacing' => 'Bogstavafstand',
-							'readableFont'  => 'Læsbar skrifttype',
-							'dyslexicFont'  => 'Skrifttype til dysleksi',
+						'titles'                 => array(
+							'contentModules'     => 'Indholdsmoduler',
+							'colorModules'       => 'Farve moduler',
+							'orientationModules' => 'Orientationsmoduler',
 						),
-						'contentBottom'          => array(
-							'textAlign'      => 'Tekstjustering',
-							'textMagnifier'  => 'Tekstforstørrelse',
-							'highlightLinks' => 'Fremhæv links',
-						),
-						'colors'                 => array(
-							'invertColors' => 'Inverter farver',
-							'brightness'   => 'Lysstyrke',
-							'contrast'     => 'Kontrast',
-							'grayscale'    => 'Gråtoner',
-							'saturation'   => 'Mætning',
-						),
-						'orientation'            => array(
+						'features'               => array(
+							'biggerText'         => 'Skriftstørrelse',
+							'highlightLinks'     => 'Fremhæv links',
+							'lineHeight'         => 'Linjehøjde',
+							'readableFont'       => 'Læsbar skrifttype',
+							'cursor'             => 'Stor cursor',
+							'textMagnifier'      => 'Tekstforstørrelse',
+							'dyslexicFont'       => 'Skrifttype til dysleksi',
+							'alignCenter'        => 'Centrer',
+							'letterSpacing'      => 'Bogstavafstand',
+							'fontWeight'         => 'Skriftvægt',
+							'darkContrast'       => 'Mørk kontrast',
+							'lightContrast'      => 'Lys kontrast',
+							'highContrast'       => 'Høj kontrast',
+							'monochrome'         => 'Monokrom',
+							'saturation'         => 'Mætning',
 							'readingLine'        => 'Læselinje',
-							'keyboardNavigation' => 'Tastaturnavigation',
-							'highlightTitles'    => 'Fremhæv titler',
 							'readingMask'        => 'Læsemask',
+							'readPage'           => 'Læs side',
+							'keyboardNavigation' => 'Tastaturnavigation',
 							'hideImages'         => 'Skjul billeder',
-							'highlightAll'       => 'Fremhæv alt',
-						),
-						'orientationBottom'      => array(
-							'readPage'       => 'Læs side',
-							'muteSounds'     => 'Lydløs',
-							'stopAnimations' => 'Stop animationer',
-						),
-						'divider'                => array(
-							'content'    => 'Indhold',
-							'colors'     => 'Farver',
-							'navigation' => 'Navigation',
-						),
-						'resetSettings'          => 'Nulstil indstillinger',
-						'footer'                 => array(
-							'accessibilityStatement' => 'Erklæring om tilgængelighed',
-							'version'                => 'Version ' . $plugin_version,
+							'muteSounds'         => 'Lydløs',
+							'highlightTitles'    => 'Fremhæv titler',
+							'highlightAll'       => 'Fremhæv indhold',
+							'stopAnimations'     => 'Stop animationer',
+							'resetSettings'      => 'Nulstil indstillinger',
 						),
 					),
 					'gr'    => array(
+						'global'                 => array(
+							'back'    => 'Πίσω',
+							'default' => 'Προεπιλογή',
+						),
+						'hideToolbar'            => array(
+							'title'   => 'Για πόσο καιρό θέλετε να αποκρύψετε τη γραμμή προσβασιμότητας;',
+							'radio1'  => 'Μόνο για αυτή τη συνεδρία',
+							'radio2'  => '24 ώρες',
+							'radio3'  => 'Μία εβδομάδα',
+							'button1' => 'Όχι τώρα',
+							'button2' => 'Απόκρυψη γραμμής εργαλείων',
+						),
+						'unsupportedPageReader'  => array(
+							'title' => 'Το πρόγραμμα περιήγησης χρειάζεται ενημέρωση',
+							'desc'  => 'Το πρόγραμμα περιήγησής σας δεν υποστηρίζει έξοδο ομιλίας. Ενημερώστε το ή χρησιμοποιήστε ένα πρόγραμμα περιήγησης με ενεργοποιημένη σύνθεση φωνής (π.χ. Chrome, Edge, Safari).',
+							'link'  => 'Πώς να το ενημερώσετε;',
+						),
 						'header'                 => array(
 							'language'      => 'Ελληνικά',
 							'listLanguages' => $list_languages,
 							'title'         => 'Ρυθμίσεις Προσβασιμότητας',
 							'desc'          => 'Δημιουργήθηκε από',
 							'anchor'        => 'OneTap',
+							'statement'     => 'Δήλωση',
+							'hideToolbar'   => 'Απόκρυψη γραμμής εργαλείων',
 						),
 						'multiFunctionalFeature' => array(
 							'title'              => 'Επιλέξτε το προφίλ προσβασιμότητας σας',
@@ -1846,57 +2477,65 @@ class Accessibility_Onetap_Public {
 								'off'   => 'ΑΠΕΝΕΡΓΟΠΟΙΗΜΕΝΟ',
 							),
 						),
-						'content'                => array(
-							'biggerText'    => 'Μεγαλύτερη γραμματοσειρά',
-							'cursor'        => 'Δείκτης',
-							'lineHeight'    => 'Ύψος γραμμής',
-							'letterSpacing' => 'Απόσταση γραμμάτων',
-							'readableFont'  => 'Ευανάγνωστη γραμματοσειρά',
-							'dyslexicFont'  => 'Γραμματοσειρά για δυσλεξία',
+						'titles'                 => array(
+							'contentModules'     => 'Μονάδες περιεχομένου',
+							'colorModules'       => 'Μονάδες χρωμάτων',
+							'orientationModules' => 'Μονάδες προσανατολισμού',
 						),
-						'contentBottom'          => array(
-							'textAlign'      => 'Στοίχιση κειμένου',
-							'textMagnifier'  => 'Μεγεθυντικό φακό κειμένου',
-							'highlightLinks' => 'Επισήμανση συνδέσμων',
-						),
-						'colors'                 => array(
-							'invertColors' => 'Αντιστροφή χρωμάτων',
-							'brightness'   => 'Φωτεινότητα',
-							'contrast'     => 'Αντίθεση',
-							'grayscale'    => 'Ασπρόμαυρο',
-							'saturation'   => 'Κορεσμός',
-						),
-						'orientation'            => array(
+						'features'               => array(
+							'biggerText'         => 'Μέγεθος γραμματοσειράς',
+							'highlightLinks'     => 'Επισήμανση συνδέσμων',
+							'lineHeight'         => 'Ύψος γραμμής',
+							'readableFont'       => 'Ευανάγνωστη γραμματοσειρά',
+							'cursor'             => 'Μεγάλος δείκτης',
+							'textMagnifier'      => 'Μεγεθυντικό φακό κειμένου',
+							'dyslexicFont'       => 'Γραμματοσειρά για δυσλεξία',
+							'alignCenter'        => 'Κεντράρισμα',
+							'letterSpacing'      => 'Απόσταση γραμμάτων',
+							'fontWeight'         => 'Βάρος γραμματοσειράς',
+							'darkContrast'       => 'Σκούρη αντίθεση',
+							'lightContrast'      => 'Ανοιχτή αντίθεση',
+							'highContrast'       => 'Υψηλή αντίθεση',
+							'monochrome'         => 'Μονόχρωμο',
+							'saturation'         => 'Κορεσμός',
 							'readingLine'        => 'Γραμμή ανάγνωσης',
-							'keyboardNavigation' => 'Πλοήγηση μέσω πληκτρολογίου',
-							'highlightTitles'    => 'Επισήμανση τίτλων',
 							'readingMask'        => 'Μάσκα ανάγνωσης',
+							'readPage'           => 'Διαβάστε τη σελίδα',
+							'keyboardNavigation' => 'Πλοήγηση μέσω πληκτρολογίου',
 							'hideImages'         => 'Απόκρυψη εικόνων',
-							'highlightAll'       => 'Επισήμανση όλων',
-						),
-						'orientationBottom'      => array(
-							'readPage'       => 'Διαβάστε τη σελίδα',
-							'muteSounds'     => 'Απενεργοποίηση ήχου',
-							'stopAnimations' => 'Σταματήστε τις κινούμενες εικόνες',
-						),
-						'divider'                => array(
-							'content'    => 'Περιεχόμενο',
-							'colors'     => 'Χρώματα',
-							'navigation' => 'Πλοήγηση',
-						),
-						'resetSettings'          => 'Επαναφορά ρυθμίσεων',
-						'footer'                 => array(
-							'accessibilityStatement' => 'Δήλωση προσβασιμότητας',
-							'version'                => 'Έκδοση ' . $plugin_version,
+							'muteSounds'         => 'Απενεργοποίηση ήχου',
+							'highlightTitles'    => 'Επισήμανση τίτλων',
+							'highlightAll'       => 'Επισήμανση περιεχομένου',
+							'stopAnimations'     => 'Σταματήστε τις κινούμενες εικόνες',
+							'resetSettings'      => 'Επαναφορά ρυθμίσεων',
 						),
 					),
 					'cz'    => array(
+						'global'                 => array(
+							'back'    => 'Zpět',
+							'default' => 'Výchozí',
+						),
+						'hideToolbar'            => array(
+							'title'   => 'Na jak dlouho chcete skrýt panel usnadnění?',
+							'radio1'  => 'Pouze pro tuto relaci',
+							'radio2'  => '24 hodin',
+							'radio3'  => 'Jeden týden',
+							'button1' => 'Teď ne',
+							'button2' => 'Skrýt panel',
+						),
+						'unsupportedPageReader'  => array(
+							'title' => 'Prohlížeč je třeba aktualizovat',
+							'desc'  => 'Váš prohlížeč nepodporuje výstup řeči. Aktualizujte jej nebo použijte prohlížeč, který podporuje syntézu řeči (např. Chrome, Edge, Safari).',
+							'link'  => 'Jak aktualizovat?',
+						),
 						'header'                 => array(
 							'language'      => 'Čeština',
 							'listLanguages' => $list_languages,
 							'title'         => 'Nastavení přístupnosti',
 							'desc'          => 'Vytvořeno',
 							'anchor'        => 'OneTap',
+							'statement'     => 'Prohlášení',
+							'hideToolbar'   => 'Skrýt panel nástrojů',
 						),
 						'multiFunctionalFeature' => array(
 							'title'              => 'Vyberte svůj přístupnostní profil',
@@ -1931,57 +2570,65 @@ class Accessibility_Onetap_Public {
 								'off'   => 'NEZAŠKRTNUTO',
 							),
 						),
-						'content'                => array(
-							'biggerText'    => 'Větší písmo',
-							'cursor'        => 'Ukazatel',
-							'lineHeight'    => 'Výška řádku',
-							'letterSpacing' => 'Mezera mezi písmeny',
-							'readableFont'  => 'Čitelný font',
-							'dyslexicFont'  => 'Font pro dyslexii',
+						'titles'                 => array(
+							'contentModules'     => 'Moduly obsahu',
+							'colorModules'       => 'Moduly barev',
+							'orientationModules' => 'Moduly orientace',
 						),
-						'contentBottom'          => array(
-							'textAlign'      => 'Zarovnání textu',
-							'textMagnifier'  => 'Lupa na text',
-							'highlightLinks' => 'Zvýraznění odkazů',
-						),
-						'colors'                 => array(
-							'invertColors' => 'Invertovat barvy',
-							'brightness'   => 'Jas',
-							'contrast'     => 'Kontrast',
-							'grayscale'    => 'Šedé tóny',
-							'saturation'   => 'Sytost',
-						),
-						'orientation'            => array(
+						'features'               => array(
+							'biggerText'         => 'Velikost písma',
+							'highlightLinks'     => 'Zvýraznění odkazů',
+							'lineHeight'         => 'Výška řádku',
+							'readableFont'       => 'Čitelný font',
+							'cursor'             => 'Velký ukazatel',
+							'textMagnifier'      => 'Lupa na text',
+							'dyslexicFont'       => 'Font pro dyslexii',
+							'alignCenter'        => 'Vycentrovat',
+							'letterSpacing'      => 'Mezera mezi písmeny',
+							'fontWeight'         => 'Tloušťka písma',
+							'darkContrast'       => 'Tmavý kontrast',
+							'lightContrast'      => 'Světlý kontrast',
+							'highContrast'       => 'Vysoký kontrast',
+							'monochrome'         => 'Monochromatický',
+							'saturation'         => 'Sytost',
 							'readingLine'        => 'Čtecí linka',
-							'keyboardNavigation' => 'Navigace klávesnicí',
-							'highlightTitles'    => 'Zvýraznit titulky',
 							'readingMask'        => 'Čtecí maska',
+							'readPage'           => 'Přečíst stránku',
+							'keyboardNavigation' => 'Navigace klávesnicí',
 							'hideImages'         => 'Skrýt obrázky',
-							'highlightAll'       => 'Zvýraznit vše',
-						),
-						'orientationBottom'      => array(
-							'readPage'       => 'Přečíst stránku',
-							'muteSounds'     => 'Ztlumit zvuky',
-							'stopAnimations' => 'Zastavit animace',
-						),
-						'divider'                => array(
-							'content'    => 'Obsah',
-							'colors'     => 'Barvy',
-							'navigation' => 'Navigace',
-						),
-						'resetSettings'          => 'Obnovit nastavení',
-						'footer'                 => array(
-							'accessibilityStatement' => 'Prohlášení o přístupnosti',
-							'version'                => 'Verze ' . $plugin_version,
+							'muteSounds'         => 'Ztlumit zvuky',
+							'highlightTitles'    => 'Zvýraznit titulky',
+							'highlightAll'       => 'Zvýraznit obsah',
+							'stopAnimations'     => 'Zastavit animace',
+							'resetSettings'      => 'Obnovit nastavení',
 						),
 					),
 					'hu'    => array(
+						'global'                 => array(
+							'back'    => 'Vissza',
+							'default' => 'Alapértelmezett',
+						),
+						'hideToolbar'            => array(
+							'title'   => 'Meddig szeretné elrejteni az akadálymentesítési eszköztárat?',
+							'radio1'  => 'Csak erre a munkamenetre',
+							'radio2'  => '24 óra',
+							'radio3'  => 'Egy hét',
+							'button1' => 'Most nem',
+							'button2' => 'Eszköztár elrejtése',
+						),
+						'unsupportedPageReader'  => array(
+							'title' => 'A böngészőt frissíteni kell',
+							'desc'  => 'A böngésző nem támogatja a beszédhang-kimenetet. Frissítse a böngészőt, vagy használjon olyat, amely támogatja a beszédfelismerést (pl. Chrome, Edge, Safari).',
+							'link'  => 'Hogyan frissítsem?',
+						),
 						'header'                 => array(
 							'language'      => 'Magyar',
 							'listLanguages' => $list_languages,
 							'title'         => 'Hozzáférhetőségi beállítások',
 							'desc'          => 'Készítette',
 							'anchor'        => 'OneTap',
+							'statement'     => 'Nyilatkozat',
+							'hideToolbar'   => 'Eszköztár elrejtése',
 						),
 						'multiFunctionalFeature' => array(
 							'title'              => 'Válassza ki hozzáférhetőségi profilját',
@@ -2016,57 +2663,65 @@ class Accessibility_Onetap_Public {
 								'off'   => 'KI',
 							),
 						),
-						'content'                => array(
-							'biggerText'    => 'Nagyobb szöveg',
-							'cursor'        => 'Kurzor',
-							'lineHeight'    => 'Sormagasság',
-							'letterSpacing' => 'Betűköz',
-							'readableFont'  => 'Olvasható betűtípus',
-							'dyslexicFont'  => 'Diszlexiás betűtípus',
+						'titles'                 => array(
+							'contentModules'     => 'Tartalom modulok',
+							'colorModules'       => 'Szín modulok',
+							'orientationModules' => 'Orientációs modulok',
 						),
-						'contentBottom'          => array(
-							'textAlign'      => 'Szöveg igazítása',
-							'textMagnifier'  => 'Szöveg nagyító',
-							'highlightLinks' => 'Linkek kiemelése',
-						),
-						'colors'                 => array(
-							'invertColors' => 'Színek megfordítása',
-							'brightness'   => 'Fényerő',
-							'contrast'     => 'Kontraszt',
-							'grayscale'    => 'Szürkeárnyalat',
-							'saturation'   => 'Telítettség',
-						),
-						'orientation'            => array(
+						'features'               => array(
+							'biggerText'         => 'Betűméret',
+							'highlightLinks'     => 'Linkek kiemelése',
+							'lineHeight'         => 'Sormagasság',
+							'readableFont'       => 'Olvasható betűtípus',
+							'cursor'             => 'Nagy kurzor',
+							'textMagnifier'      => 'Szöveg nagyító',
+							'dyslexicFont'       => 'Diszlexiás betűtípus',
+							'alignCenter'        => 'Középre igazítás',
+							'letterSpacing'      => 'Betűköz',
+							'fontWeight'         => 'Betűvastagság',
+							'darkContrast'       => 'Sötét kontraszt',
+							'lightContrast'      => 'Világos kontraszt',
+							'highContrast'       => 'Magas kontraszt',
+							'monochrome'         => 'Monokróm',
+							'saturation'         => 'Telítettség',
 							'readingLine'        => 'Olvasási vonal',
-							'keyboardNavigation' => 'Billentyűzet navigáció',
-							'highlightTitles'    => 'Címek kiemelése',
 							'readingMask'        => 'Olvasási maszk',
+							'readPage'           => 'Oldal olvasása',
+							'keyboardNavigation' => 'Billentyűzet navigáció',
 							'hideImages'         => 'Képek elrejtése',
-							'highlightAll'       => 'Mindent kiemelni',
-						),
-						'orientationBottom'      => array(
-							'readPage'       => 'Oldal olvasása',
-							'muteSounds'     => 'Hangok némítása',
-							'stopAnimations' => 'Animációk leállítása',
-						),
-						'divider'                => array(
-							'content'    => 'Tartalom',
-							'colors'     => 'Színek',
-							'navigation' => 'Navigáció',
-						),
-						'resetSettings'          => 'Beállítások visszaállítása',
-						'footer'                 => array(
-							'accessibilityStatement' => 'Hozzáférhetőségi nyilatkozat',
-							'version'                => 'Verzió ' . $plugin_version,
+							'muteSounds'         => 'Hangok némítása',
+							'highlightTitles'    => 'Címek kiemelése',
+							'highlightAll'       => 'Tartalom kiemelése',
+							'stopAnimations'     => 'Animációk leállítása',
+							'resetSettings'      => 'Beállítások visszaállítása',
 						),
 					),
 					'lt'    => array(
+						'global'                 => array(
+							'back'    => 'Atgal',
+							'default' => 'Numatytasis',
+						),
+						'hideToolbar'            => array(
+							'title'   => 'Kiek laiko norite slėpti prieinamumo įrankių juostą?',
+							'radio1'  => 'Tik šiai sesijai',
+							'radio2'  => '24 valandos',
+							'radio3'  => 'Savaitė',
+							'button1' => 'Ne dabar',
+							'button2' => 'Slėpti juostą',
+						),
+						'unsupportedPageReader'  => array(
+							'title' => 'Naršyklę reikia atnaujinti',
+							'desc'  => 'Jūsų naršyklė nepalaiko kalbos sintezės. Atnaujinkite naršyklę arba naudokite tokią, kuri palaiko kalbos sintezę (pvz., Chrome, Edge, Safari).',
+							'link'  => 'Kaip atnaujinti?',
+						),
 						'header'                 => array(
 							'language'      => 'Lietuvių',
 							'listLanguages' => $list_languages,
 							'title'         => 'Prieigos nustatymai',
 							'desc'          => 'Sukūrė',
 							'anchor'        => 'OneTap',
+							'statement'     => 'Pareiškimas',
+							'hideToolbar'   => 'Slėpti įrankių juostą',
 						),
 						'multiFunctionalFeature' => array(
 							'title'              => 'Pasirinkite savo prieigos profilį',
@@ -2101,57 +2756,65 @@ class Accessibility_Onetap_Public {
 								'off'   => 'IŠJUNGTA',
 							),
 						),
-						'content'                => array(
-							'biggerText'    => 'Didesnis tekstas',
-							'cursor'        => 'Kursorius',
-							'lineHeight'    => 'Eilutės aukštis',
-							'letterSpacing' => 'Rašto tarpai',
-							'readableFont'  => 'Lengvai skaitomas šriftas',
-							'dyslexicFont'  => 'Dysleksijai pritaikytas šriftas',
+						'titles'                 => array(
+							'contentModules'     => 'Turinio moduliai',
+							'colorModules'       => 'Spalvų moduliai',
+							'orientationModules' => 'Orientacijos moduliai',
 						),
-						'contentBottom'          => array(
-							'textAlign'      => 'Teksto išlygiavimas',
-							'textMagnifier'  => 'Teksto didinamoji lupa',
-							'highlightLinks' => 'Nuorodų paryškinimas',
-						),
-						'colors'                 => array(
-							'invertColors' => 'Inversuoti spalvas',
-							'brightness'   => 'Šviesumas',
-							'contrast'     => 'Kontrastas',
-							'grayscale'    => 'Pilka spalvų gama',
-							'saturation'   => 'Sotinimas',
-						),
-						'orientation'            => array(
+						'features'               => array(
+							'biggerText'         => 'Šrifto dydis',
+							'highlightLinks'     => 'Nuorodų paryškinimas',
+							'lineHeight'         => 'Eilutės aukštis',
+							'readableFont'       => 'Lengvai skaitomas šriftas',
+							'cursor'             => 'Didelis kursorius',
+							'textMagnifier'      => 'Teksto didinamoji lupa',
+							'dyslexicFont'       => 'Dysleksijai pritaikytas šriftas',
+							'alignCenter'        => 'Centruoti',
+							'letterSpacing'      => 'Rašto tarpai',
+							'fontWeight'         => 'Šrifto storis',
+							'darkContrast'       => 'Tamsus kontrastas',
+							'lightContrast'      => 'Šviesus kontrastas',
+							'highContrast'       => 'Aukštas kontrastas',
+							'monochrome'         => 'Monochrominis',
+							'saturation'         => 'Sotinimas',
 							'readingLine'        => 'Skaitymo linija',
-							'keyboardNavigation' => 'Klaviatūros navigacija',
-							'highlightTitles'    => 'Antraščių paryškinimas',
 							'readingMask'        => 'Skaitymo uždanga',
+							'readPage'           => 'Skaityti puslapį',
+							'keyboardNavigation' => 'Klaviatūros navigacija',
 							'hideImages'         => 'Slėpti nuotraukas',
-							'highlightAll'       => 'Paryškinti viską',
-						),
-						'orientationBottom'      => array(
-							'readPage'       => 'Skaityti puslapį',
-							'muteSounds'     => 'Nutilinti garsus',
-							'stopAnimations' => 'Sustabdyti animacijas',
-						),
-						'divider'                => array(
-							'content'    => 'Turinys',
-							'colors'     => 'Spalvos',
-							'navigation' => 'Navigacija',
-						),
-						'resetSettings'          => 'Atstatyti nustatymus',
-						'footer'                 => array(
-							'accessibilityStatement' => 'Prieigos deklaracija',
-							'version'                => 'Versija ' . $plugin_version,
+							'muteSounds'         => 'Nutilinti garsus',
+							'highlightTitles'    => 'Antraščių paryškinimas',
+							'highlightAll'       => 'Turinio paryškinimas',
+							'stopAnimations'     => 'Sustabdyti animacijas',
+							'resetSettings'      => 'Atstatyti nustatymus',
 						),
 					),
 					'lv'    => array(
+						'global'                 => array(
+							'back'    => 'Atpakaļ',
+							'default' => 'Noklusējuma',
+						),
+						'hideToolbar'            => array(
+							'title'   => 'Cik ilgi vēlaties paslēpt piekļūstamības rīkjoslu?',
+							'radio1'  => 'Tikai šai sesijai',
+							'radio2'  => '24 stundas',
+							'radio3'  => 'Nedēļu',
+							'button1' => 'Ne tagad',
+							'button2' => 'Paslēpt rīkjoslu',
+						),
+						'unsupportedPageReader'  => array(
+							'title' => 'Pārlūkprogramma ir jāatjaunina',
+							'desc'  => 'Jūsu pārlūkprogramma neatbalsta runas sintezatoru. Lūdzu, atjauniniet pārlūkprogrammu vai izmantojiet tādu, kas atbalsta runas sintēzi (piemēram, Chrome, Edge, Safari).',
+							'link'  => 'Kā atjaunināt?',
+						),
 						'header'                 => array(
 							'language'      => 'Latviešu',
 							'listLanguages' => $list_languages,
 							'title'         => 'Piekļuves iestatījumi',
 							'desc'          => 'Izveidojis',
 							'anchor'        => 'OneTap',
+							'statement'     => 'Paziņojums',
+							'hideToolbar'   => 'Slēpt rīkjoslu',
 						),
 						'multiFunctionalFeature' => array(
 							'title'              => 'Izvēlieties savu piekļuves profilu',
@@ -2186,57 +2849,65 @@ class Accessibility_Onetap_Public {
 								'off'   => 'IZSLĒGTS',
 							),
 						),
-						'content'                => array(
-							'biggerText'    => 'Lielāks teksts',
-							'cursor'        => 'Kursors',
-							'lineHeight'    => 'Rindas augstums',
-							'letterSpacing' => 'Burbu attālums',
-							'readableFont'  => 'Lasāms fonts',
-							'dyslexicFont'  => 'Dysleksijas fonts',
+						'titles'                 => array(
+							'contentModules'     => 'Satura moduļi',
+							'colorModules'       => 'Krāsu moduļi',
+							'orientationModules' => 'Orientācijas moduļi',
 						),
-						'contentBottom'          => array(
-							'textAlign'      => 'Teksta izlīdzinājums',
-							'textMagnifier'  => 'Teksta palielinātājs',
-							'highlightLinks' => 'Saistītās saites izcelšana',
-						),
-						'colors'                 => array(
-							'invertColors' => 'Krāsu inversija',
-							'brightness'   => 'Spilgtums',
-							'contrast'     => 'Kontrasts',
-							'grayscale'    => 'Pelēktoņu režīms',
-							'saturation'   => 'Saturācija',
-						),
-						'orientation'            => array(
+						'features'               => array(
+							'biggerText'         => 'Fonta izmērs',
+							'highlightLinks'     => 'Saistītās saites izcelšana',
+							'lineHeight'         => 'Rindas augstums',
+							'readableFont'       => 'Lasāms fonts',
+							'cursor'             => 'Liels kursors',
+							'textMagnifier'      => 'Teksta palielinātājs',
+							'dyslexicFont'       => 'Dysleksijas fonts',
+							'alignCenter'        => 'Centrēt',
+							'letterSpacing'      => 'Burbu attālums',
+							'fontWeight'         => 'Fonta biezums',
+							'darkContrast'       => 'Tumšs kontrasts',
+							'lightContrast'      => 'Gaišs kontrasts',
+							'highContrast'       => 'Augsts kontrasts',
+							'monochrome'         => 'Monohroms',
+							'saturation'         => 'Saturācija',
 							'readingLine'        => 'Lasīšanas līnija',
-							'keyboardNavigation' => 'Navigācija, izmantojot tastatūru',
-							'highlightTitles'    => 'Virsrakstu izcelšana',
 							'readingMask'        => 'Lasīšanas maska',
+							'readPage'           => 'Lasīt lapu',
+							'keyboardNavigation' => 'Navigācija, izmantojot tastatūru',
 							'hideImages'         => 'Slēpt attēlus',
-							'highlightAll'       => 'Izcelt visu',
-						),
-						'orientationBottom'      => array(
-							'readPage'       => 'Lasīt lapu',
-							'muteSounds'     => 'Izslēgt skaņas',
-							'stopAnimations' => 'Pārtraukt animācijas',
-						),
-						'divider'                => array(
-							'content'    => 'Saturs',
-							'colors'     => 'Krāsas',
-							'navigation' => 'Navigācija',
-						),
-						'resetSettings'          => 'Atiestatīt iestatījumus',
-						'footer'                 => array(
-							'accessibilityStatement' => 'Piekļuves deklarācija',
-							'version'                => 'Versija ' . $plugin_version,
+							'muteSounds'         => 'Izslēgt skaņas',
+							'highlightTitles'    => 'Virsrakstu izcelšana',
+							'highlightAll'       => 'Satura izcelšana',
+							'stopAnimations'     => 'Pārtraukt animācijas',
+							'resetSettings'      => 'Atiestatīt iestatījumus',
 						),
 					),
 					'ee'    => array(
+						'global'                 => array(
+							'back'    => 'Tagasi',
+							'default' => 'Vaikimisi',
+						),
+						'hideToolbar'            => array(
+							'title'   => 'Kui kauaks soovite juurdepääsetavuse tööriistariba peita?',
+							'radio1'  => 'Ainult selleks seansiks',
+							'radio2'  => '24 tundi',
+							'radio3'  => 'Üheks nädalaks',
+							'button1' => 'Mitte praegu',
+							'button2' => 'Peida tööriistariba',
+						),
+						'unsupportedPageReader'  => array(
+							'title' => 'Brauserit tuleb uuendada',
+							'desc'  => 'Teie brauser ei toeta kõneväljundit. Palun uuendage oma brauserit või kasutage sellist, mis toetab kõnesüntesaatorit (nt Chrome, Edge, Safari).',
+							'link'  => 'Kuidas uuendada?',
+						),
 						'header'                 => array(
 							'language'      => 'Eesti',
 							'listLanguages' => $list_languages,
 							'title'         => 'Juurdepääsu seaded',
 							'desc'          => 'Loodud',
 							'anchor'        => 'OneTap',
+							'statement'     => 'Avaldus',
+							'hideToolbar'   => 'Peida tööriistariba',
 						),
 						'multiFunctionalFeature' => array(
 							'title'              => 'Valige oma ligipääsu profiil',
@@ -2271,57 +2942,65 @@ class Accessibility_Onetap_Public {
 								'off'   => 'VÄLJAS',
 							),
 						),
-						'content'                => array(
-							'biggerText'    => 'Suurem tekst',
-							'cursor'        => 'Kursor',
-							'lineHeight'    => 'Ridade kõrgus',
-							'letterSpacing' => 'Tähe vaheline kaugus',
-							'readableFont'  => 'Lugemisväline font',
-							'dyslexicFont'  => 'Düslia font',
+						'titles'                 => array(
+							'contentModules'     => 'Sisu moodulid',
+							'colorModules'       => 'Värvi moodulid',
+							'orientationModules' => 'Orientatsiooni moodulid',
 						),
-						'contentBottom'          => array(
-							'textAlign'      => 'Teksti joondus',
-							'textMagnifier'  => 'Teksti suurendaja',
-							'highlightLinks' => 'Linkide esiletõstmine',
-						),
-						'colors'                 => array(
-							'invertColors' => 'Keerata värvid ümber',
-							'brightness'   => 'Heledus',
-							'contrast'     => 'Kontrastsus',
-							'grayscale'    => 'Halltooni režiim',
-							'saturation'   => 'Küllastus',
-						),
-						'orientation'            => array(
+						'features'               => array(
+							'biggerText'         => 'Fondi suurus',
+							'highlightLinks'     => 'Linkide esiletõstmine',
+							'lineHeight'         => 'Ridade kõrgus',
+							'readableFont'       => 'Lugemisväline font',
+							'cursor'             => 'Suur kursor',
+							'textMagnifier'      => 'Teksti suurendaja',
+							'dyslexicFont'       => 'Düslia font',
+							'alignCenter'        => 'Keskendada',
+							'letterSpacing'      => 'Tähe vaheline kaugus',
+							'fontWeight'         => 'Fondi paksus',
+							'darkContrast'       => 'Tume kontrast',
+							'lightContrast'      => 'Hele kontrast',
+							'highContrast'       => 'Kõrge kontrast',
+							'monochrome'         => 'Monokroom',
+							'saturation'         => 'Küllastus',
 							'readingLine'        => 'Lugemislus',
-							'keyboardNavigation' => 'Klaviatuuri navigeerimine',
-							'highlightTitles'    => 'Pealkirjade esiletõstmine',
 							'readingMask'        => 'Lugemismask',
+							'readPage'           => 'Loe lehekülge',
+							'keyboardNavigation' => 'Klaviatuuri navigeerimine',
 							'hideImages'         => 'Peida pildid',
-							'highlightAll'       => 'Esiletõsta kõik',
-						),
-						'orientationBottom'      => array(
-							'readPage'       => 'Loe lehekülge',
-							'muteSounds'     => 'Keela helid',
-							'stopAnimations' => 'Peata animatsioonid',
-						),
-						'divider'                => array(
-							'content'    => 'Sisu',
-							'colors'     => 'Värvid',
-							'navigation' => 'Navigeerimine',
-						),
-						'resetSettings'          => 'Lähtesta seaded',
-						'footer'                 => array(
-							'accessibilityStatement' => 'Ligipääsuvõime avaldus',
-							'version'                => 'Versioon ' . $plugin_version,
+							'muteSounds'         => 'Keela helid',
+							'highlightTitles'    => 'Pealkirjade esiletõstmine',
+							'highlightAll'       => 'Sisu esiletõstmine',
+							'stopAnimations'     => 'Peata animatsioonid',
+							'resetSettings'      => 'Lähtesta seaded',
 						),
 					),
 					'hr'    => array(
+						'global'                 => array(
+							'back'    => 'Natrag',
+							'default' => 'Zadano',
+						),
+						'hideToolbar'            => array(
+							'title'   => 'Koliko dugo želite sakriti traku za pristupačnost?',
+							'radio1'  => 'Samo za ovu sesiju',
+							'radio2'  => '24 sata',
+							'radio3'  => 'Tjedan dana',
+							'button1' => 'Ne sada',
+							'button2' => 'Sakrij traku',
+						),
+						'unsupportedPageReader'  => array(
+							'title' => 'Preglednik treba ažurirati',
+							'desc'  => 'Vaš preglednik ne podržava govor. Ažurirajte preglednik ili koristite onaj koji podržava sintezu govora (npr. Chrome, Edge, Safari).',
+							'link'  => 'Kako ažurirati?',
+						),
 						'header'                 => array(
 							'language'      => 'Hrvatski',
 							'listLanguages' => $list_languages,
 							'title'         => 'Postavke pristupa',
 							'desc'          => 'Izradio',
 							'anchor'        => 'OneTap',
+							'statement'     => 'Izjava',
+							'hideToolbar'   => 'Sakrij alatnu traku',
 						),
 						'multiFunctionalFeature' => array(
 							'title'              => 'Odaberite svoj pristupni profil',
@@ -2356,57 +3035,65 @@ class Accessibility_Onetap_Public {
 								'off'   => 'ISKLJUČENO',
 							),
 						),
-						'content'                => array(
-							'biggerText'    => 'Veći tekst',
-							'cursor'        => 'Kursor',
-							'lineHeight'    => 'Visina linije',
-							'letterSpacing' => 'Razmak između slova',
-							'readableFont'  => 'Čitljiv font',
-							'dyslexicFont'  => 'Font za disleksiju',
+						'titles'                 => array(
+							'contentModules'     => 'Moduli sadržaja',
+							'colorModules'       => 'Moduli boja',
+							'orientationModules' => 'Moduli orijentacije',
 						),
-						'contentBottom'          => array(
-							'textAlign'      => 'Poravnanje teksta',
-							'textMagnifier'  => 'Povećalo za tekst',
-							'highlightLinks' => 'Isticanje poveznica',
-						),
-						'colors'                 => array(
-							'invertColors' => 'Inverzija boja',
-							'brightness'   => 'Svjetlina',
-							'contrast'     => 'Kontrast',
-							'grayscale'    => 'Sivi režim',
-							'saturation'   => 'Zasićenost',
-						),
-						'orientation'            => array(
+						'features'               => array(
+							'biggerText'         => 'Veličina fonta',
+							'highlightLinks'     => 'Isticanje poveznica',
+							'lineHeight'         => 'Visina linije',
+							'readableFont'       => 'Čitljiv font',
+							'cursor'             => 'Veliki kursor',
+							'textMagnifier'      => 'Povećalo za tekst',
+							'dyslexicFont'       => 'Font za disleksiju',
+							'alignCenter'        => 'Centriranje',
+							'letterSpacing'      => 'Razmak između slova',
+							'fontWeight'         => 'Debljina fonta',
+							'darkContrast'       => 'Tamni kontrast',
+							'lightContrast'      => 'Svijetli kontrast',
+							'highContrast'       => 'Visoki kontrast',
+							'monochrome'         => 'Monokrom',
+							'saturation'         => 'Zasićenost',
 							'readingLine'        => 'Linija za čitanje',
-							'keyboardNavigation' => 'Navigacija tipkovnicom',
-							'highlightTitles'    => 'Isticanje naslova',
 							'readingMask'        => 'Maska za čitanje',
+							'readPage'           => 'Čitaj stranicu',
+							'keyboardNavigation' => 'Navigacija tipkovnicom',
 							'hideImages'         => 'Sakrij slike',
-							'highlightAll'       => 'Istakni sve',
-						),
-						'orientationBottom'      => array(
-							'readPage'       => 'Čitaj stranicu',
-							'muteSounds'     => 'Isključi zvukove',
-							'stopAnimations' => 'Zaustavi animacije',
-						),
-						'divider'                => array(
-							'content'    => 'Sadržaj',
-							'colors'     => 'Boje',
-							'navigation' => 'Navigacija',
-						),
-						'resetSettings'          => 'Vrati postavke',
-						'footer'                 => array(
-							'accessibilityStatement' => 'Izjava o pristupačnosti',
-							'version'                => 'Verzija ' . $plugin_version,
+							'muteSounds'         => 'Isključi zvukove',
+							'highlightTitles'    => 'Isticanje naslova',
+							'highlightAll'       => 'Isticanje sadržaja',
+							'stopAnimations'     => 'Zaustavi animacije',
+							'resetSettings'      => 'Vrati postavke',
 						),
 					),
 					'ie'    => array(
+						'global'                 => array(
+							'back'    => 'Siar',
+							'default' => 'Réamhshocraithe',
+						),
+						'hideToolbar'            => array(
+							'title'   => 'Cé chomh fada is mian leat an barra inrochtaineachta a cheilt?',
+							'radio1'  => 'Ach don seisiún seo amháin',
+							'radio2'  => '24 uair an chloig',
+							'radio3'  => 'Seachtain amháin',
+							'button1' => 'Níl anois',
+							'button2' => 'Folaigh an barra',
+						),
+						'unsupportedPageReader'  => array(
+							'title' => 'Your browser needs to be updated',
+							'desc'  => 'Your browser does not support speech output. Please update your browser or use one with speech synthesis enabled (e.g. Chrome, Edge, Safari).',
+							'link'  => 'How to update?',
+						),
 						'header'                 => array(
 							'language'      => 'Gaeilge',
 							'listLanguages' => $list_languages,
 							'title'         => 'Socruithe Rochtana',
 							'desc'          => 'Tógadh',
 							'anchor'        => 'OneTap',
+							'statement'     => 'Ráiteas',
+							'hideToolbar'   => 'Folaigh an barra uirlisí',
 						),
 						'multiFunctionalFeature' => array(
 							'title'              => 'Roghnaigh do phróifíl rochtana',
@@ -2441,57 +3128,65 @@ class Accessibility_Onetap_Public {
 								'off'   => 'AMACH',
 							),
 						),
-						'content'                => array(
-							'biggerText'    => 'Téacs Níos Mó',
-							'cursor'        => 'Cúrsóir',
-							'lineHeight'    => 'Airde Líne',
-							'letterSpacing' => 'Spásáil Litreach',
-							'readableFont'  => 'Cló Léitheoireachta',
-							'dyslexicFont'  => 'Cló do Dhiolachas',
+						'titles'                 => array(
+							'contentModules'     => 'Modúil Ábhair',
+							'colorModules'       => 'Modúil Dathanna',
+							'orientationModules' => 'Modúil Treoshuíomh',
 						),
-						'contentBottom'          => array(
-							'textAlign'      => 'Caidrimh Téacs',
-							'textMagnifier'  => 'Méadaí Téacs',
-							'highlightLinks' => 'Samhlaigh Ceangail',
-						),
-						'colors'                 => array(
-							'invertColors' => 'Inverter na Dathanna',
-							'brightness'   => 'Lúbthacht',
-							'contrast'     => 'Difríocht',
-							'grayscale'    => 'Modh GrayScale',
-							'saturation'   => 'Satail',
-						),
-						'orientation'            => array(
+						'features'               => array(
+							'biggerText'         => 'Méid Cló',
+							'highlightLinks'     => 'Samhlaigh Ceangail',
+							'lineHeight'         => 'Airde Líne',
+							'readableFont'       => 'Cló Léitheoireachta',
+							'cursor'             => 'Cúrsóir Mór',
+							'textMagnifier'      => 'Méadaí Téacs',
+							'dyslexicFont'       => 'Cló do Dhiolachas',
+							'alignCenter'        => 'Lárú',
+							'letterSpacing'      => 'Spásáil Litreach',
+							'fontWeight'         => 'Tromas Cló',
+							'darkContrast'       => 'Codarsnacht Dorcha',
+							'lightContrast'      => 'Codarsnacht Éadrom',
+							'highContrast'       => 'Codarsnacht Ard',
+							'monochrome'         => 'Monachrómach',
+							'saturation'         => 'Satail',
 							'readingLine'        => 'Líne Léitheoireachta',
-							'keyboardNavigation' => 'Navigeacht Cnaipe',
-							'highlightTitles'    => 'Samhlaigh Teidil',
 							'readingMask'        => 'Masg Léitheoireachta',
+							'readPage'           => 'Léigh Leathanach',
+							'keyboardNavigation' => 'Navigeacht Cnaipe',
 							'hideImages'         => 'Folaigh Grianghraif',
-							'highlightAll'       => 'Samhlaigh gach rud',
-						),
-						'orientationBottom'      => array(
-							'readPage'       => 'Léigh Leathanach',
-							'muteSounds'     => 'Áthraigh na Gutha',
-							'stopAnimations' => 'Stop Animations',
-						),
-						'divider'                => array(
-							'content'    => 'Ábhar',
-							'colors'     => 'Dathanna',
-							'navigation' => 'Navigeacht',
-						),
-						'resetSettings'          => 'Athshocraigh Socruithe',
-						'footer'                 => array(
-							'accessibilityStatement' => 'Taispeánadh um Rochtain',
-							'version'                => 'Leagan ' . $plugin_version,
+							'muteSounds'         => 'Áthraigh na Gutha',
+							'highlightTitles'    => 'Samhlaigh Teidil',
+							'highlightAll'       => 'Samhlaigh Ábhar',
+							'stopAnimations'     => 'Stop Animations',
+							'resetSettings'      => 'Athshocraigh Socruithe',
 						),
 					),
 					'bg'    => array(
+						'global'                 => array(
+							'back'    => 'Назад',
+							'default' => 'По подразбиране',
+						),
+						'hideToolbar'            => array(
+							'title'   => 'За колко време искате да скриете лентата за достъпност?',
+							'radio1'  => 'Само за тази сесия',
+							'radio2'  => '24 часа',
+							'radio3'  => 'Една седмица',
+							'button1' => 'Не сега',
+							'button2' => 'Скрий лентата',
+						),
+						'unsupportedPageReader'  => array(
+							'title' => 'Браузърът трябва да бъде актуализиран',
+							'desc'  => 'Вашият браузър не поддържа гласов изход. Моля, актуализирайте го или използвайте такъв с активирана речева синтеза (напр. Chrome, Edge, Safari).',
+							'link'  => 'Как да актуализирате?',
+						),
 						'header'                 => array(
 							'language'      => 'Български',
 							'listLanguages' => $list_languages,
 							'title'         => 'Настройки за достъп',
 							'desc'          => 'Създадено от',
 							'anchor'        => 'OneTap',
+							'statement'     => 'Изявление',
+							'hideToolbar'   => 'Скриване на лентата с инструменти',
 						),
 						'multiFunctionalFeature' => array(
 							'title'              => 'Изберете вашия достъпен профил',
@@ -2526,57 +3221,65 @@ class Accessibility_Onetap_Public {
 								'off'   => 'ИЗКЛЮЧЕНО',
 							),
 						),
-						'content'                => array(
-							'biggerText'    => 'По-голям текст',
-							'cursor'        => 'Курсор',
-							'lineHeight'    => 'Височина на реда',
-							'letterSpacing' => 'Разстояние между буквите',
-							'readableFont'  => 'Шрифт за четене',
-							'dyslexicFont'  => 'Шрифт за дислексия',
+						'titles'                 => array(
+							'contentModules'     => 'Модули за съдържание',
+							'colorModules'       => 'Модули за цветове',
+							'orientationModules' => 'Модули за ориентация',
 						),
-						'contentBottom'          => array(
-							'textAlign'      => 'Подравняване на текста',
-							'textMagnifier'  => 'Лупа за текст',
-							'highlightLinks' => 'Подчертаване на линкове',
-						),
-						'colors'                 => array(
-							'invertColors' => 'Обръщане на цветовете',
-							'brightness'   => 'Яркост',
-							'contrast'     => 'Контраст',
-							'grayscale'    => 'Режим сиви',
-							'saturation'   => 'Наситеност',
-						),
-						'orientation'            => array(
+						'features'               => array(
+							'biggerText'         => 'Размер на шрифта',
+							'highlightLinks'     => 'Подчертаване на линкове',
+							'lineHeight'         => 'Височина на реда',
+							'readableFont'       => 'Шрифт за четене',
+							'cursor'             => 'Голям курсор',
+							'textMagnifier'      => 'Лупа за текст',
+							'dyslexicFont'       => 'Шрифт за дислексия',
+							'alignCenter'        => 'Центриране',
+							'letterSpacing'      => 'Разстояние между буквите',
+							'fontWeight'         => 'Дебелина на шрифта',
+							'darkContrast'       => 'Тъмен контраст',
+							'lightContrast'      => 'Светъл контраст',
+							'highContrast'       => 'Висок контраст',
+							'monochrome'         => 'Монохром',
+							'saturation'         => 'Наситеност',
 							'readingLine'        => 'Линия за четене',
-							'keyboardNavigation' => 'Навигация с клавиатура',
-							'highlightTitles'    => 'Подчертаване на заглавия',
 							'readingMask'        => 'Маска за четене',
+							'readPage'           => 'Прочетете страницата',
+							'keyboardNavigation' => 'Навигация с клавиатура',
 							'hideImages'         => 'Скриване на изображения',
-							'highlightAll'       => 'Подчертаване на всички',
-						),
-						'orientationBottom'      => array(
-							'readPage'       => 'Прочетете страницата',
-							'muteSounds'     => 'Без звуци',
-							'stopAnimations' => 'Спри анимациите',
-						),
-						'divider'                => array(
-							'content'    => 'Съдържание',
-							'colors'     => 'Цветове',
-							'navigation' => 'Навигация',
-						),
-						'resetSettings'          => 'Нулиране на настройките',
-						'footer'                 => array(
-							'accessibilityStatement' => 'Декларация за достъпност',
-							'version'                => 'Версия ' . $plugin_version,
+							'muteSounds'         => 'Без звуци',
+							'highlightTitles'    => 'Подчертаване на заглавия',
+							'highlightAll'       => 'Подчертаване на съдържание',
+							'stopAnimations'     => 'Спри анимациите',
+							'resetSettings'      => 'Нулиране на настройките',
 						),
 					),
 					'no'    => array(
+						'global'                 => array(
+							'back'    => 'Tilbake',
+							'default' => 'Standard',
+						),
+						'hideToolbar'            => array(
+							'title'   => 'Hvor lenge vil du skjule tilgjengelighetsverktøylinjen?',
+							'radio1'  => 'Kun for denne økten',
+							'radio2'  => '24 timer',
+							'radio3'  => 'En uke',
+							'button1' => 'Ikke nå',
+							'button2' => 'Skjul verktøylinje',
+						),
+						'unsupportedPageReader'  => array(
+							'title' => 'Nettleseren må oppdateres',
+							'desc'  => 'Nettleseren din støtter ikke taleutgang. Oppdater nettleseren eller bruk en som støtter talesyntese (f.eks. Chrome, Edge, Safari).',
+							'link'  => 'Hvordan oppdatere?',
+						),
 						'header'                 => array(
 							'language'      => 'Norsk',
 							'listLanguages' => $list_languages,
 							'title'         => 'Tilgjengelighetsinnstillinger',
 							'desc'          => 'Drevet av',
 							'anchor'        => 'OneTap',
+							'statement'     => 'Erklæring',
+							'hideToolbar'   => 'Skjul verktøylinje',
 						),
 						'multiFunctionalFeature' => array(
 							'title'              => 'Velg din tilgjengelighetsprofil',
@@ -2611,57 +3314,65 @@ class Accessibility_Onetap_Public {
 								'off'   => 'AV',
 							),
 						),
-						'content'                => array(
-							'biggerText'    => 'Større tekst',
-							'cursor'        => 'Markør',
-							'lineHeight'    => 'Linjeavstand',
-							'letterSpacing' => 'Bokstavavstand',
-							'readableFont'  => 'Lesbar skrifttype',
-							'dyslexicFont'  => 'Dysleksivennlig skrifttype',
+						'titles'                 => array(
+							'contentModules'     => 'Innholdsmoduler',
+							'colorModules'       => 'Fargemoduler',
+							'orientationModules' => 'Orientasjonsmoduler',
 						),
-						'contentBottom'          => array(
-							'textAlign'      => 'Justering av tekst',
-							'textMagnifier'  => 'Tekstforstørrelse',
-							'highlightLinks' => 'Fremhev lenker',
-						),
-						'colors'                 => array(
-							'invertColors' => 'Invertér farger',
-							'brightness'   => 'Lysstyrke',
-							'contrast'     => 'Kontrast',
-							'grayscale'    => 'Gråtoner',
-							'saturation'   => 'Metning',
-						),
-						'orientation'            => array(
+						'features'               => array(
+							'biggerText'         => 'Skriftstørrelse',
+							'highlightLinks'     => 'Fremhev lenker',
+							'lineHeight'         => 'Linjeavstand',
+							'readableFont'       => 'Lesbar skrifttype',
+							'cursor'             => 'Stor markør',
+							'textMagnifier'      => 'Tekstforstørrelse',
+							'dyslexicFont'       => 'Dysleksivennlig skrifttype',
+							'alignCenter'        => 'Senter',
+							'letterSpacing'      => 'Bokstavavstand',
+							'fontWeight'         => 'Skriftvekt',
+							'darkContrast'       => 'Mørk kontrast',
+							'lightContrast'      => 'Lys kontrast',
+							'highContrast'       => 'Høy kontrast',
+							'monochrome'         => 'Monokrom',
+							'saturation'         => 'Metning',
 							'readingLine'        => 'Leselinje',
-							'keyboardNavigation' => 'Tastaturnavigasjon',
-							'highlightTitles'    => 'Fremhev titler',
 							'readingMask'        => 'Lesemaske',
+							'readPage'           => 'Les siden',
+							'keyboardNavigation' => 'Tastaturnavigasjon',
 							'hideImages'         => 'Skjul bilder',
-							'highlightAll'       => 'Fremhev alt',
-						),
-						'orientationBottom'      => array(
-							'readPage'       => 'Les siden',
-							'muteSounds'     => 'Demp lyder',
-							'stopAnimations' => 'Stopp animasjoner',
-						),
-						'divider'                => array(
-							'content'    => 'innhold',
-							'colors'     => 'farger',
-							'navigation' => 'navigasjon',
-						),
-						'resetSettings'          => 'Tilbakestill innstillinger',
-						'footer'                 => array(
-							'accessibilityStatement' => 'Tilgjengelighetserklæring',
-							'version'                => 'Versjon ' . $plugin_version,
+							'muteSounds'         => 'Demp lyder',
+							'highlightTitles'    => 'Fremhev titler',
+							'highlightAll'       => 'Fremhev innhold',
+							'stopAnimations'     => 'Stopp animasjoner',
+							'resetSettings'      => 'Tilbakestill innstillinger',
 						),
 					),
 					'tr'    => array(
+						'global'                 => array(
+							'back'    => 'Geri',
+							'default' => 'Varsayılan',
+						),
+						'hideToolbar'            => array(
+							'title'   => 'Erişilebilirlik araç çubuğunu ne kadar süre gizlemek istiyorsunuz?',
+							'radio1'  => 'Yalnızca bu oturum için',
+							'radio2'  => '24 saat',
+							'radio3'  => 'Bir hafta',
+							'button1' => 'Şimdi değil',
+							'button2' => 'Araç çubuğunu gizle',
+						),
+						'unsupportedPageReader'  => array(
+							'title' => 'Tarayıcının güncellenmesi gerekiyor',
+							'desc'  => 'Tarayıcınız konuşma çıkışını desteklemiyor. Lütfen tarayıcınızı güncelleyin veya konuşma sentezi destekleyen bir tarayıcı kullanın (ör. Chrome, Edge, Safari).',
+							'link'  => 'Nasıl güncellenir?',
+						),
 						'header'                 => array(
 							'language'      => 'Türkçe',
 							'listLanguages' => $list_languages,
 							'title'         => 'Erişilebilirlik Ayarları',
 							'desc'          => 'Tarafından desteklenmektedir',
 							'anchor'        => 'OneTap',
+							'statement'     => 'Açıklama',
+							'hideToolbar'   => 'Araç çubuğunu gizle',
 						),
 						'multiFunctionalFeature' => array(
 							'title'              => 'Erişilebilirlik profilinizi seçin',
@@ -2696,57 +3407,65 @@ class Accessibility_Onetap_Public {
 								'off'   => 'KAPALI',
 							),
 						),
-						'content'                => array(
-							'biggerText'    => 'Daha Büyük Yazı',
-							'cursor'        => 'İmleç',
-							'lineHeight'    => 'Satır Yüksekliği',
-							'letterSpacing' => 'Harf Aralığı',
-							'readableFont'  => 'Okunabilir Yazı Tipi',
-							'dyslexicFont'  => 'Disleksi Dostu Yazı Tipi',
+						'titles'                 => array(
+							'contentModules'     => 'İçerik Modülleri',
+							'colorModules'       => 'Renk Modülleri',
+							'orientationModules' => 'Yönlendirme Modülleri',
 						),
-						'contentBottom'          => array(
-							'textAlign'      => 'Metin Hizalama',
-							'textMagnifier'  => 'Metin Büyüteci',
-							'highlightLinks' => 'Bağlantıları Vurgula',
-						),
-						'colors'                 => array(
-							'invertColors' => 'Renkleri Ters Çevir',
-							'brightness'   => 'Parlaklık',
-							'contrast'     => 'Kontrast',
-							'grayscale'    => 'Gri Tonlama',
-							'saturation'   => 'Doygunluk',
-						),
-						'orientation'            => array(
+						'features'               => array(
+							'biggerText'         => 'Yazı Boyutu',
+							'highlightLinks'     => 'Bağlantıları Vurgula',
+							'lineHeight'         => 'Satır Yüksekliği',
+							'readableFont'       => 'Okunabilir Yazı Tipi',
+							'cursor'             => 'Büyük İmleç',
+							'textMagnifier'      => 'Metin Büyüteci',
+							'dyslexicFont'       => 'Disleksi Dostu Yazı Tipi',
+							'alignCenter'        => 'Ortala',
+							'letterSpacing'      => 'Harf Aralığı',
+							'fontWeight'         => 'Yazı Kalınlığı',
+							'darkContrast'       => 'Koyu Kontrast',
+							'lightContrast'      => 'Açık Kontrast',
+							'highContrast'       => 'Yüksek Kontrast',
+							'monochrome'         => 'Monokrom',
+							'saturation'         => 'Doygunluk',
 							'readingLine'        => 'Okuma Satırı',
-							'keyboardNavigation' => 'Klavye ile Gezinme',
-							'highlightTitles'    => 'Başlıkları Vurgula',
 							'readingMask'        => 'Okuma Maskesi',
+							'readPage'           => 'Sayfayı Oku',
+							'keyboardNavigation' => 'Klavye ile Gezinme',
 							'hideImages'         => 'Görüntüleri Gizle',
-							'highlightAll'       => 'Hepsini Vurgula',
-						),
-						'orientationBottom'      => array(
-							'readPage'       => 'Sayfayı Oku',
-							'muteSounds'     => 'Sesleri Kapat',
-							'stopAnimations' => 'Animasyonları Durdur',
-						),
-						'divider'                => array(
-							'content'    => 'içerik',
-							'colors'     => 'renkler',
-							'navigation' => 'navigasyon',
-						),
-						'resetSettings'          => 'Ayarları Sıfırla',
-						'footer'                 => array(
-							'accessibilityStatement' => 'Erişilebilirlik Bildirimi',
-							'version'                => 'Sürüm ' . $plugin_version,
+							'muteSounds'         => 'Sesleri Kapat',
+							'highlightTitles'    => 'Başlıkları Vurgula',
+							'highlightAll'       => 'İçeriği Vurgula',
+							'stopAnimations'     => 'Animasyonları Durdur',
+							'resetSettings'      => 'Ayarları Sıfırla',
 						),
 					),
 					'id'    => array(
+						'global'                 => array(
+							'back'    => 'Kembali',
+							'default' => 'Bawaan',
+						),
+						'hideToolbar'            => array(
+							'title'   => 'Berapa lama Anda ingin menyembunyikan toolbar aksesibilitas?',
+							'radio1'  => 'Hanya untuk sesi ini',
+							'radio2'  => '24 jam',
+							'radio3'  => 'Satu minggu',
+							'button1' => 'Tidak sekarang',
+							'button2' => 'Sembunyikan toolbar',
+						),
+						'unsupportedPageReader'  => array(
+							'title' => 'Browser perlu diperbarui',
+							'desc'  => 'Browser Anda tidak mendukung output suara. Silakan perbarui browser Anda atau gunakan yang mendukung sintesis suara (misalnya Chrome, Edge, Safari).',
+							'link'  => 'Cara memperbarui?',
+						),
 						'header'                 => array(
 							'language'      => 'Bahasa Indonesia',
 							'listLanguages' => $list_languages,
 							'title'         => 'Pengaturan Aksesibilitas',
 							'desc'          => 'Didukung oleh',
 							'anchor'        => 'OneTap',
+							'statement'     => 'Pernyataan',
+							'hideToolbar'   => 'Sembunyikan bilah alat',
 						),
 						'multiFunctionalFeature' => array(
 							'title'              => 'Pilih profil aksesibilitas Anda',
@@ -2781,57 +3500,65 @@ class Accessibility_Onetap_Public {
 								'off'   => 'MATIKAN',
 							),
 						),
-						'content'                => array(
-							'biggerText'    => 'Teks Lebih Besar',
-							'cursor'        => 'Kursor',
-							'lineHeight'    => 'Tinggi Baris',
-							'letterSpacing' => 'Jarak Huruf',
-							'readableFont'  => 'Font yang Mudah Dibaca',
-							'dyslexicFont'  => 'Font Ramah Disleksia',
+						'titles'                 => array(
+							'contentModules'     => 'Modul Konten',
+							'colorModules'       => 'Modul Warna',
+							'orientationModules' => 'Modul Orientasi',
 						),
-						'contentBottom'          => array(
-							'textAlign'      => 'Penataan Teks',
-							'textMagnifier'  => 'Pembesar Teks',
-							'highlightLinks' => 'Sorot Tautan',
-						),
-						'colors'                 => array(
-							'invertColors' => 'Balikkan Warna',
-							'brightness'   => 'Kecerahan',
-							'contrast'     => 'Kontras',
-							'grayscale'    => 'Skala Abu-abu',
-							'saturation'   => 'Kejenuhan',
-						),
-						'orientation'            => array(
+						'features'               => array(
+							'biggerText'         => 'Ukuran Font',
+							'highlightLinks'     => 'Sorot Tautan',
+							'lineHeight'         => 'Tinggi Baris',
+							'readableFont'       => 'Font yang Mudah Dibaca',
+							'cursor'             => 'Kursor Besar',
+							'textMagnifier'      => 'Pembesar Teks',
+							'dyslexicFont'       => 'Font Ramah Disleksia',
+							'alignCenter'        => 'Tengah',
+							'letterSpacing'      => 'Jarak Huruf',
+							'fontWeight'         => 'Ketebalan Font',
+							'darkContrast'       => 'Kontras Gelap',
+							'lightContrast'      => 'Kontras Terang',
+							'highContrast'       => 'Kontras Tinggi',
+							'monochrome'         => 'Monokrom',
+							'saturation'         => 'Kejenuhan',
 							'readingLine'        => 'Garis Bacaan',
-							'keyboardNavigation' => 'Navigasi Keyboard',
-							'highlightTitles'    => 'Sorot Judul',
 							'readingMask'        => 'Masker Bacaan',
+							'readPage'           => 'Baca Halaman',
+							'keyboardNavigation' => 'Navigasi Keyboard',
 							'hideImages'         => 'Sembunyikan Gambar',
-							'highlightAll'       => 'Sorot Semua',
-						),
-						'orientationBottom'      => array(
-							'readPage'       => 'Baca Halaman',
-							'muteSounds'     => 'Matikan Suara',
-							'stopAnimations' => 'Hentikan Animasi',
-						),
-						'divider'                => array(
-							'content'    => 'konten',
-							'colors'     => 'warna',
-							'navigation' => 'navigasi',
-						),
-						'resetSettings'          => 'Setel Ulang Pengaturan',
-						'footer'                 => array(
-							'accessibilityStatement' => 'Pernyataan Aksesibilitas',
-							'version'                => 'Versi ' . $plugin_version,
+							'muteSounds'         => 'Matikan Suara',
+							'highlightTitles'    => 'Sorot Judul',
+							'highlightAll'       => 'Sorot Konten',
+							'stopAnimations'     => 'Hentikan Animasi',
+							'resetSettings'      => 'Setel Ulang Pengaturan',
 						),
 					),
 					'pt-br' => array(
+						'global'                 => array(
+							'back'    => 'Voltar',
+							'default' => 'Padrão',
+						),
+						'hideToolbar'            => array(
+							'title'   => 'Por quanto tempo você deseja ocultar a barra de acessibilidade?',
+							'radio1'  => 'Apenas para esta sessão',
+							'radio2'  => '24 horas',
+							'radio3'  => 'Uma semana',
+							'button1' => 'Agora não',
+							'button2' => 'Ocultar barra',
+						),
+						'unsupportedPageReader'  => array(
+							'title' => 'O navegador precisa ser atualizado',
+							'desc'  => 'Seu navegador não é compatível com saída de voz. Atualize seu navegador ou use um que tenha síntese de voz ativada (por exemplo, Chrome, Edge, Safari).',
+							'link'  => 'Como atualizar?',
+						),
 						'header'                 => array(
 							'language'      => 'Português (Brasil)',
 							'listLanguages' => $list_languages,
 							'title'         => 'Ajustes de Acessibilidade',
 							'desc'          => 'Desenvolvido por',
 							'anchor'        => 'OneTap',
+							'statement'     => 'Declaração',
+							'hideToolbar'   => 'Ocultar barra de ferramentas',
 						),
 						'multiFunctionalFeature' => array(
 							'title'              => 'Selecione seu perfil de acessibilidade',
@@ -2866,57 +3593,65 @@ class Accessibility_Onetap_Public {
 								'off'   => 'DESLIGADO',
 							),
 						),
-						'content'                => array(
-							'biggerText'    => 'Texto Maior',
-							'cursor'        => 'Cursor',
-							'lineHeight'    => 'Altura da Linha',
-							'letterSpacing' => 'Espaçamento de Letras',
-							'readableFont'  => 'Fonte Legível',
-							'dyslexicFont'  => 'Fonte para Dislexia',
+						'titles'                 => array(
+							'contentModules'     => 'Módulos de Conteúdo',
+							'colorModules'       => 'Módulos de Cor',
+							'orientationModules' => 'Módulos de Orientação',
 						),
-						'contentBottom'          => array(
-							'textAlign'      => 'Alinhar Texto',
-							'textMagnifier'  => 'Lupa de Texto',
-							'highlightLinks' => 'Destacar Links',
-						),
-						'colors'                 => array(
-							'invertColors' => 'Inverter Cores',
-							'brightness'   => 'Brilho',
-							'contrast'     => 'Contraste',
-							'grayscale'    => 'Escala de Cinza',
-							'saturation'   => 'Saturação',
-						),
-						'orientation'            => array(
+						'features'               => array(
+							'biggerText'         => 'Tamanho da Fonte',
+							'highlightLinks'     => 'Destacar Links',
+							'lineHeight'         => 'Altura da Linha',
+							'readableFont'       => 'Fonte Legível',
+							'cursor'             => 'Cursor Grande',
+							'textMagnifier'      => 'Lupa de Texto',
+							'dyslexicFont'       => 'Fonte para Dislexia',
+							'alignCenter'        => 'Centralizar',
+							'letterSpacing'      => 'Espaçamento de Letras',
+							'fontWeight'         => 'Peso da Fonte',
+							'darkContrast'       => 'Contraste Escuro',
+							'lightContrast'      => 'Contraste Claro',
+							'highContrast'       => 'Alto Contraste',
+							'monochrome'         => 'Monocromático',
+							'saturation'         => 'Saturação',
 							'readingLine'        => 'Linha de Leitura',
-							'keyboardNavigation' => 'Navegação por Teclado',
-							'highlightTitles'    => 'Destacar Títulos',
 							'readingMask'        => 'Máscara de Leitura',
+							'readPage'           => 'Ler Página',
+							'keyboardNavigation' => 'Navegação por Teclado',
 							'hideImages'         => 'Ocultar Imagens',
-							'highlightAll'       => 'Destacar Tudo',
-						),
-						'orientationBottom'      => array(
-							'readPage'       => 'Ler Página',
-							'muteSounds'     => 'Silenciar Sons',
-							'stopAnimations' => 'Parar Animações',
-						),
-						'divider'                => array(
-							'content'    => 'conteúdo',
-							'colors'     => 'cores',
-							'navigation' => 'navegação',
-						),
-						'resetSettings'          => 'Redefinir Configurações',
-						'footer'                 => array(
-							'accessibilityStatement' => 'Declaração de Acessibilidade',
-							'version'                => 'Versão ' . $plugin_version,
+							'muteSounds'         => 'Silenciar Sons',
+							'highlightTitles'    => 'Destacar Títulos',
+							'highlightAll'       => 'Destacar Conteúdo',
+							'stopAnimations'     => 'Parar Animações',
+							'resetSettings'      => 'Redefinir Configurações',
 						),
 					),
 					'ja'    => array(
+						'global'                 => array(
+							'back'    => '戻る',
+							'default' => 'デフォルト',
+						),
+						'hideToolbar'            => array(
+							'title'   => 'アクセシビリティツールバーをどのくらい非表示にしますか？',
+							'radio1'  => 'このセッションのみ',
+							'radio2'  => '24時間',
+							'radio3'  => '1週間',
+							'button1' => '今はしない',
+							'button2' => 'ツールバーを非表示',
+						),
+						'unsupportedPageReader'  => array(
+							'title' => 'ブラウザの更新が必要です',
+							'desc'  => 'ご利用のブラウザは音声出力に対応していません。ブラウザを更新するか、音声合成に対応したブラウザをご使用ください（例：Chrome、Edge、Safari）。',
+							'link'  => '更新方法はこちら',
+						),
 						'header'                 => array(
 							'language'      => '日本語',
 							'listLanguages' => $list_languages,
 							'title'         => 'アクセシビリティ設定',
 							'desc'          => '提供元',
 							'anchor'        => 'OneTap',
+							'statement'     => '声明',
+							'hideToolbar'   => 'ツールバーを非表示にする',
 						),
 						'multiFunctionalFeature' => array(
 							'title'              => 'アクセシビリティプロファイルを選択',
@@ -2951,57 +3686,65 @@ class Accessibility_Onetap_Public {
 								'off'   => 'オフ',
 							),
 						),
-						'content'                => array(
-							'biggerText'    => '文字を大きく',
-							'cursor'        => 'カーソル',
-							'lineHeight'    => '行の高さ',
-							'letterSpacing' => '文字間隔',
-							'readableFont'  => '読みやすいフォント',
-							'dyslexicFont'  => 'ディスレクシア用フォント',
+						'titles'                 => array(
+							'contentModules'     => 'コンテンツモジュール',
+							'colorModules'       => 'カラーモジュール',
+							'orientationModules' => 'オリエンテーションモジュール',
 						),
-						'contentBottom'          => array(
-							'textAlign'      => 'テキストの配置',
-							'textMagnifier'  => 'テキスト拡大鏡',
-							'highlightLinks' => 'リンクを強調表示',
-						),
-						'colors'                 => array(
-							'invertColors' => '色を反転',
-							'brightness'   => '明るさ',
-							'contrast'     => 'コントラスト',
-							'grayscale'    => 'グレースケール',
-							'saturation'   => '彩度',
-						),
-						'orientation'            => array(
+						'features'               => array(
+							'biggerText'         => 'フォントサイズ',
+							'highlightLinks'     => 'リンクを強調表示',
+							'lineHeight'         => '行の高さ',
+							'readableFont'       => '読みやすいフォント',
+							'cursor'             => '大きなカーソル',
+							'textMagnifier'      => 'テキスト拡大鏡',
+							'dyslexicFont'       => 'ディスレクシア用フォント',
+							'alignCenter'        => '中央揃え',
+							'letterSpacing'      => '文字間隔',
+							'fontWeight'         => 'フォントの太さ',
+							'darkContrast'       => 'ダークコントラスト',
+							'lightContrast'      => 'ライトコントラスト',
+							'highContrast'       => 'ハイコントラスト',
+							'monochrome'         => 'モノクローム',
+							'saturation'         => '彩度',
 							'readingLine'        => '読み取りライン',
-							'keyboardNavigation' => 'キーボードナビゲーション',
-							'highlightTitles'    => 'タイトルを強調表示',
 							'readingMask'        => '読み取りマスク',
+							'readPage'           => 'ページを読む',
+							'keyboardNavigation' => 'キーボードナビゲーション',
 							'hideImages'         => '画像を非表示',
-							'highlightAll'       => 'すべてを強調表示',
-						),
-						'orientationBottom'      => array(
-							'readPage'       => 'ページを読む',
-							'muteSounds'     => '音をミュート',
-							'stopAnimations' => 'アニメーションを停止',
-						),
-						'divider'                => array(
-							'content'    => 'コンテンツ',
-							'colors'     => '色',
-							'navigation' => 'ナビゲーション',
-						),
-						'resetSettings'          => '設定をリセット',
-						'footer'                 => array(
-							'accessibilityStatement' => 'アクセシビリティ声明',
-							'version'                => 'バージョン ' . $plugin_version,
+							'muteSounds'         => '音をミュート',
+							'highlightTitles'    => 'タイトルを強調表示',
+							'highlightAll'       => 'コンテンツを強調表示',
+							'stopAnimations'     => 'アニメーションを停止',
+							'resetSettings'      => '設定をリセット',
 						),
 					),
 					'ko'    => array(
+						'global'                 => array(
+							'back'    => '뒤로',
+							'default' => '기본값',
+						),
+						'hideToolbar'            => array(
+							'title'   => '접근성 도구 모음을 얼마나 숨기시겠습니까?',
+							'radio1'  => '이번 세션만',
+							'radio2'  => '24시간',
+							'radio3'  => '일주일',
+							'button1' => '나중에',
+							'button2' => '도구 모음 숨기기',
+						),
+						'unsupportedPageReader'  => array(
+							'title' => '브라우저를 업데이트해야 합니다',
+							'desc'  => '사용 중인 브라우저는 음성 출력을 지원하지 않습니다. 브라우저를 업데이트하거나 음성 합성이 가능한 브라우저를 사용하세요 (예: Chrome, Edge, Safari).',
+							'link'  => '업데이트 방법',
+						),
 						'header'                 => array(
 							'language'      => '한국어',
 							'listLanguages' => $list_languages,
 							'title'         => '접근성 설정',
 							'desc'          => '제공자',
 							'anchor'        => 'OneTap',
+							'statement'     => '성명',
+							'hideToolbar'   => '도구 모음 숨기기',
 						),
 						'multiFunctionalFeature' => array(
 							'title'              => '접근성 프로필 선택',
@@ -3036,57 +3779,69 @@ class Accessibility_Onetap_Public {
 								'off'   => '끄기',
 							),
 						),
-						'content'                => array(
-							'biggerText'    => '더 큰 글꼴',
-							'cursor'        => '커서',
-							'lineHeight'    => '줄 높이',
-							'letterSpacing' => '글자 간격',
-							'readableFont'  => '읽기 쉬운 글꼴',
-							'dyslexicFont'  => '디스렉시아용 글꼴',
+						'titles'                 => array(
+							'contentModules'     => '콘텐츠 모듈',
+							'colorModules'       => '색상 모듈',
+							'orientationModules' => '방향 모듈',
 						),
-						'contentBottom'          => array(
-							'textAlign'      => '텍스트 정렬',
-							'textMagnifier'  => '텍스트 확대경',
-							'highlightLinks' => '링크 강조 표시',
-						),
-						'colors'                 => array(
-							'invertColors' => '색상 반전',
-							'brightness'   => '밝기',
-							'contrast'     => '대비',
-							'grayscale'    => '그레이스케일',
-							'saturation'   => '채도',
-						),
-						'orientation'            => array(
+						'features'               => array(
+							'biggerText'         => '글꼴 크기',
+							'highlightLinks'     => '링크 강조 표시',
+							'lineHeight'         => '줄 높이',
+							'readableFont'       => '읽기 쉬운 글꼴',
+							'cursor'             => '큰 커서',
+							'textMagnifier'      => '텍스트 확대경',
+							'dyslexicFont'       => '디스렉시아용 글꼴',
+							'alignCenter'        => '가운데 정렬',
+							'letterSpacing'      => '글자 간격',
+							'fontWeight'         => '글꼴 굵기',
+							'darkContrast'       => '어두운 대비',
+							'lightContrast'      => '밝은 대비',
+							'highContrast'       => '높은 대비',
+							'monochrome'         => '단색',
+							'saturation'         => '채도',
 							'readingLine'        => '읽기 라인',
-							'keyboardNavigation' => '키보드 탐색',
-							'highlightTitles'    => '제목 강조 표시',
 							'readingMask'        => '읽기 마스크',
+							'readPage'           => '페이지 읽기',
+							'keyboardNavigation' => '키보드 탐색',
 							'hideImages'         => '이미지 숨기기',
-							'highlightAll'       => '모두 강조 표시',
+							'muteSounds'         => '소리 음소거',
+							'highlightTitles'    => '제목 강조 표시',
+							'highlightAll'       => '콘텐츠 강조 표시',
+							'stopAnimations'     => '애니메이션 중지',
+							'resetSettings'      => '설정 초기화',
 						),
-						'orientationBottom'      => array(
-							'readPage'       => '페이지 읽기',
-							'muteSounds'     => '소리 음소거',
-							'stopAnimations' => '애니메이션 중지',
-						),
-						'divider'                => array(
-							'content'    => '콘텐츠',
-							'colors'     => '색상',
-							'navigation' => '탐색',
-						),
-						'resetSettings'          => '설정 초기화',
 						'footer'                 => array(
 							'accessibilityStatement' => '접근성 선언문',
 							'version'                => '버전 ' . $plugin_version,
 						),
 					),
 					'zh'    => array(
+						'global'                 => array(
+							'back'    => '返回',
+							'default' => '默认',
+						),
+						'hideToolbar'            => array(
+							'title'   => '您想隐藏辅助工具栏多长时间？',
+							'radio1'  => '仅此会话',
+							'radio2'  => '24小时',
+							'radio3'  => '一周',
+							'button1' => '暂不',
+							'button2' => '隐藏工具栏',
+						),
+						'unsupportedPageReader'  => array(
+							'title' => '需要更新浏览器',
+							'desc'  => '您的浏览器不支持语音输出。请更新浏览器，或使用支持语音合成功能的浏览器（例如 Chrome、Edge、Safari）。',
+							'link'  => '如何更新？',
+						),
 						'header'                 => array(
 							'language'      => '简体中文',
 							'listLanguages' => $list_languages,
 							'title'         => '无障碍调整',
 							'desc'          => '提供者',
 							'anchor'        => 'OneTap',
+							'statement'     => '声明',
+							'hideToolbar'   => '隐藏工具栏',
 						),
 						'multiFunctionalFeature' => array(
 							'title'              => '选择您的无障碍配置文件',
@@ -3121,57 +3876,69 @@ class Accessibility_Onetap_Public {
 								'off'   => '关',
 							),
 						),
-						'content'                => array(
-							'biggerText'    => '更大字体',
-							'cursor'        => '光标',
-							'lineHeight'    => '行高',
-							'letterSpacing' => '字母间距',
-							'readableFont'  => '可读字体',
-							'dyslexicFont'  => '阅读障碍字体',
+						'titles'                 => array(
+							'contentModules'     => '内容模块',
+							'colorModules'       => '颜色模块',
+							'orientationModules' => '方向模块',
 						),
-						'contentBottom'          => array(
-							'textAlign'      => '文本对齐',
-							'textMagnifier'  => '文本放大器',
-							'highlightLinks' => '突出显示链接',
-						),
-						'colors'                 => array(
-							'invertColors' => '反转颜色',
-							'brightness'   => '亮度',
-							'contrast'     => '对比度',
-							'grayscale'    => '灰度',
-							'saturation'   => '饱和度',
-						),
-						'orientation'            => array(
+						'features'               => array(
+							'biggerText'         => '字体大小',
+							'highlightLinks'     => '突出显示链接',
+							'lineHeight'         => '行高',
+							'readableFont'       => '可读字体',
+							'cursor'             => '大光标',
+							'textMagnifier'      => '文本放大器',
+							'dyslexicFont'       => '阅读障碍字体',
+							'alignCenter'        => '居中对齐',
+							'letterSpacing'      => '字母间距',
+							'fontWeight'         => '字体粗细',
+							'darkContrast'       => '深色对比',
+							'lightContrast'      => '浅色对比',
+							'highContrast'       => '高对比度',
+							'monochrome'         => '单色',
+							'saturation'         => '饱和度',
 							'readingLine'        => '阅读线',
-							'keyboardNavigation' => '键盘导航',
-							'highlightTitles'    => '突出显示标题',
 							'readingMask'        => '阅读遮罩',
+							'readPage'           => '朗读页面',
+							'keyboardNavigation' => '键盘导航',
 							'hideImages'         => '隐藏图片',
-							'highlightAll'       => '突出显示所有内容',
+							'muteSounds'         => '静音声音',
+							'highlightTitles'    => '突出显示标题',
+							'highlightAll'       => '突出显示内容',
+							'stopAnimations'     => '停止动画',
+							'resetSettings'      => '重置设置',
 						),
-						'orientationBottom'      => array(
-							'readPage'       => '朗读页面',
-							'muteSounds'     => '静音声音',
-							'stopAnimations' => '停止动画',
-						),
-						'divider'                => array(
-							'content'    => '内容',
-							'colors'     => '颜色',
-							'navigation' => '导航',
-						),
-						'resetSettings'          => '重置设置',
 						'footer'                 => array(
 							'accessibilityStatement' => '无障碍声明',
 							'version'                => '版本 ' . $plugin_version,
 						),
 					),
 					'ar'    => array(
+						'global'                 => array(
+							'back'    => 'رجوع',
+							'default' => 'افتراضي',
+						),
+						'hideToolbar'            => array(
+							'title'   => 'كم من الوقت تريد إخفاء شريط أدوات إمكانية الوصول؟',
+							'radio1'  => 'فقط لهذه الجلسة',
+							'radio2'  => '24 ساعة',
+							'radio3'  => 'أسبوع واحد',
+							'button1' => 'ليس الآن',
+							'button2' => 'إخفاء الشريط',
+						),
+						'unsupportedPageReader'  => array(
+							'title' => 'يجب تحديث المتصفح',
+							'desc'  => 'المتصفح الخاص بك لا يدعم إخراج الصوت. يرجى تحديث المتصفح أو استخدام متصفح يدعم تحويل النص إلى كلام (مثل Chrome أو Edge أو Safari).',
+							'link'  => 'كيف يتم التحديث؟',
+						),
 						'header'                 => array(
 							'language'      => 'العربية',
 							'listLanguages' => $list_languages,
 							'title'         => 'تعديلات الوصول',
 							'desc'          => 'مزود بواسطة',
 							'anchor'        => 'OneTap',
+							'statement'     => 'بيان',
+							'hideToolbar'   => 'إخفاء شريط الأدوات',
 						),
 						'multiFunctionalFeature' => array(
 							'title'              => 'اختر ملف التعريف للوصول الخاص بك',
@@ -3206,57 +3973,69 @@ class Accessibility_Onetap_Public {
 								'off'   => 'إيقاف',
 							),
 						),
-						'content'                => array(
-							'biggerText'    => 'نص أكبر',
-							'cursor'        => 'مؤشر',
-							'lineHeight'    => 'ارتفاع السطر',
-							'letterSpacing' => 'تباعد الحروف',
-							'readableFont'  => 'خط قابل للقراءة',
-							'dyslexicFont'  => 'خط مخصص لمرضى الديسلكسيا',
+						'titles'                 => array(
+							'contentModules'     => 'وحدات المحتوى',
+							'colorModules'       => 'وحدات الألوان',
+							'orientationModules' => 'وحدات التوجه',
 						),
-						'contentBottom'          => array(
-							'textAlign'      => 'محاذاة النص',
-							'textMagnifier'  => 'مكبر النص',
-							'highlightLinks' => 'تسليط الضوء على الروابط',
-						),
-						'colors'                 => array(
-							'invertColors' => 'عكس الألوان',
-							'brightness'   => 'السطوع',
-							'contrast'     => 'التباين',
-							'grayscale'    => 'التدرج الرمادي',
-							'saturation'   => 'التشبع',
-						),
-						'orientation'            => array(
+						'features'               => array(
+							'biggerText'         => 'حجم الخط',
+							'highlightLinks'     => 'تسليط الضوء على الروابط',
+							'lineHeight'         => 'ارتفاع السطر',
+							'readableFont'       => 'خط قابل للقراءة',
+							'cursor'             => 'مؤشر كبير',
+							'textMagnifier'      => 'مكبر النص',
+							'dyslexicFont'       => 'خط مخصص لمرضى الديسلكسيا',
+							'alignCenter'        => 'محاذاة الوسط',
+							'letterSpacing'      => 'تباعد الحروف',
+							'fontWeight'         => 'سمك الخط',
+							'darkContrast'       => 'تباين داكن',
+							'lightContrast'      => 'تباين فاتح',
+							'highContrast'       => 'تباين عالي',
+							'monochrome'         => 'أحادي اللون',
+							'saturation'         => 'التشبع',
 							'readingLine'        => 'خط القراءة',
-							'keyboardNavigation' => 'التنقل عبر لوحة المفاتيح',
-							'highlightTitles'    => 'تسليط الضوء على العناوين',
 							'readingMask'        => 'قناع القراءة',
+							'readPage'           => 'قراءة الصفحة',
+							'keyboardNavigation' => 'التنقل عبر لوحة المفاتيح',
 							'hideImages'         => 'إخفاء الصور',
-							'highlightAll'       => 'تسليط الضوء على الكل',
+							'muteSounds'         => 'كتم الأصوات',
+							'highlightTitles'    => 'تسليط الضوء على العناوين',
+							'highlightAll'       => 'تسليط الضوء على المحتوى',
+							'stopAnimations'     => 'إيقاف الأنيميشينات',
+							'resetSettings'      => 'إعادة تعيين الإعدادات',
 						),
-						'orientationBottom'      => array(
-							'readPage'       => 'قراءة الصفحة',
-							'muteSounds'     => 'كتم الأصوات',
-							'stopAnimations' => 'إيقاف الأنيميشينات',
-						),
-						'divider'                => array(
-							'content'    => 'المحتوى',
-							'colors'     => 'الألوان',
-							'navigation' => 'التنقل',
-						),
-						'resetSettings'          => 'إعادة تعيين الإعدادات',
 						'footer'                 => array(
 							'accessibilityStatement' => 'بيان الوصول',
 							'version'                => 'الإصدار ' . $plugin_version,
 						),
 					),
 					'ru'    => array(
+						'global'                 => array(
+							'back'    => 'Назад',
+							'default' => 'По умолчанию',
+						),
+						'hideToolbar'            => array(
+							'title'   => 'На сколько вы хотите скрыть панель доступности?',
+							'radio1'  => 'Только для этой сессии',
+							'radio2'  => '24 часа',
+							'radio3'  => 'Одна неделя',
+							'button1' => 'Не сейчас',
+							'button2' => 'Скрыть панель',
+						),
+						'unsupportedPageReader'  => array(
+							'title' => 'Браузер нужно обновить',
+							'desc'  => 'Ваш браузер не поддерживает голосовой вывод. Обновите браузер или используйте тот, который поддерживает синтез речи (например, Chrome, Edge, Safari).',
+							'link'  => 'Как обновить?',
+						),
 						'header'                 => array(
 							'language'      => 'Русский',
 							'listLanguages' => $list_languages,
 							'title'         => 'Настройки доступности',
 							'desc'          => 'Предоставлено',
 							'anchor'        => 'OneTap',
+							'statement'     => 'Заявление',
+							'hideToolbar'   => 'Скрыть панель инструментов',
 						),
 						'multiFunctionalFeature' => array(
 							'title'              => 'Выберите ваш профиль доступности',
@@ -3291,57 +4070,69 @@ class Accessibility_Onetap_Public {
 								'off'   => 'ВЫКЛ',
 							),
 						),
-						'content'                => array(
-							'biggerText'    => 'Большой текст',
-							'cursor'        => 'Курсор',
-							'lineHeight'    => 'Высота строки',
-							'letterSpacing' => 'Межбуквенный интервал',
-							'readableFont'  => 'Читаемый шрифт',
-							'dyslexicFont'  => 'Шрифт для людей с дислексией',
+						'titles'                 => array(
+							'contentModules'     => 'Модули контента',
+							'colorModules'       => 'Модули цветов',
+							'orientationModules' => 'Модули ориентации',
 						),
-						'contentBottom'          => array(
-							'textAlign'      => 'Выравнивание текста',
-							'textMagnifier'  => 'Увеличитель текста',
-							'highlightLinks' => 'Выделить ссылки',
-						),
-						'colors'                 => array(
-							'invertColors' => 'Инвертировать цвета',
-							'brightness'   => 'Яркость',
-							'contrast'     => 'Контрастность',
-							'grayscale'    => 'Оттенки серого',
-							'saturation'   => 'Насыщенность',
-						),
-						'orientation'            => array(
+						'features'               => array(
+							'biggerText'         => 'Размер шрифта',
+							'highlightLinks'     => 'Выделить ссылки',
+							'lineHeight'         => 'Высота строки',
+							'readableFont'       => 'Читаемый шрифт',
+							'cursor'             => 'Большой курсор',
+							'textMagnifier'      => 'Увеличитель текста',
+							'dyslexicFont'       => 'Шрифт для людей с дислексией',
+							'alignCenter'        => 'Выравнивание по центру',
+							'letterSpacing'      => 'Межбуквенный интервал',
+							'fontWeight'         => 'Толщина шрифта',
+							'darkContrast'       => 'Темный контраст',
+							'lightContrast'      => 'Светлый контраст',
+							'highContrast'       => 'Высокий контраст',
+							'monochrome'         => 'Монохромный',
+							'saturation'         => 'Насыщенность',
 							'readingLine'        => 'Читаемая линия',
-							'keyboardNavigation' => 'Навигация с клавиатуры',
-							'highlightTitles'    => 'Выделить заголовки',
 							'readingMask'        => 'Читаемая маска',
+							'readPage'           => 'Читать страницу',
+							'keyboardNavigation' => 'Навигация с клавиатуры',
 							'hideImages'         => 'Скрыть изображения',
-							'highlightAll'       => 'Выделить все',
+							'muteSounds'         => 'Отключить звуки',
+							'highlightTitles'    => 'Выделить заголовки',
+							'highlightAll'       => 'Выделить контент',
+							'stopAnimations'     => 'Остановить анимацию',
+							'resetSettings'      => 'Сбросить настройки',
 						),
-						'orientationBottom'      => array(
-							'readPage'       => 'Читать страницу',
-							'muteSounds'     => 'Отключить звуки',
-							'stopAnimations' => 'Остановить анимацию',
-						),
-						'divider'                => array(
-							'content'    => 'контент',
-							'colors'     => 'цвета',
-							'navigation' => 'навигация',
-						),
-						'resetSettings'          => 'Сбросить настройки',
 						'footer'                 => array(
 							'accessibilityStatement' => 'Заявление о доступности',
 							'version'                => 'Версия ' . $plugin_version,
 						),
 					),
 					'hi'    => array(
+						'global'                 => array(
+							'back'    => 'वापस',
+							'default' => 'डिफ़ॉल्ट',
+						),
+						'hideToolbar'            => array(
+							'title'   => 'आप एक्सेसिबिलिटी टूलबार को कितनी देर तक छिपाना चाहते हैं?',
+							'radio1'  => 'केवल इस सत्र के लिए',
+							'radio2'  => '24 घंटे',
+							'radio3'  => 'एक सप्ताह',
+							'button1' => 'अभी नहीं',
+							'button2' => 'टूलबार छिपाएं',
+						),
+						'unsupportedPageReader'  => array(
+							'title' => 'ब्राउज़र को अपडेट करने की आवश्यकता है',
+							'desc'  => 'आपका ब्राउज़र वाक् आउटपुट का समर्थन नहीं करता है। कृपया अपना ब्राउज़र अपडेट करें या ऐसा ब्राउज़र इस्तेमाल करें जो स्पीच सिंथेसिस को सपोर्ट करता हो (जैसे Chrome, Edge, Safari)।',
+							'link'  => 'कैसे अपडेट करें?',
+						),
 						'header'                 => array(
 							'language'      => 'हिन्दी',
 							'listLanguages' => $list_languages,
 							'title'         => 'सुगम्यता समायोजन',
 							'desc'          => 'द्वारा संचालित',
 							'anchor'        => 'OneTap',
+							'statement'     => 'बयान',
+							'hideToolbar'   => 'टूलबार छिपाएं',
 						),
 						'multiFunctionalFeature' => array(
 							'title'              => 'अपनी सुगम्यता प्रोफ़ाइल चुनें',
@@ -3376,57 +4167,69 @@ class Accessibility_Onetap_Public {
 								'off'   => 'OFF',
 							),
 						),
-						'content'                => array(
-							'biggerText'    => 'बड़ा टेक्स्ट',
-							'cursor'        => 'कर्सर',
-							'lineHeight'    => 'लाइन हाइट',
-							'letterSpacing' => 'अक्षर स्पेसिंग',
-							'readableFont'  => 'पठनीय फ़ॉन्ट',
-							'dyslexicFont'  => 'डिस्लेक्सिक फ़ॉन्ट',
+						'titles'                 => array(
+							'contentModules'     => 'सामग्री मॉड्यूल',
+							'colorModules'       => 'रंग मॉड्यूल',
+							'orientationModules' => 'अभिविन्यास मॉड्यूल',
 						),
-						'contentBottom'          => array(
-							'textAlign'      => 'पाठ संरेखण',
-							'textMagnifier'  => 'पाठ मैग्नीफायर',
-							'highlightLinks' => 'लिंक्स को हाइलाइट करें',
-						),
-						'colors'                 => array(
-							'invertColors' => 'रंगों को उलटना',
-							'brightness'   => 'चमक',
-							'contrast'     => 'कांट्रास्ट',
-							'grayscale'    => 'ग्रे-स्केल',
-							'saturation'   => 'संतृप्ति',
-						),
-						'orientation'            => array(
+						'features'               => array(
+							'biggerText'         => 'फ़ॉन्ट आकार',
+							'highlightLinks'     => 'लिंक्स को हाइलाइट करें',
+							'lineHeight'         => 'लाइन हाइट',
+							'readableFont'       => 'पठनीय फ़ॉन्ट',
+							'cursor'             => 'बड़ा कर्सर',
+							'textMagnifier'      => 'पाठ मैग्नीफायर',
+							'dyslexicFont'       => 'डिस्लेक्सिक फ़ॉन्ट',
+							'alignCenter'        => 'केंद्र संरेखण',
+							'letterSpacing'      => 'अक्षर स्पेसिंग',
+							'fontWeight'         => 'फ़ॉन्ट वजन',
+							'darkContrast'       => 'गहरा कांट्रास्ट',
+							'lightContrast'      => 'हल्का कांट्रास्ट',
+							'highContrast'       => 'उच्च कांट्रास्ट',
+							'monochrome'         => 'मोनोक्रोम',
+							'saturation'         => 'संतृप्ति',
 							'readingLine'        => 'पढ़ने की लाइन',
-							'keyboardNavigation' => 'किबोर्ड नेविगेशन',
-							'highlightTitles'    => 'शीर्षक हाइलाइट करें',
 							'readingMask'        => 'पढ़ने की मास्क',
+							'readPage'           => 'पृष्ठ पढ़ें',
+							'keyboardNavigation' => 'किबोर्ड नेविगेशन',
 							'hideImages'         => 'चित्र छिपाएं',
-							'highlightAll'       => 'सब कुछ हाइलाइट करें',
+							'muteSounds'         => 'ध्वनियों को म्यूट करें',
+							'highlightTitles'    => 'शीर्षक हाइलाइट करें',
+							'highlightAll'       => 'सामग्री हाइलाइट करें',
+							'stopAnimations'     => 'एनिमेशन रोकें',
+							'resetSettings'      => 'सेटिंग्स रीसेट करें',
 						),
-						'orientationBottom'      => array(
-							'readPage'       => 'पृष्ठ पढ़ें',
-							'muteSounds'     => 'ध्वनियों को म्यूट करें',
-							'stopAnimations' => 'एनिमेशन रोकें',
-						),
-						'divider'                => array(
-							'content'    => 'सामग्री',
-							'colors'     => 'रंग',
-							'navigation' => 'नेविगेशन',
-						),
-						'resetSettings'          => 'सेटिंग्स रीसेट करें',
 						'footer'                 => array(
 							'accessibilityStatement' => 'सुगम्यता कथन',
 							'version'                => 'संस्करण ' . $plugin_version,
 						),
 					),
 					'uk'    => array(
+						'global'                 => array(
+							'back'    => 'Назад',
+							'default' => 'За замовчуванням',
+						),
+						'hideToolbar'            => array(
+							'title'   => 'На скільки ви хочете приховати панель доступності?',
+							'radio1'  => 'Лише для цієї сесії',
+							'radio2'  => '24 години',
+							'radio3'  => 'Один тиждень',
+							'button1' => 'Не зараз',
+							'button2' => 'Приховати панель',
+						),
+						'unsupportedPageReader'  => array(
+							'title' => 'Потрібно оновити браузер',
+							'desc'  => 'Ваш браузер не підтримує озвучування. Оновіть браузер або скористайтеся тим, що підтримує синтез мовлення (наприклад, Chrome, Edge, Safari).',
+							'link'  => 'Як оновити?',
+						),
 						'header'                 => array(
 							'language'      => 'Українська',
 							'listLanguages' => $list_languages,
 							'title'         => 'Налаштування доступності',
 							'desc'          => 'Підтримується',
 							'anchor'        => 'OneTap',
+							'statement'     => 'Заява',
+							'hideToolbar'   => 'Сховати панель інструментів',
 						),
 						'multiFunctionalFeature' => array(
 							'title'              => 'Оберіть свій профіль доступності',
@@ -3461,57 +4264,69 @@ class Accessibility_Onetap_Public {
 								'off'   => 'ВИКЛ.',
 							),
 						),
-						'content'                => array(
-							'biggerText'    => 'Збільшений текст',
-							'cursor'        => 'Курсор',
-							'lineHeight'    => 'Висота рядка',
-							'letterSpacing' => 'Міжлітерний інтервал',
-							'readableFont'  => 'Читабельний шрифт',
-							'dyslexicFont'  => 'Шрифт для дислексії',
+						'titles'                 => array(
+							'contentModules'     => 'Модулі контенту',
+							'colorModules'       => 'Модулі кольорів',
+							'orientationModules' => 'Модулі орієнтації',
 						),
-						'contentBottom'          => array(
-							'textAlign'      => 'Вирівнювання тексту',
-							'textMagnifier'  => 'Магніфікатор тексту',
-							'highlightLinks' => 'Підсвітити посилання',
-						),
-						'colors'                 => array(
-							'invertColors' => 'Інвертувати кольори',
-							'brightness'   => 'Яскравість',
-							'contrast'     => 'Контрастність',
-							'grayscale'    => 'Чорно-біле',
-							'saturation'   => 'Насиченість',
-						),
-						'orientation'            => array(
+						'features'               => array(
+							'biggerText'         => 'Розмір шрифту',
+							'highlightLinks'     => 'Підсвітити посилання',
+							'lineHeight'         => 'Висота рядка',
+							'readableFont'       => 'Читабельний шрифт',
+							'cursor'             => 'Великий курсор',
+							'textMagnifier'      => 'Магніфікатор тексту',
+							'dyslexicFont'       => 'Шрифт для дислексії',
+							'alignCenter'        => 'Вирівнювання по центру',
+							'letterSpacing'      => 'Міжлітерний інтервал',
+							'fontWeight'         => 'Товщина шрифту',
+							'darkContrast'       => 'Темний контраст',
+							'lightContrast'      => 'Світлий контраст',
+							'highContrast'       => 'Високий контраст',
+							'monochrome'         => 'Монохромний',
+							'saturation'         => 'Насиченість',
 							'readingLine'        => 'Лінія читання',
-							'keyboardNavigation' => 'Навігація за допомогою клавіатури',
-							'highlightTitles'    => 'Підсвітити заголовки',
 							'readingMask'        => 'Маска для читання',
+							'readPage'           => 'Читати сторінку',
+							'keyboardNavigation' => 'Навігація за допомогою клавіатури',
 							'hideImages'         => 'Сховати зображення',
-							'highlightAll'       => 'Підсвітити все',
+							'muteSounds'         => 'Вимкнути звук',
+							'highlightTitles'    => 'Підсвітити заголовки',
+							'highlightAll'       => 'Підсвітити контент',
+							'stopAnimations'     => 'Зупинити анімації',
+							'resetSettings'      => 'Скинути налаштування',
 						),
-						'orientationBottom'      => array(
-							'readPage'       => 'Читати сторінку',
-							'muteSounds'     => 'Вимкнути звук',
-							'stopAnimations' => 'Зупинити анімації',
-						),
-						'divider'                => array(
-							'content'    => 'контент',
-							'colors'     => 'кольори',
-							'navigation' => 'орієнтація',
-						),
-						'resetSettings'          => 'Скинути налаштування',
 						'footer'                 => array(
 							'accessibilityStatement' => 'Заява про доступність',
 							'version'                => 'Версія ' . $plugin_version,
 						),
 					),
 					'sr'    => array(
+						'global'                 => array(
+							'back'    => 'Назад',
+							'default' => 'Подразумевано',
+						),
+						'hideToolbar'            => array(
+							'title'   => 'Колико дуго желите да сакријете траку за приступачност?',
+							'radio1'  => 'Само за ову сесију',
+							'radio2'  => '24 сата',
+							'radio3'  => 'Недељу дана',
+							'button1' => 'Не сада',
+							'button2' => 'Сакриј траку',
+						),
+						'unsupportedPageReader'  => array(
+							'title' => 'Pregledač treba da se ažurira',
+							'desc'  => 'Vaš pregledač ne podržava govor. Ažurirajte ga ili koristite pregledač koji podržava sintezu govora (npr. Chrome, Edge, Safari).',
+							'link'  => 'Kako ažurirati?',
+						),
 						'header'                 => array(
 							'language'      => 'Srpski',
 							'listLanguages' => $list_languages,
 							'title'         => 'Podešavanja pristupačnosti',
 							'desc'          => 'Pomaže',
 							'anchor'        => 'OneTap',
+							'statement'     => 'Изјава',
+							'hideToolbar'   => 'Сакриј траку са алаткама',
 						),
 						'multiFunctionalFeature' => array(
 							'title'              => 'Izaberite svoj profil pristupačnosti',
@@ -3546,89 +4361,642 @@ class Accessibility_Onetap_Public {
 								'off'   => 'ISKLJUČENO',
 							),
 						),
-						'content'                => array(
-							'biggerText'    => 'Veći tekst',
-							'cursor'        => 'Kursor',
-							'lineHeight'    => 'Visina linije',
-							'letterSpacing' => 'Razmak između slova',
-							'readableFont'  => 'Font koji je lako čitljiv',
-							'dyslexicFont'  => 'Font za disleksiju',
+						'titles'                 => array(
+							'contentModules'     => 'Moduli sadržaja',
+							'colorModules'       => 'Moduli boja',
+							'orientationModules' => 'Moduli orijentacije',
 						),
-						'contentBottom'          => array(
-							'textAlign'      => 'Poravnanje teksta',
-							'textMagnifier'  => 'Magnifikator teksta',
-							'highlightLinks' => 'Istakni linkove',
-						),
-						'colors'                 => array(
-							'invertColors' => 'Invertuj boje',
-							'brightness'   => 'Osvetljenost',
-							'contrast'     => 'Kontrast',
-							'grayscale'    => 'Crno-belo',
-							'saturation'   => 'Saturacija',
-						),
-						'orientation'            => array(
+						'features'               => array(
+							'biggerText'         => 'Veličina fonta',
+							'highlightLinks'     => 'Istakni linkove',
+							'lineHeight'         => 'Visina linije',
+							'readableFont'       => 'Font koji je lako čitljiv',
+							'cursor'             => 'Veliki kursor',
+							'textMagnifier'      => 'Magnifikator teksta',
+							'dyslexicFont'       => 'Font za disleksiju',
+							'alignCenter'        => 'Poravnanje po centru',
+							'letterSpacing'      => 'Razmak između slova',
+							'fontWeight'         => 'Debljina fonta',
+							'darkContrast'       => 'Tamni kontrast',
+							'lightContrast'      => 'Svetli kontrast',
+							'highContrast'       => 'Visoki kontrast',
+							'monochrome'         => 'Monohromatski',
+							'saturation'         => 'Saturacija',
 							'readingLine'        => 'Linija za čitanje',
-							'keyboardNavigation' => 'Navigacija tastaturom',
-							'highlightTitles'    => 'Istakni naslove',
 							'readingMask'        => 'Maska za čitanje',
+							'readPage'           => 'Čitaj stranicu',
+							'keyboardNavigation' => 'Navigacija tastaturom',
 							'hideImages'         => 'Sakrij slike',
-							'highlightAll'       => 'Istakni sve',
+							'muteSounds'         => 'Isključi zvuke',
+							'highlightTitles'    => 'Istakni naslove',
+							'highlightAll'       => 'Istakni sadržaj',
+							'stopAnimations'     => 'Zaustavi animacije',
+							'resetSettings'      => 'Poništi podešavanja',
 						),
-						'orientationBottom'      => array(
-							'readPage'       => 'Čitaj stranicu',
-							'muteSounds'     => 'Isključi zvuke',
-							'stopAnimations' => 'Zaustavi animacije',
-						),
-						'divider'                => array(
-							'content'    => 'sadržaj',
-							'colors'     => 'boje',
-							'navigation' => 'orijentacija',
-						),
-						'resetSettings'          => 'Poništi podešavanja',
 						'footer'                 => array(
 							'accessibilityStatement' => 'Izjava o pristupačnosti',
 							'version'                => 'Verzija ' . $plugin_version,
 						),
 					),
+					'gb'    => array(
+						'global'                 => array(
+							'back'    => 'Back',
+							'default' => 'Default',
+						),
+						'hideToolbar'            => array(
+							'title'   => 'How long do you want to hide the toolbar?',
+							'radio1'  => 'Only for this session',
+							'radio2'  => '24 hours',
+							'radio3'  => 'A Week',
+							'button1' => 'Not Now',
+							'button2' => 'Hide Toolbar',
+						),
+						'unsupportedPageReader'  => array(
+							'title' => 'Browser needs to be updated',
+							'desc'  => 'Your browser doesn\'t support speech output. Please update your browser or use one with speech synthesis enabled (e.g. Chrome, Edge, Safari).',
+							'link'  => 'How to Update?',
+						),
+						'header'                 => array(
+							'language'      => 'English (UK)',
+							'listLanguages' => $list_languages,
+							'title'         => 'Accessibility Adjustments',
+							'desc'          => 'Powered by',
+							'anchor'        => 'OneTap',
+							'statement'     => 'Statement',
+							'hideToolbar'   => 'Hide Toolbar',
+						),
+						'multiFunctionalFeature' => array(
+							'title'              => 'Select your accessibility profile',
+							'visionImpairedMode' => array(
+								'title' => 'Vision Impaired Mode',
+								'desc'  => "Enhances website's visuals",
+								'on'    => 'ON',
+								'off'   => 'OFF',
+							),
+							'seizureSafeProfile' => array(
+								'title' => 'Seizure Safe Profile',
+								'desc'  => 'Clear flashes & reduces colour',
+								'on'    => 'ON',
+								'off'   => 'OFF',
+							),
+							'aDHDFriendlyMode'   => array(
+								'title' => 'ADHD Friendly Mode',
+								'desc'  => 'Focused browsing, distraction-free',
+								'on'    => 'ON',
+								'off'   => 'OFF',
+							),
+							'blindnessMode'      => array(
+								'title' => 'Blindness Mode',
+								'desc'  => 'Reduces distractions, improves focus',
+								'on'    => 'ON',
+								'off'   => 'OFF',
+							),
+							'epilepsySafeMode'   => array(
+								'title' => 'Epilepsy Safe Mode',
+								'desc'  => 'Dims colours and stops blinking',
+								'on'    => 'ON',
+								'off'   => 'OFF',
+							),
+						),
+						'titles'                 => array(
+							'contentModules'     => 'Content Modules',
+							'colorModules'       => 'Colour Modules',
+							'orientationModules' => 'Orientation Modules',
+						),
+						'features'               => array(
+							'biggerText'         => 'Font Size',
+							'highlightLinks'     => 'Highlight Links',
+							'lineHeight'         => 'Line Height',
+							'readableFont'       => 'Readable Font',
+							'cursor'             => 'Big Cursor',
+							'textMagnifier'      => 'Text Magnifier',
+							'dyslexicFont'       => 'Dyslexic Font',
+							'alignCenter'        => 'Align Text',
+							'letterSpacing'      => 'Letter Spacing',
+							'fontWeight'         => 'Font Weight',
+							'darkContrast'       => 'Dark Contrast',
+							'lightContrast'      => 'Light Contrast',
+							'highContrast'       => 'High Contrast',
+							'monochrome'         => 'Monochrome',
+							'saturation'         => 'Saturation',
+							'readingLine'        => 'Reading Line',
+							'readingMask'        => 'Reading Mask',
+							'readPage'           => 'Read Page',
+							'keyboardNavigation' => 'Keyboard Navigation',
+							'hideImages'         => 'Hide Images',
+							'muteSounds'         => 'Mute Sounds',
+							'highlightTitles'    => 'Highlight Titles',
+							'highlightAll'       => 'Highlight Content',
+							'stopAnimations'     => 'Stop Animations',
+							'resetSettings'      => 'Reset Settings',
+						),
+					),
+					'ir'    => array(
+						'global'                 => array(
+							'back'    => 'بازگشت',
+							'default' => 'پیش‌فرض',
+						),
+						'hideToolbar'            => array(
+							'title'   => 'چقدر می‌خواهید نوار ابزار دسترسی را مخفی کنید؟',
+							'radio1'  => 'فقط برای این جلسه',
+							'radio2'  => '24 ساعت',
+							'radio3'  => 'یک هفته',
+							'button1' => 'الان نه',
+							'button2' => 'مخفی کردن نوار ابزار',
+						),
+						'unsupportedPageReader'  => array(
+							'title' => 'مرورگر نیاز به به‌روزرسانی دارد',
+							'desc'  => 'مرورگر شما از خروجی صوتی پشتیبانی نمی‌کند. لطفاً مرورگر خود را به‌روزرسانی کنید یا از مرورگری استفاده کنید که سنتز گفتار را پشتیبانی می‌کند (مثل Chrome، Edge، Safari).',
+							'link'  => 'چگونه به‌روزرسانی کنیم؟',
+						),
+						'header'                 => array(
+							'language'      => 'فارسی',
+							'listLanguages' => $list_languages,
+							'title'         => 'تنظیمات دسترسی',
+							'desc'          => 'قدرت گرفته از',
+							'anchor'        => 'OneTap',
+							'statement'     => 'بیانیه',
+							'hideToolbar'   => 'مخفی کردن نوار ابزار',
+						),
+						'multiFunctionalFeature' => array(
+							'title'              => 'پروفایل دسترسی خود را انتخاب کنید',
+							'visionImpairedMode' => array(
+								'title' => 'حالت اختلال بینایی',
+								'desc'  => 'بهبود عناصر بصری وب‌سایت',
+								'on'    => 'روشن',
+								'off'   => 'خاموش',
+							),
+							'seizureSafeProfile' => array(
+								'title' => 'پروفایل ایمن برای تشنج',
+								'desc'  => 'کاهش فلش‌ها و بهبود رنگ‌ها',
+								'on'    => 'روشن',
+								'off'   => 'خاموش',
+							),
+							'aDHDFriendlyMode'   => array(
+								'title' => 'حالت دوستانه ADHD',
+								'desc'  => 'مرور متمرکز بدون حواس‌پرتی',
+								'on'    => 'روشن',
+								'off'   => 'خاموش',
+							),
+							'blindnessMode'      => array(
+								'title' => 'حالت نابینایی',
+								'desc'  => 'کاهش حواس‌پرتی، بهبود تمرکز',
+								'on'    => 'روشن',
+								'off'   => 'خاموش',
+							),
+							'epilepsySafeMode'   => array(
+								'title' => 'حالت ایمن صرع',
+								'desc'  => 'کاهش رنگ‌ها و توقف چشمک‌زدن',
+								'on'    => 'روشن',
+								'off'   => 'خاموش',
+							),
+						),
+						'titles'                 => array(
+							'contentModules'     => 'ماژول‌های محتوا',
+							'colorModules'       => 'ماژول‌های رنگ',
+							'orientationModules' => 'ماژول‌های جهت‌گیری',
+						),
+						'features'               => array(
+							'biggerText'         => 'اندازه فونت',
+							'highlightLinks'     => 'برجسته کردن لینک‌ها',
+							'lineHeight'         => 'ارتفاع خط',
+							'readableFont'       => 'فونت خوانا',
+							'cursor'             => 'مکان‌نما بزرگ',
+							'textMagnifier'      => 'ذره‌بین متن',
+							'dyslexicFont'       => 'فونت دیسلکسی',
+							'alignCenter'        => 'تراز وسط',
+							'letterSpacing'      => 'فاصله حروف',
+							'fontWeight'         => 'ضخامت فونت',
+							'darkContrast'       => 'کنتراست تیره',
+							'lightContrast'      => 'کنتراست روشن',
+							'highContrast'       => 'کنتراست بالا',
+							'monochrome'         => 'تک‌رنگ',
+							'saturation'         => 'اشباع',
+							'readingLine'        => 'خط خواندن',
+							'readingMask'        => 'ماسک خواندن',
+							'readPage'           => 'خواندن صفحه',
+							'keyboardNavigation' => 'ناوبری صفحه کلید',
+							'hideImages'         => 'مخفی کردن تصاویر',
+							'muteSounds'         => 'بی‌صدا کردن صداها',
+							'highlightTitles'    => 'برجسته کردن عناوین',
+							'highlightAll'       => 'برجسته کردن محتوا',
+							'stopAnimations'     => 'توقف انیمیشن‌ها',
+							'resetSettings'      => 'بازنشانی تنظیمات',
+						),
+					),
+					'il'    => array(
+						'global'                 => array(
+							'back'    => 'חזרה',
+							'default' => 'ברירת מחדל',
+						),
+						'hideToolbar'            => array(
+							'title'   => 'לכמה זמן תרצה להסתיר את סרגל הכלים לנגישות?',
+							'radio1'  => 'רק עבור הפעלה זו',
+							'radio2'  => '24 שעות',
+							'radio3'  => 'שבוע',
+							'button1' => 'לא עכשיו',
+							'button2' => 'הסתר סרגל כלים',
+						),
+						'unsupportedPageReader'  => array(
+							'title' => 'יש לעדכן את הדפדפן',
+							'desc'  => 'הדפדפן שלך אינו תומך בפלט קולי. אנא עדכן את הדפדפן שלך או השתמש באחד התומך בסינתזת דיבור (למשל Chrome, Edge, Safari).',
+							'link'  => 'איך לעדכן?',
+						),
+						'header'                 => array(
+							'language'      => 'עברית',
+							'listLanguages' => $list_languages,
+							'title'         => 'התאמות נגישות',
+							'desc'          => 'מופעל על ידי',
+							'anchor'        => 'OneTap',
+							'statement'     => 'הצהרה',
+							'hideToolbar'   => 'הסתר סרגל כלים',
+						),
+						'multiFunctionalFeature' => array(
+							'title'              => 'בחר את פרופיל הנגישות שלך',
+							'visionImpairedMode' => array(
+								'title' => 'מצב ליקוי ראייה',
+								'desc'  => 'משפר את האלמנטים הוויזואליים של האתר',
+								'on'    => 'פועל',
+								'off'   => 'כבוי',
+							),
+							'seizureSafeProfile' => array(
+								'title' => 'פרופיל בטוח להתקפים',
+								'desc'  => 'מפחית הבזקים ומשפר צבעים',
+								'on'    => 'פועל',
+								'off'   => 'כבוי',
+							),
+							'aDHDFriendlyMode'   => array(
+								'title' => 'מצב ידידותי ל-ADHD',
+								'desc'  => 'גלישה ממוקדת ללא הסחות דעת',
+								'on'    => 'פועל',
+								'off'   => 'כבוי',
+							),
+							'blindnessMode'      => array(
+								'title' => 'מצב עיוורון',
+								'desc'  => 'מפחית הסחות דעת, משפר ריכוז',
+								'on'    => 'פועל',
+								'off'   => 'כבוי',
+							),
+							'epilepsySafeMode'   => array(
+								'title' => 'מצב בטוח לאפילפסיה',
+								'desc'  => 'מעמעם צבעים ועוצר הבהוב',
+								'on'    => 'פועל',
+								'off'   => 'כבוי',
+							),
+						),
+						'titles'                 => array(
+							'contentModules'     => 'מודולי תוכן',
+							'colorModules'       => 'מודולי צבע',
+							'orientationModules' => 'מודולי כיוון',
+						),
+						'features'               => array(
+							'biggerText'         => 'גודל גופן',
+							'highlightLinks'     => 'הדגש קישורים',
+							'lineHeight'         => 'גובה שורה',
+							'readableFont'       => 'גופן קריא',
+							'cursor'             => 'סמן גדול',
+							'textMagnifier'      => 'זכוכית מגדלת לטקסט',
+							'dyslexicFont'       => 'גופן לדיסלקציה',
+							'alignCenter'        => 'יישור למרכז',
+							'letterSpacing'      => 'מרווח אותיות',
+							'fontWeight'         => 'עובי גופן',
+							'darkContrast'       => 'ניגודיות כהה',
+							'lightContrast'      => 'ניגודיות בהירה',
+							'highContrast'       => 'ניגודיות גבוהה',
+							'monochrome'         => 'מונוכרום',
+							'saturation'         => 'רוויה',
+							'readingLine'        => 'קו קריאה',
+							'readingMask'        => 'מסכת קריאה',
+							'readPage'           => 'קרא דף',
+							'keyboardNavigation' => 'ניווט במקלדת',
+							'hideImages'         => 'הסתר תמונות',
+							'muteSounds'         => 'השתק צלילים',
+							'highlightTitles'    => 'הדגש כותרות',
+							'highlightAll'       => 'הדגש תוכן',
+							'stopAnimations'     => 'עצור אנימציות',
+							'resetSettings'      => 'איפוס הגדרות',
+						),
+					),
+					'mk'    => array(
+						'global'                 => array(
+							'back'    => 'Назад',
+							'default' => 'Стандардно',
+						),
+						'hideToolbar'            => array(
+							'title'   => 'Колку долго сакате да ја скриете лентата за пристапност?',
+							'radio1'  => 'Само за оваа сесија',
+							'radio2'  => '24 часа',
+							'radio3'  => 'Една недела',
+							'button1' => 'Не сега',
+							'button2' => 'Скриј лента',
+						),
+						'unsupportedPageReader'  => array(
+							'title' => 'Прелистувачот треба да се ажурира',
+							'desc'  => 'Вашиот прелистувач не поддржува говорен излез. Ве молиме ажурирајте го вашиот прелистувач или користете таков што поддржува говорна синтеза (на пр. Chrome, Edge, Safari).',
+							'link'  => 'Како да се ажурира?',
+						),
+						'header'                 => array(
+							'language'      => 'Македонски',
+							'listLanguages' => $list_languages,
+							'title'         => 'Прилагодувања за пристапност',
+							'desc'          => 'Овозможено од',
+							'anchor'        => 'OneTap',
+							'statement'     => 'Изјава',
+							'hideToolbar'   => 'Скриј лента со алатки',
+						),
+						'multiFunctionalFeature' => array(
+							'title'              => 'Изберете го вашиот профил за пристапност',
+							'visionImpairedMode' => array(
+								'title' => 'Режим за оштетен вид',
+								'desc'  => 'Подобрува визуелни елементи на веб-страницата',
+								'on'    => 'ВКЛ',
+								'off'   => 'ИСКЛ',
+							),
+							'seizureSafeProfile' => array(
+								'title' => 'Безбеден профил за напади',
+								'desc'  => 'Намалува трепкање и подобрува бои',
+								'on'    => 'ВКЛ',
+								'off'   => 'ИСКЛ',
+							),
+							'aDHDFriendlyMode'   => array(
+								'title' => 'ADHD пријателски режим',
+								'desc'  => 'Фокусирана навигација без одвлекување',
+								'on'    => 'ВКЛ',
+								'off'   => 'ИСКЛ',
+							),
+							'blindnessMode'      => array(
+								'title' => 'Режим за слепило',
+								'desc'  => 'Намалува одвлекувања и подобрува фокус',
+								'on'    => 'ВКЛ',
+								'off'   => 'ИСКЛ',
+							),
+							'epilepsySafeMode'   => array(
+								'title' => 'Безбеден режим за епилепсија',
+								'desc'  => 'Намалува бои и запира трепкање',
+								'on'    => 'ВКЛ',
+								'off'   => 'ИСКЛ',
+							),
+						),
+						'titles'                 => array(
+							'contentModules'     => 'Модули за содржина',
+							'colorModules'       => 'Модули за бои',
+							'orientationModules' => 'Модули за ориентација',
+						),
+						'features'               => array(
+							'biggerText'         => 'Големина на фонт',
+							'highlightLinks'     => 'Истакни врски',
+							'lineHeight'         => 'Висина на линија',
+							'readableFont'       => 'Читлив фонт',
+							'cursor'             => 'Голем курсор',
+							'textMagnifier'      => 'Лупа за текст',
+							'dyslexicFont'       => 'Фонт за дислексија',
+							'alignCenter'        => 'Центрирај',
+							'letterSpacing'      => 'Растојание меѓу букви',
+							'fontWeight'         => 'Дебелина на фонт',
+							'darkContrast'       => 'Темен контраст',
+							'lightContrast'      => 'Светол контраст',
+							'highContrast'       => 'Висок контраст',
+							'monochrome'         => 'Монохром',
+							'saturation'         => 'Заситеност',
+							'readingLine'        => 'Линија за читање',
+							'readingMask'        => 'Маска за читање',
+							'readPage'           => 'Прочитај страница',
+							'keyboardNavigation' => 'Навигација со тастатура',
+							'hideImages'         => 'Скриј слики',
+							'muteSounds'         => 'Исклучи звуци',
+							'highlightTitles'    => 'Истакни наслови',
+							'highlightAll'       => 'Истакни содржина',
+							'stopAnimations'     => 'Запирај анимации',
+							'resetSettings'      => 'Ресетирај поставки',
+						),
+					),
+					'th'    => array(
+						'global'                 => array(
+							'back'    => 'กลับ',
+							'default' => 'ค่าเริ่มต้น',
+						),
+						'hideToolbar'            => array(
+							'title'   => 'คุณต้องการซ่อนแถบเครื่องมือการเข้าถึงนานแค่ไหน?',
+							'radio1'  => 'เฉพาะสำหรับเซสชันนี้',
+							'radio2'  => '24 ชั่วโมง',
+							'radio3'  => 'หนึ่งสัปดาห์',
+							'button1' => 'ไม่ใช่ตอนนี้',
+							'button2' => 'ซ่อนแถบเครื่องมือ',
+						),
+						'unsupportedPageReader'  => array(
+							'title' => 'เบราว์เซอร์ต้องอัปเดต',
+							'desc'  => 'เบราว์เซอร์ของคุณไม่รองรับการส่งออกเสียง กรุณาอัปเดตเบราว์เซอร์ของคุณหรือใช้เบราว์เซอร์ที่รองรับการสังเคราะห์เสียง (เช่น Chrome, Edge, Safari)',
+							'link'  => 'วิธีอัปเดต?',
+						),
+						'header'                 => array(
+							'language'      => 'ไทย',
+							'listLanguages' => $list_languages,
+							'title'         => 'การปรับแต่งการเข้าถึง',
+							'desc'          => 'ขับเคลื่อนโดย',
+							'anchor'        => 'OneTap',
+							'statement'     => 'คำแถลง',
+							'hideToolbar'   => 'ซ่อนแถบเครื่องมือ',
+						),
+						'multiFunctionalFeature' => array(
+							'title'              => 'เลือกโปรไฟล์การเข้าถึงของคุณ',
+							'visionImpairedMode' => array(
+								'title' => 'โหมดสำหรับผู้บกพร่องทางสายตา',
+								'desc'  => 'ปรับปรุงองค์ประกอบภาพของเว็บไซต์',
+								'on'    => 'เปิด',
+								'off'   => 'ปิด',
+							),
+							'seizureSafeProfile' => array(
+								'title' => 'โปรไฟล์ปลอดภัยสำหรับอาการชัก',
+								'desc'  => 'ลดการกระพริบและปรับปรุงสี',
+								'on'    => 'เปิด',
+								'off'   => 'ปิด',
+							),
+							'aDHDFriendlyMode'   => array(
+								'title' => 'โหมดที่เป็นมิตรกับ ADHD',
+								'desc'  => 'การเรียกดูแบบโฟกัสโดยไม่มีสิ่งรบกวน',
+								'on'    => 'เปิด',
+								'off'   => 'ปิด',
+							),
+							'blindnessMode'      => array(
+								'title' => 'โหมดสำหรับผู้ตาบอด',
+								'desc'  => 'ลดสิ่งรบกวนและปรับปรุงโฟกัส',
+								'on'    => 'เปิด',
+								'off'   => 'ปิด',
+							),
+							'epilepsySafeMode'   => array(
+								'title' => 'โหมดปลอดภัยสำหรับโรคลมชัก',
+								'desc'  => 'ลดสีและหยุดการกระพริบ',
+								'on'    => 'เปิด',
+								'off'   => 'ปิด',
+							),
+						),
+						'titles'                 => array(
+							'contentModules'     => 'โมดูลเนื้อหา',
+							'colorModules'       => 'โมดูลสี',
+							'orientationModules' => 'โมดูลการวางแนว',
+						),
+						'features'               => array(
+							'biggerText'         => 'ขนาดฟอนต์',
+							'highlightLinks'     => 'เน้นลิงก์',
+							'lineHeight'         => 'ความสูงบรรทัด',
+							'readableFont'       => 'ฟอนต์ที่อ่านง่าย',
+							'cursor'             => 'เคอร์เซอร์ขนาดใหญ่',
+							'textMagnifier'      => 'แว่นขยายข้อความ',
+							'dyslexicFont'       => 'ฟอนต์สำหรับผู้บกพร่องทางการอ่าน',
+							'alignCenter'        => 'จัดกึ่งกลาง',
+							'letterSpacing'      => 'ระยะห่างตัวอักษร',
+							'fontWeight'         => 'ความหนาฟอนต์',
+							'darkContrast'       => 'คอนทราสต์เข้ม',
+							'lightContrast'      => 'คอนทราสต์อ่อน',
+							'highContrast'       => 'คอนทราสต์สูง',
+							'monochrome'         => 'ขาวดำ',
+							'saturation'         => 'ความอิ่มตัว',
+							'readingLine'        => 'เส้นอ่าน',
+							'readingMask'        => 'หน้ากากอ่าน',
+							'readPage'           => 'อ่านหน้า',
+							'keyboardNavigation' => 'นำทางด้วยแป้นพิมพ์',
+							'hideImages'         => 'ซ่อนรูปภาพ',
+							'muteSounds'         => 'ปิดเสียง',
+							'highlightTitles'    => 'เน้นหัวข้อ',
+							'highlightAll'       => 'เน้นเนื้อหา',
+							'stopAnimations'     => 'หยุดแอนิเมชัน',
+							'resetSettings'      => 'รีเซ็ตการตั้งค่า',
+						),
+					),
+					'vn'    => array(
+						'global'                 => array(
+							'back'    => 'Quay lại',
+							'default' => 'Mặc định',
+						),
+						'hideToolbar'            => array(
+							'title'   => 'Bạn muốn ẩn thanh công cụ truy cập trong bao lâu?',
+							'radio1'  => 'Chỉ cho phiên này',
+							'radio2'  => '24 giờ',
+							'radio3'  => 'Một tuần',
+							'button1' => 'Không phải bây giờ',
+							'button2' => 'Ẩn thanh công cụ',
+						),
+						'unsupportedPageReader'  => array(
+							'title' => 'Trình duyệt cần được cập nhật',
+							'desc'  => 'Trình duyệt của bạn không hỗ trợ đầu ra giọng nói. Vui lòng cập nhật trình duyệt của bạn hoặc sử dụng trình duyệt hỗ trợ tổng hợp giọng nói (ví dụ: Chrome, Edge, Safari).',
+							'link'  => 'Cách cập nhật?',
+						),
+						'header'                 => array(
+							'language'      => 'Tiếng Việt',
+							'listLanguages' => $list_languages,
+							'title'         => 'Điều chỉnh Khả năng Truy cập',
+							'desc'          => 'Được cung cấp bởi',
+							'anchor'        => 'OneTap',
+							'statement'     => 'Tuyên bố',
+							'hideToolbar'   => 'Ẩn thanh công cụ',
+						),
+						'multiFunctionalFeature' => array(
+							'title'              => 'Chọn hồ sơ khả năng truy cập của bạn',
+							'visionImpairedMode' => array(
+								'title' => 'Chế độ Khiếm thị',
+								'desc'  => 'Cải thiện hình ảnh của trang web',
+								'on'    => 'BẬT',
+								'off'   => 'TẮT',
+							),
+							'seizureSafeProfile' => array(
+								'title' => 'Hồ sơ An toàn cho Co giật',
+								'desc'  => 'Loại bỏ nhấp nháy và giảm màu sắc',
+								'on'    => 'BẬT',
+								'off'   => 'TẮT',
+							),
+							'aDHDFriendlyMode'   => array(
+								'title' => 'Chế độ Thân thiện với ADHD',
+								'desc'  => 'Duyệt tập trung, không bị phân tâm',
+								'on'    => 'BẬT',
+								'off'   => 'TẮT',
+							),
+							'blindnessMode'      => array(
+								'title' => 'Chế độ Mù',
+								'desc'  => 'Giảm phiền nhiễu, cải thiện tập trung',
+								'on'    => 'BẬT',
+								'off'   => 'TẮT',
+							),
+							'epilepsySafeMode'   => array(
+								'title' => 'Chế độ An toàn cho Động kinh',
+								'desc'  => 'Làm mờ màu sắc và dừng nhấp nháy',
+								'on'    => 'BẬT',
+								'off'   => 'TẮT',
+							),
+						),
+						'titles'                 => array(
+							'contentModules'     => 'Mô-đun Nội dung',
+							'colorModules'       => 'Mô-đun Màu sắc',
+							'orientationModules' => 'Mô-đun Định hướng',
+						),
+						'features'               => array(
+							'biggerText'         => 'Kích thước Phông chữ',
+							'highlightLinks'     => 'Làm nổi bật Liên kết',
+							'lineHeight'         => 'Chiều cao Dòng',
+							'readableFont'       => 'Phông chữ Dễ đọc',
+							'cursor'             => 'Con trỏ Lớn',
+							'textMagnifier'      => 'Kính lúp Văn bản',
+							'dyslexicFont'       => 'Phông chữ cho Chứng khó đọc',
+							'alignCenter'        => 'Căn giữa',
+							'letterSpacing'      => 'Khoảng cách Chữ cái',
+							'fontWeight'         => 'Độ đậm Phông chữ',
+							'darkContrast'       => 'Tương phản Tối',
+							'lightContrast'      => 'Tương phản Sáng',
+							'highContrast'       => 'Tương phản Cao',
+							'monochrome'         => 'Đơn sắc',
+							'saturation'         => 'Độ bão hòa',
+							'readingLine'        => 'Dòng Đọc',
+							'readingMask'        => 'Mặt nạ Đọc',
+							'readPage'           => 'Đọc Trang',
+							'keyboardNavigation' => 'Điều hướng Bàn phím',
+							'hideImages'         => 'Ẩn Hình ảnh',
+							'muteSounds'         => 'Tắt Âm thanh',
+							'highlightTitles'    => 'Làm nổi bật Tiêu đề',
+							'highlightAll'       => 'Làm nổi bật Nội dung',
+							'stopAnimations'     => 'Dừng Hoạt hình',
+							'resetSettings'      => 'Đặt lại Cài đặt',
+						),
+					),
 				),
-				'getSettings' => array(
-					'language'                   => $setting_language,
-					'color'                      => $setting_color,
-					'position-top-bottom'        => $setting_position_top_bottom,
-					'position-left-right'        => $setting_position_left_right,
-					'widge-position'             => $setting_widget_position,
-					'position-top-bottom-tablet' => $setting_position_top_bottom_tablet,
-					'position-left-right-tablet' => $setting_position_left_right_tablet,
-					'widge-position-tablet'      => $setting_widget_position_tablet,
-					'position-top-bottom-mobile' => $setting_position_top_bottom_mobile,
-					'position-left-right-mobile' => $setting_position_left_right_mobile,
-					'widge-position-mobile'      => $setting_widget_position_mobile,
-					'hide-powered-by-onetap'     => $setting_hide_powered_by_onetap,
+				'getSettings'     => array(
+					'language'                   => $onetap_setting_language,
+					'color'                      => $onetap_setting_color,
+					'position-top-bottom'        => $onetap_setting_position_top_bottom,
+					'position-left-right'        => $onetap_setting_position_left_right,
+					'widge-position'             => $onetap_setting_widget_position,
+					'position-top-bottom-tablet' => $onetap_setting_position_top_bottom_tablet,
+					'position-left-right-tablet' => $onetap_setting_position_left_right_tablet,
+					'widge-position-tablet'      => $onetap_setting_widget_position_tablet,
+					'position-top-bottom-mobile' => $onetap_setting_position_top_bottom_mobile,
+					'position-left-right-mobile' => $onetap_setting_position_left_right_mobile,
+					'widge-position-mobile'      => $onetap_setting_widget_position_mobile,
+					'hide-powered-by-onetap'     => $onetap_setting_hide_powered_by_onetap,
 				),
-				'showModules' => array(
-					'bigger-text'         => $modules_bigger_text,
-					'cursor'              => $modules_cursor,
-					'line-height'         => $modules_line_height,
-					'letter-spacing'      => $modules_letter_spacing,
-					'readable-font'       => $modules_readable_font,
-					'dyslexic-font'       => $modules_dyslexic_font,
-					'text-align'          => $modules_text_align,
-					'text-magnifier'      => $modules_text_magnifier,
-					'highlight-links'     => $modules_highlight_links,
-					'invert-colors'       => $modules_invert_colors,
-					'brightness'          => $modules_brightness,
-					'contrast'            => $modules_contrast,
-					'grayscale'           => $modules_grayscale,
-					'saturation'          => $modules_saturnation,
-					'reading-line'        => $modules_reading_line,
-					'keyboard-navigation' => $modules_keyboard_navigation,
-					'highlight-titles'    => $modules_highlight_titles,
-					'reading-mask'        => $modules_reading_mask,
-					'hide-images'         => $modules_hide_images,
-					'highlight-all'       => $modules_highlight_all,
-					'read-page'           => $modules_read_page,
-					'mute-sounds'         => $modules_mute_sounds,
-					'stop-animations'     => $modules_stop_animations,
+				'showModules'     => array(
+					'accessibility-profiles' => $module_settings['accessibility_profiles'],
+					'bigger-text'            => $module_settings['bigger_text'],
+					'highlight-links'        => $module_settings['highlight_links'],
+					'line-height'            => $module_settings['line_height'],
+					'cursor'                 => $module_settings['cursor'],
+					'readable-font'          => $module_settings['readable_font'],
+					'dyslexic-font'          => $module_settings['dyslexic_font'],
+					'text-magnifier'         => $module_settings['text_magnifier'],
+					'text-align'             => $module_settings['text_align'],
+					'letter-spacing'         => $module_settings['letter_spacing'],
+					'font-weight'            => $module_settings['font_weight'],
+					'dark-contrast'          => $module_settings['dark_contrast'],
+					'light-contrast'         => $module_settings['light_contrast'],
+					'high-contrast'          => $module_settings['high_contrast'],
+					'monochrome'             => $module_settings['monochrome'],
+					'saturation'             => $module_settings['saturation'],
+					'reading-line'           => $module_settings['reading_line'],
+					'reading-mask'           => $module_settings['reading_mask'],
+					'read-page'              => $module_settings['read_page'],
+					'keyboard-navigation'    => $module_settings['keyboard_navigation'],
+					'hide-images'            => $module_settings['hide_images'],
+					'mute-sounds'            => $module_settings['mute_sounds'],
+					'highlight-titles'       => $module_settings['highlight_titles'],
+					'highlight-all'          => $module_settings['highlight_all'],
+					'stop-animations'        => $module_settings['stop_animations'],
 				),
 			)
 		);
@@ -3645,31 +5013,8 @@ class Accessibility_Onetap_Public {
 	 */
 	public function add_custom_body_class( $classes ) {
 
-		// Get the 'onetap_modules' option from the database.
-		$modules                     = get_option( 'onetap_modules' );
-		$modules_bigger_text         = isset( $modules['bigger-text'] ) ? esc_html( $modules['bigger-text'] ) : Accessibility_Onetap_Config::get_module( 'bigger_text' );
-		$modules_cursor              = isset( $modules['cursor'] ) ? esc_html( $modules['cursor'] ) : Accessibility_Onetap_Config::get_module( 'cursor' );
-		$modules_line_height         = isset( $modules['line-height'] ) ? esc_html( $modules['line-height'] ) : Accessibility_Onetap_Config::get_module( 'line_height' );
-		$modules_letter_spacing      = isset( $modules['letter-spacing'] ) ? esc_html( $modules['letter-spacing'] ) : Accessibility_Onetap_Config::get_module( 'letter_spacing' );
-		$modules_readable_font       = isset( $modules['readable-font'] ) ? esc_html( $modules['readable-font'] ) : Accessibility_Onetap_Config::get_module( 'readable_font' );
-		$modules_dyslexic_font       = isset( $modules['dyslexic-font'] ) ? esc_html( $modules['dyslexic-font'] ) : Accessibility_Onetap_Config::get_module( 'dyslexic_font' );
-		$modules_text_align          = isset( $modules['text-align'] ) ? esc_html( $modules['text-align'] ) : Accessibility_Onetap_Config::get_module( 'text_align' );
-		$modules_text_magnifier      = isset( $modules['text-magnifier'] ) ? esc_html( $modules['text-magnifier'] ) : Accessibility_Onetap_Config::get_module( 'text_magnifier' );
-		$modules_highlight_links     = isset( $modules['highlight-links'] ) ? esc_html( $modules['highlight-links'] ) : Accessibility_Onetap_Config::get_module( 'highlight_links' );
-		$modules_invert_colors       = isset( $modules['invert-colors'] ) ? esc_html( $modules['invert-colors'] ) : Accessibility_Onetap_Config::get_module( 'invert_colors' );
-		$modules_brightness          = isset( $modules['brightness'] ) ? esc_html( $modules['brightness'] ) : Accessibility_Onetap_Config::get_module( 'brightness' );
-		$modules_contrast            = isset( $modules['contrast'] ) ? esc_html( $modules['contrast'] ) : Accessibility_Onetap_Config::get_module( 'contrast' );
-		$modules_grayscale           = isset( $modules['grayscale'] ) ? esc_html( $modules['grayscale'] ) : Accessibility_Onetap_Config::get_module( 'grayscale' );
-		$modules_saturnation         = isset( $modules['saturation'] ) ? esc_html( $modules['saturation'] ) : Accessibility_Onetap_Config::get_module( 'saturation' );
-		$modules_reading_line        = isset( $modules['reading-line'] ) ? esc_html( $modules['reading-line'] ) : Accessibility_Onetap_Config::get_module( 'reading_line' );
-		$modules_keyboard_navigation = isset( $modules['keyboard-navigation'] ) ? esc_html( $modules['keyboard-navigation'] ) : Accessibility_Onetap_Config::get_module( 'keyboard_navigation' );
-		$modules_highlight_titles    = isset( $modules['highlight-titles'] ) ? esc_html( $modules['highlight-titles'] ) : Accessibility_Onetap_Config::get_module( 'highlight_titles' );
-		$modules_reading_mask        = isset( $modules['reading-mask'] ) ? esc_html( $modules['reading-mask'] ) : Accessibility_Onetap_Config::get_module( 'reading_mask' );
-		$modules_hide_images         = isset( $modules['hide-images'] ) ? esc_html( $modules['hide-images'] ) : Accessibility_Onetap_Config::get_module( 'hide_images' );
-		$modules_highlight_all       = isset( $modules['highlight-all'] ) ? esc_html( $modules['highlight-all'] ) : Accessibility_Onetap_Config::get_module( 'highlight_all' );
-		$modules_read_page           = isset( $modules['read-page'] ) ? esc_html( $modules['read-page'] ) : Accessibility_Onetap_Config::get_module( 'read_page' );
-		$modules_mute_sounds         = isset( $modules['mute-sounds'] ) ? esc_html( $modules['mute-sounds'] ) : Accessibility_Onetap_Config::get_module( 'mute_sounds' );
-		$modules_stop_animations     = isset( $modules['stop-animations'] ) ? esc_html( $modules['stop-animations'] ) : Accessibility_Onetap_Config::get_module( 'stop_animations' );
+		// Get module settings using helper method.
+		$module_settings = $this->get_module_settings();
 
 		// Add default classes to the $classes array.
 		$classes[] = 'onetap-root onetap-accessibility-plugin onetap-body-class onetap-custom-class onetap-classes';
@@ -3677,165 +5022,40 @@ class Accessibility_Onetap_Public {
 		// Check if specific accessibility modules are turned off.
 		// If a module is 'off', add its corresponding class to the $classes array.
 
-		// Hide content feature.
-		if (
-			'off' === $modules_bigger_text &&
-			'off' === $modules_cursor &&
-			'off' === $modules_letter_spacing &&
-			'off' === $modules_readable_font &&
-			'off' === $modules_text_align &&
-			'off' === $modules_line_height
-		) {
-			// Add class for the "content" module.
-			$classes[] = 'onetap_hide_content_feature';
-		}
+		// Define module to class mapping for efficient processing.
+		$module_class_mapping = array(
+			'bigger_text'         => 'onetap_hide_bigger_text',
+			'highlight_links'     => 'onetap_hide_highlight_links',
+			'line_height'         => 'onetap_hide_line_height',
+			'readable_font'       => 'onetap_hide_readable_font',
+			'cursor'              => 'onetap_hide_cursor',
+			'text_magnifier'      => 'onetap_hide_text_magnifier',
+			'dyslexic_font'       => 'onetap_hide_dyslexic_font',
+			'text_align'          => 'onetap_hide_text_align',
+			'align_center'        => 'onetap_hide_align_center',
+			'letter_spacing'      => 'onetap_hide_letter_spacing',
+			'font_weight'         => 'onetap_hide_font_weight',
+			'dark_contrast'       => 'onetap_hide_dark_contrast',
+			'light_contrast'      => 'onetap_hide_light_contrast',
+			'high_contrast'       => 'onetap_hide_high_contrast',
+			'monochrome'          => 'onetap_hide_monochrome',
+			'saturation'          => 'onetap_hide_saturation',
+			'reading_line'        => 'onetap_hide_reading_line',
+			'reading_mask'        => 'onetap_hide_reading_mask',
+			'read_page'           => 'onetap_hide_read_page',
+			'keyboard_navigation' => 'onetap_hide_keyboard_navigation',
+			'hide_images'         => 'onetap_hide_hide_images',
+			'mute_sounds'         => 'onetap_hide_mute_sounds',
+			'highlight_titles'    => 'onetap_hide_highlight_titles',
+			'highlight_all'       => 'onetap_hide_highlight_all',
+			'stop_animations'     => 'onetap_hide_stop_animations',
+		);
 
-		// Hide colors.
-		if (
-			'off' === $modules_invert_colors &&
-			'off' === $modules_brightness &&
-			'off' === $modules_grayscale
-		) {
-			// Add class for the "colors" module.
-			$classes[] = 'onetap_hide_colors_feature';
-		}
-
-		// Hide orientations.
-		if (
-			'off' === $modules_highlight_links &&
-			'off' === $modules_stop_animations &&
-			'off' === $modules_hide_images &&
-			'off' === $modules_reading_mask &&
-			'off' === $modules_reading_line &&
-			'off' === $modules_highlight_all
-		) {
-			// Add class for the "orientation" module.
-			$classes[] = 'onetap_hide_orientation_feature';
-		}
-
-		// Hide orientation bottom.
-		if (
-			'off' === $modules_read_page &&
-			'off' === $modules_mute_sounds &&
-			'off' === $modules_stop_animations
-		) {
-			// Add class for the "orientation bottom" module.
-			$classes[] = 'onetap_hide_orientation_bottom_feature';
-		}
-
-		if ( 'off' === $modules_bigger_text ) {
-			// Add class for the "bigger text" module.
-			$classes[] = 'onetap_hide_bigger_text';
-		}
-
-		if ( 'off' === $modules_cursor ) {
-			// Add class for the "cursor" module.
-			$classes[] = 'onetap_hide_cursor';
-		}
-
-		if ( 'off' === $modules_line_height ) {
-			// Add class for the "line height" module.
-			$classes[] = 'onetap_hide_line_height';
-		}
-
-		if ( 'off' === $modules_letter_spacing ) {
-			// Add class for the "letter spacing" module.
-			$classes[] = 'onetap_hide_letter_spacing';
-		}
-
-		if ( 'off' === $modules_readable_font ) {
-			// Add class for the "readable font" module.
-			$classes[] = 'onetap_hide_readable_font';
-		}
-
-		if ( 'off' === $modules_dyslexic_font ) {
-			// Add class for the "dyslexic font" module.
-			$classes[] = 'onetap_hide_dyslexic_font';
-		}
-
-		if ( 'off' === $modules_text_align ) {
-			// Add class for the "text align" module.
-			$classes[] = 'onetap_hide_text_align';
-		}
-
-		if ( 'off' === $modules_text_magnifier ) {
-			// Add class for the "text magnifier" module.
-			$classes[] = 'onetap_hide_text_magnifier';
-		}
-
-		if ( 'off' === $modules_highlight_links ) {
-			// Add class for the "highlight links" module.
-			$classes[] = 'onetap_hide_highlight_links';
-		}
-
-		if ( 'off' === $modules_invert_colors ) {
-			// Add class for the "invert colors" module.
-			$classes[] = 'onetap_hide_invert_colors';
-		}
-
-		if ( 'off' === $modules_brightness ) {
-			// Add class for the "brightness adjustment" module.
-			$classes[] = 'onetap_hide_brightness';
-		}
-
-		if ( 'off' === $modules_contrast ) {
-			// Add class for the "contrast adjustment" module.
-			$classes[] = 'onetap_hide_contrast';
-		}
-
-		if ( 'off' === $modules_grayscale ) {
-			// Add class for the "grayscale" module.
-			$classes[] = 'onetap_hide_grayscale';
-		}
-
-		if ( 'off' === $modules_saturnation ) {
-			// Add class for the "saturation adjustment" module.
-			$classes[] = 'onetap_hide_saturnation';
-		}
-
-		if ( 'off' === $modules_reading_line ) {
-			// Add class for the "reading line" module.
-			$classes[] = 'onetap_hide_reading_line';
-		}
-
-		if ( 'off' === $modules_keyboard_navigation ) {
-			// Add class for the "keyboard navigation" module.
-			$classes[] = 'onetap_hide_keyboard_navigation';
-		}
-
-		if ( 'off' === $modules_highlight_titles ) {
-			// Add class for the "dyslexic font" module.
-			$classes[] = 'onetap_hide_highlight_titles';
-		}
-
-		if ( 'off' === $modules_reading_mask ) {
-			// Add class for the "reading mask" module.
-			$classes[] = 'onetap_hide_reading_mask';
-		}
-
-		if ( 'off' === $modules_hide_images ) {
-			// Add class for the "hide images" module.
-			$classes[] = 'onetap_hide_hide_images';
-		}
-
-		if ( 'off' === $modules_highlight_all ) {
-			// Add class for the "highlight all" module.
-			$classes[] = 'onetap_hide_highlight_all';
-		}
-
-		if ( 'off' === $modules_read_page ) {
-			// Add class for the "read page" module.
-			$classes[] = 'onetap_hide_read_page';
-		}
-
-		if ( 'off' === $modules_mute_sounds ) {
-			// Add class for the "mute sounds" module.
-			$classes[] = 'onetap_hide_mute_sounds';
-		}
-
-		if ( 'off' === $modules_stop_animations ) {
-			// Add class for the "stop animations" module.
-			$classes[] = 'onetap_hide_stop_animations';
+		// Loop through module settings and add classes for disabled modules.
+		foreach ( $module_class_mapping as $module_key => $class_name ) {
+			if ( isset( $module_settings[ $module_key ] ) && 'off' === $module_settings[ $module_key ] ) {
+				$classes[] = $class_name;
+			}
 		}
 
 		// Return the updated array of classes.
@@ -3851,8 +5071,37 @@ class Accessibility_Onetap_Public {
 	 */
 	public function render_accessibility_template() {
 		?>
-		<section class="onetap-container-toggle">
-			<div class="onetap-toggle">
+		<section class="onetap-container-toggle" style="display: none;">
+			<?php
+			$settings               = get_option( 'onetap_settings' );
+			$general_settings_raw   = get_option( 'onetap_general_settings' );
+			$general_settings       = is_array( $general_settings_raw ) && isset( $general_settings_raw['hide_powered_by_onetap'] ) ? $general_settings_raw['hide_powered_by_onetap'] : 'off';
+			$show_accessibility_raw = absint( get_option( 'onetap_show_accessibility' ) );
+
+			$class_only_hide_toolbar = '';
+			if ( isset( $general_settings_raw['hide_powered_by_onetap'] ) && 'on' === $general_settings_raw['hide_powered_by_onetap'] ) {
+				$class_only_hide_toolbar .= ' only-hide-hide_powered_by_onetap ';
+			}
+
+			if ( ! $show_accessibility_raw && 'on' === $general_settings ) {
+				$class_only_hide_toolbar .= ' only-hide-toolbar ';
+			}
+
+			if ( ! is_array( $settings ) ) {
+				$settings = array();
+			}
+
+			$toggle_classes = array_filter(
+				array(
+					! empty( $settings['border'] ) ? $settings['border'] : '',
+					isset( $settings['toggle-device-position-desktop'] ) && 'on' === $settings['toggle-device-position-desktop'] ? 'hide-on-desktop' : '',
+					isset( $settings['toggle-device-position-tablet'] ) && 'on' === $settings['toggle-device-position-tablet'] ? 'hide-on-tablet' : '',
+					isset( $settings['toggle-device-position-mobile'] ) && 'on' === $settings['toggle-device-position-mobile'] ? 'hide-on-mobile' : '',
+				)
+			);
+			?>
+
+			<button type="button" aria-label="Toggle Accessibility Toolbar" class="onetap-toggle <?php echo esc_attr( implode( ' ', $toggle_classes ) ); ?>">				
 				<?php
 				// Define SVG paths for each icon type.
 				$icon_paths = array(
@@ -3886,532 +5135,775 @@ class Accessibility_Onetap_Public {
 					echo '<img class="design-size2 design-border2" src="' . esc_url( ACCESSIBILITY_ONETAP_PLUGINS_URL . 'assets/images/admin/Original_Logo_Icon.svg' ) . '" alt="toggle icon" />';
 				}
 				?>
-			</div>			
+			</button>
 		</section>
-		<nav class="onetap-accessibility onetap-plugin-onetap">
+		<nav class="onetap-accessibility onetap-plugin-onetap" aria-label="Accessibility Options">
 			<section class="onetap-container">
-				<div class="onetap-accessibility-settings">
-					<header class="onetap-header-top">
-						<!-- Languages -->
-						<div class="onetap-languages">
+				<div class="onetap-accessibility-settings" data-lenis-prevent="true">
+					<header class="onetap-header-top <?php echo esc_attr( $class_only_hide_toolbar ); ?>">
+						<?php
+						// Get language toggle settings.
+						$language_toggles = isset( $settings['toggle-language'] ) && is_array( $settings['toggle-language'] ) ? $settings['toggle-language'] : array();
+
+						// Get default language.
+						$default_language = isset( $settings['language'] ) ? $settings['language'] : 'en';
+
+						// Define all languages with their names and flag images.
+						$all_languages = array(
+							'en'    => array(
+								'name' => __( 'English', 'accessibility-onetap' ),
+								'flag' => 'english.png',
+							),
+							'de'    => array(
+								'name' => __( 'Deutsch', 'accessibility-onetap' ),
+								'flag' => 'german.png',
+							),
+							'es'    => array(
+								'name' => __( 'Español', 'accessibility-onetap' ),
+								'flag' => 'spanish.png',
+							),
+							'fr'    => array(
+								'name' => __( 'Français', 'accessibility-onetap' ),
+								'flag' => 'french.png',
+							),
+							'it'    => array(
+								'name' => __( 'Italiano', 'accessibility-onetap' ),
+								'flag' => 'italia.png',
+							),
+							'pl'    => array(
+								'name' => __( 'Polski', 'accessibility-onetap' ),
+								'flag' => 'poland.png',
+							),
+							'se'    => array(
+								'name' => __( 'Svenska', 'accessibility-onetap' ),
+								'flag' => 'swedish.png',
+							),
+							'fi'    => array(
+								'name' => __( 'Suomi', 'accessibility-onetap' ),
+								'flag' => 'finnland.png',
+							),
+							'pt'    => array(
+								'name' => __( 'Português', 'accessibility-onetap' ),
+								'flag' => 'portugal.png',
+							),
+							'ro'    => array(
+								'name' => __( 'Română', 'accessibility-onetap' ),
+								'flag' => 'rumania.png',
+							),
+							'si'    => array(
+								'name' => __( 'Slovenščina', 'accessibility-onetap' ),
+								'flag' => 'slowakia.png',
+							),
+							'sk'    => array(
+								'name' => __( 'Slovenčina', 'accessibility-onetap' ),
+								'flag' => 'slowenien.png',
+							),
+							'nl'    => array(
+								'name' => __( 'Nederlands', 'accessibility-onetap' ),
+								'flag' => 'netherland.png',
+							),
+							'dk'    => array(
+								'name' => __( 'Dansk', 'accessibility-onetap' ),
+								'flag' => 'danish.png',
+							),
+							'gr'    => array(
+								'name' => __( 'Ελληνικά', 'accessibility-onetap' ),
+								'flag' => 'greece.png',
+							),
+							'cz'    => array(
+								'name' => __( 'Čeština', 'accessibility-onetap' ),
+								'flag' => 'czech.png',
+							),
+							'hu'    => array(
+								'name' => __( 'Magyar', 'accessibility-onetap' ),
+								'flag' => 'hungarian.png',
+							),
+							'lt'    => array(
+								'name' => __( 'Lietuvių', 'accessibility-onetap' ),
+								'flag' => 'lithuanian.png',
+							),
+							'lv'    => array(
+								'name' => __( 'Latviešu', 'accessibility-onetap' ),
+								'flag' => 'latvian.png',
+							),
+							'ee'    => array(
+								'name' => __( 'Eesti', 'accessibility-onetap' ),
+								'flag' => 'estonian.png',
+							),
+							'hr'    => array(
+								'name' => __( 'Hrvatski', 'accessibility-onetap' ),
+								'flag' => 'croatia.png',
+							),
+							'ie'    => array(
+								'name' => __( 'Gaeilge', 'accessibility-onetap' ),
+								'flag' => 'ireland.png',
+							),
+							'bg'    => array(
+								'name' => __( 'Български', 'accessibility-onetap' ),
+								'flag' => 'bulgarian.png',
+							),
+							'no'    => array(
+								'name' => __( 'Norsk', 'accessibility-onetap' ),
+								'flag' => 'norwegan.png',
+							),
+							'tr'    => array(
+								'name' => __( 'Türkçe', 'accessibility-onetap' ),
+								'flag' => 'turkish.png',
+							),
+							'id'    => array(
+								'name' => __( 'Bahasa Indonesia', 'accessibility-onetap' ),
+								'flag' => 'indonesian.png',
+							),
+							'pt-br' => array(
+								'name' => __( 'Português (Brasil)', 'accessibility-onetap' ),
+								'flag' => 'brasilian.png',
+							),
+							'ja'    => array(
+								'name' => __( '日本語', 'accessibility-onetap' ),
+								'flag' => 'japanese.png',
+							),
+							'ko'    => array(
+								'name' => __( '한국어', 'accessibility-onetap' ),
+								'flag' => 'korean.png',
+							),
+							'zh'    => array(
+								'name' => __( '简体中文', 'accessibility-onetap' ),
+								'flag' => 'chinese-simplified.png',
+							),
+							'ar'    => array(
+								'name' => __( 'العربية', 'accessibility-onetap' ),
+								'flag' => 'arabic.png',
+							),
+							'ru'    => array(
+								'name' => __( 'Русский', 'accessibility-onetap' ),
+								'flag' => 'russian.png',
+							),
+							'hi'    => array(
+								'name' => __( 'हिन्दी', 'accessibility-onetap' ),
+								'flag' => 'hindi.png',
+							),
+							'uk'    => array(
+								'name' => __( 'Українська', 'accessibility-onetap' ),
+								'flag' => 'ukrainian.png',
+							),
+							'sr'    => array(
+								'name' => __( 'Srpski', 'accessibility-onetap' ),
+								'flag' => 'serbian.png',
+							),
+							'gb'    => array(
+								'name' => __( 'English (UK)', 'accessibility-onetap' ),
+								'flag' => 'england.png',
+							),
+							'ir'    => array(
+								'name' => __( 'ایران', 'accessibility-onetap' ),
+								'flag' => 'iran.png',
+							),
+							'il'    => array(
+								'name' => __( 'ישראל', 'accessibility-onetap' ),
+								'flag' => 'israel.png',
+							),
+							'mk'    => array(
+								'name' => __( 'Македонија', 'accessibility-onetap' ),
+								'flag' => 'macedonia.png',
+							),
+							'th'    => array(
+								'name' => __( 'ประเทศไทย', 'accessibility-onetap' ),
+								'flag' => 'thailand.png',
+							),
+							'vn'    => array(
+								'name' => __( 'Việt Nam', 'accessibility-onetap' ),
+								'flag' => 'vietnam.png',
+							),
+						);
+
+						// Filter enabled languages.
+						// If no toggles are set (first time), default all languages to enabled.
+						$enabled_languages = array();
+						if ( empty( $language_toggles ) ) {
+							// First time: all languages enabled by default.
+							$enabled_languages = $all_languages;
+						} else {
+							// Filter based on toggle settings.
+							foreach ( $all_languages as $lang_code => $lang_data ) {
+								// Check if language is enabled (value is 'on').
+								if ( isset( $language_toggles[ $lang_code ] ) && 'on' === $language_toggles[ $lang_code ] ) {
+									$enabled_languages[ $lang_code ] = $lang_data;
+								}
+							}
+						}
+
+						// If no languages are enabled, default to English.
+						if ( empty( $enabled_languages ) ) {
+							$enabled_languages = array( 'en' => $all_languages['en'] );
+						}
+
+						// Count enabled languages.
+						$enabled_count = count( $enabled_languages );
+
+						// Determine which language to show as active (use default language if enabled, otherwise first enabled).
+						$active_language = $default_language;
+						if ( ! isset( $enabled_languages[ $active_language ] ) ) {
+							$active_language = key( $enabled_languages );
+						}
+						?>
+						
+						<!-- Languages Dropdown (only show if more than one language is enabled) -->
+						<button id="onetap-language-list" aria-controls="onetap-language-list" type="button" role="combobox" aria-expanded="false" aria-haspopup="listbox" class="onetap-languages<?php echo ( 1 === $enabled_count ) ? ' onetap-disable' : ''; ?>" aria-label="Select language">
 							<div class="onetap-icon">
-								<img src="<?php echo esc_url( ACCESSIBILITY_ONETAP_PLUGINS_URL . 'assets/images/english.png' ); ?>" class="onetap-active" alt="en">							
-								<img src="<?php echo esc_url( ACCESSIBILITY_ONETAP_PLUGINS_URL . 'assets/images/german.png' ); ?>" alt="de">								
-								<img src="<?php echo esc_url( ACCESSIBILITY_ONETAP_PLUGINS_URL . 'assets/images/spanish.png' ); ?>" alt="es">								
-								<img src="<?php echo esc_url( ACCESSIBILITY_ONETAP_PLUGINS_URL . 'assets/images/french.png' ); ?>" alt="fr">								
-								<img src="<?php echo esc_url( ACCESSIBILITY_ONETAP_PLUGINS_URL . 'assets/images/italia.png' ); ?>" alt="it">								
-								<img src="<?php echo esc_url( ACCESSIBILITY_ONETAP_PLUGINS_URL . 'assets/images/poland.png' ); ?>" alt="pl">								
-								<img src="<?php echo esc_url( ACCESSIBILITY_ONETAP_PLUGINS_URL . 'assets/images/swedish.png' ); ?>" alt="se">								
-								<img src="<?php echo esc_url( ACCESSIBILITY_ONETAP_PLUGINS_URL . 'assets/images/finnland.png' ); ?>" alt="fi">								
-								<img src="<?php echo esc_url( ACCESSIBILITY_ONETAP_PLUGINS_URL . 'assets/images/portugal.png' ); ?>" alt="pt">								
-								<img src="<?php echo esc_url( ACCESSIBILITY_ONETAP_PLUGINS_URL . 'assets/images/rumania.png' ); ?>" alt="ro">								
-								<img src="<?php echo esc_url( ACCESSIBILITY_ONETAP_PLUGINS_URL . 'assets/images/slowenien.png' ); ?>" alt="sk">								
-								<img src="<?php echo esc_url( ACCESSIBILITY_ONETAP_PLUGINS_URL . 'assets/images/slowakia.png' ); ?>" alt="si">								
-								<img src="<?php echo esc_url( ACCESSIBILITY_ONETAP_PLUGINS_URL . 'assets/images/netherland.png' ); ?>" alt="nl">								
-								<img src="<?php echo esc_url( ACCESSIBILITY_ONETAP_PLUGINS_URL . 'assets/images/danish.png' ); ?>" alt="dk">								
-								<img src="<?php echo esc_url( ACCESSIBILITY_ONETAP_PLUGINS_URL . 'assets/images/greece.png' ); ?>" alt="gr">								
-								<img src="<?php echo esc_url( ACCESSIBILITY_ONETAP_PLUGINS_URL . 'assets/images/czech.png' ); ?>" alt="cz">								
-								<img src="<?php echo esc_url( ACCESSIBILITY_ONETAP_PLUGINS_URL . 'assets/images/hungarian.png' ); ?>" alt="hu">								
-								<img src="<?php echo esc_url( ACCESSIBILITY_ONETAP_PLUGINS_URL . 'assets/images/lithuanian.png' ); ?>" alt="lt">								
-								<img src="<?php echo esc_url( ACCESSIBILITY_ONETAP_PLUGINS_URL . 'assets/images/latvian.png' ); ?>" alt="lv">								
-								<img src="<?php echo esc_url( ACCESSIBILITY_ONETAP_PLUGINS_URL . 'assets/images/estonian.png' ); ?>" alt="ee">								
-								<img src="<?php echo esc_url( ACCESSIBILITY_ONETAP_PLUGINS_URL . 'assets/images/croatia.png' ); ?>" alt="hr">								
-								<img src="<?php echo esc_url( ACCESSIBILITY_ONETAP_PLUGINS_URL . 'assets/images/ireland.png' ); ?>" alt="ie">								
-								<img src="<?php echo esc_url( ACCESSIBILITY_ONETAP_PLUGINS_URL . 'assets/images/bulgarian.png' ); ?>" alt="bg">								
-								<img src="<?php echo esc_url( ACCESSIBILITY_ONETAP_PLUGINS_URL . 'assets/images/norwegan.png' ); ?>" alt="no">				
-								<img src="<?php echo esc_url( ACCESSIBILITY_ONETAP_PLUGINS_URL . 'assets/images/turkish.png' ); ?>" alt="tr">				
-								<img src="<?php echo esc_url( ACCESSIBILITY_ONETAP_PLUGINS_URL . 'assets/images/indonesian.png' ); ?>" alt="id">				
-								<img src="<?php echo esc_url( ACCESSIBILITY_ONETAP_PLUGINS_URL . 'assets/images/brasilian.png' ); ?>" alt="pt-br">				
-								<img src="<?php echo esc_url( ACCESSIBILITY_ONETAP_PLUGINS_URL . 'assets/images/japanese.png' ); ?>" alt="ja">				
-								<img src="<?php echo esc_url( ACCESSIBILITY_ONETAP_PLUGINS_URL . 'assets/images/korean.png' ); ?>" alt="ko">				
-								<img src="<?php echo esc_url( ACCESSIBILITY_ONETAP_PLUGINS_URL . 'assets/images/chinese-simplified.png' ); ?>" alt="zh">				
-								<img src="<?php echo esc_url( ACCESSIBILITY_ONETAP_PLUGINS_URL . 'assets/images/arabic.png' ); ?>" alt="ar">				
-								<img src="<?php echo esc_url( ACCESSIBILITY_ONETAP_PLUGINS_URL . 'assets/images/russian.png' ); ?>" alt="ru">				
-								<img src="<?php echo esc_url( ACCESSIBILITY_ONETAP_PLUGINS_URL . 'assets/images/hindi.png' ); ?>" alt="hi">				
-								<img src="<?php echo esc_url( ACCESSIBILITY_ONETAP_PLUGINS_URL . 'assets/images/ukrainian.png' ); ?>" alt="uk">				
-								<img src="<?php echo esc_url( ACCESSIBILITY_ONETAP_PLUGINS_URL . 'assets/images/serbian.png' ); ?>" alt="sr">								
+								<?php foreach ( $enabled_languages as $lang_code => $lang_data ) : ?>
+									<img src="<?php echo esc_url( ACCESSIBILITY_ONETAP_PLUGINS_URL . 'assets/images/' . $lang_data['flag'] ); ?>" class="<?php echo ( $lang_code === $active_language ) ? 'onetap-active' : ''; ?>" alt="<?php echo esc_attr( $lang_code ); ?>">
+								<?php endforeach; ?>
 							</div>
 							<p class="onetap-text">
 								<span>
-									<?php esc_html_e( 'English', 'accessibility-onetap' ); ?>
+									<?php echo esc_html( $enabled_languages[ $active_language ]['name'] ); ?>
 								</span>
-								<img src="<?php echo esc_url( ACCESSIBILITY_ONETAP_PLUGINS_URL . '/assets/images/icon-drop-down-menu.png' ); ?>" width="10" height="10" alt="<?php echo esc_attr__( 'icon drop down menu', 'accessibility-onetap' ); ?>">
+								<img src="<?php echo esc_url( ACCESSIBILITY_ONETAP_PLUGINS_URL . 'assets/images/icon-drop-down-menu.png' ); ?>" width="10" height="10" alt="<?php echo esc_attr__( 'icon drop down menu', 'accessibility-onetap' ); ?>">
 							</p>
-						</div>
+						</button>
 
 						<!-- List of languages -->
 						<div class="onetap-list-of-languages" style="display: none;">
 							<ul>
-								<li data-language="en">
-									<?php esc_html_e( 'English', 'accessibility-onetap' ); ?>
-									<img src="<?php echo esc_url( ACCESSIBILITY_ONETAP_PLUGINS_URL . 'assets/images/english.png' ); ?>" alt="flag">				
-								</li>
-								<li data-language="de">
-									<?php esc_html_e( 'Deutsch', 'accessibility-onetap' ); ?>
-									<img src="<?php echo esc_url( ACCESSIBILITY_ONETAP_PLUGINS_URL . 'assets/images/german.png' ); ?>" alt="flag">	
-								</li>
-								<li data-language="es">
-									<?php esc_html_e( 'Español', 'accessibility-onetap' ); ?>
-									<img src="<?php echo esc_url( ACCESSIBILITY_ONETAP_PLUGINS_URL . 'assets/images/spanish.png' ); ?>" alt="flag">	
-								</li>
-								<li data-language="fr">
-									<?php esc_html_e( 'Français', 'accessibility-onetap' ); ?>
-									<img src="<?php echo esc_url( ACCESSIBILITY_ONETAP_PLUGINS_URL . 'assets/images/french.png' ); ?>" alt="flag">	
-								</li>
-								<li data-language="it">
-									<?php esc_html_e( 'Italiano', 'accessibility-onetap' ); ?>
-									<img src="<?php echo esc_url( ACCESSIBILITY_ONETAP_PLUGINS_URL . 'assets/images/italia.png' ); ?>" alt="flag">	
-								</li>
-								<li data-language="pl">
-									<?php esc_html_e( 'Polski', 'accessibility-onetap' ); ?>
-									<img src="<?php echo esc_url( ACCESSIBILITY_ONETAP_PLUGINS_URL . 'assets/images/poland.png' ); ?>" alt="flag">	
-								</li>
-								<li data-language="se">
-									<?php esc_html_e( 'Svenska', 'accessibility-onetap' ); ?>
-									<img src="<?php echo esc_url( ACCESSIBILITY_ONETAP_PLUGINS_URL . 'assets/images/swedish.png' ); ?>" alt="flag">	
-								</li>
-								<li data-language="fi">
-									<?php esc_html_e( 'Suomi', 'accessibility-onetap' ); ?>
-									<img src="<?php echo esc_url( ACCESSIBILITY_ONETAP_PLUGINS_URL . 'assets/images/finnland.png' ); ?>" alt="flag">	
-								</li>
-								<li data-language="pt">
-									<?php esc_html_e( 'Português', 'accessibility-onetap' ); ?>
-									<img src="<?php echo esc_url( ACCESSIBILITY_ONETAP_PLUGINS_URL . 'assets/images/portugal.png' ); ?>" alt="flag">	
-								</li>
-								<li data-language="ro">
-									<?php esc_html_e( 'Română', 'accessibility-onetap' ); ?>
-									<img src="<?php echo esc_url( ACCESSIBILITY_ONETAP_PLUGINS_URL . 'assets/images/rumania.png' ); ?>" alt="flag">	
-								</li>
-								<li data-language="si">
-									<?php esc_html_e( 'Slovenščina', 'accessibility-onetap' ); ?>
-									<img src="<?php echo esc_url( ACCESSIBILITY_ONETAP_PLUGINS_URL . 'assets/images/slowakia.png' ); ?>" alt="flag">	
-								</li>
-								<li data-language="sk">
-									<?php esc_html_e( 'Slovenčina', 'accessibility-onetap' ); ?>
-									<img src="<?php echo esc_url( ACCESSIBILITY_ONETAP_PLUGINS_URL . 'assets/images/slowenien.png' ); ?>" alt="flag">	
-								</li>					
-								<li data-language="nl">
-									<?php esc_html_e( 'Nederlands', 'accessibility-onetap' ); ?>
-									<img src="<?php echo esc_url( ACCESSIBILITY_ONETAP_PLUGINS_URL . 'assets/images/netherland.png' ); ?>" alt="flag">	
-								</li>
-								<li data-language="dk">
-									<?php esc_html_e( 'Dansk', 'accessibility-onetap' ); ?>
-									<img src="<?php echo esc_url( ACCESSIBILITY_ONETAP_PLUGINS_URL . 'assets/images/danish.png' ); ?>" alt="flag">	
-								</li>
-								<li data-language="gr">
-									<?php esc_html_e( 'Ελληνικά', 'accessibility-onetap' ); ?>
-									<img src="<?php echo esc_url( ACCESSIBILITY_ONETAP_PLUGINS_URL . 'assets/images/greece.png' ); ?>" alt="flag">	
-								</li>
-								<li data-language="cz">
-									<?php esc_html_e( 'Čeština', 'accessibility-onetap' ); ?>
-									<img src="<?php echo esc_url( ACCESSIBILITY_ONETAP_PLUGINS_URL . 'assets/images/czech.png' ); ?>" alt="flag">	
-								</li>
-								<li data-language="hu">
-									<?php esc_html_e( 'Magyar', 'accessibility-onetap' ); ?>
-									<img src="<?php echo esc_url( ACCESSIBILITY_ONETAP_PLUGINS_URL . 'assets/images/hungarian.png' ); ?>" alt="flag">	
-								</li>									
-								<li data-language="lt">
-									<?php esc_html_e( 'Lietuvių', 'accessibility-onetap' ); ?>
-									<img src="<?php echo esc_url( ACCESSIBILITY_ONETAP_PLUGINS_URL . 'assets/images/lithuanian.png' ); ?>" alt="flag">	
-								</li>
-								<li data-language="lv">
-									<?php esc_html_e( 'Latviešu', 'accessibility-onetap' ); ?>
-									<img src="<?php echo esc_url( ACCESSIBILITY_ONETAP_PLUGINS_URL . 'assets/images/latvian.png' ); ?>" alt="flag">	
-								</li>
-								<li data-language="ee">
-									<?php esc_html_e( 'Eesti', 'accessibility-onetap' ); ?>
-									<img src="<?php echo esc_url( ACCESSIBILITY_ONETAP_PLUGINS_URL . 'assets/images/estonian.png' ); ?>" alt="flag">	
-								</li>
-								<li data-language="hr">
-									<?php esc_html_e( 'Hrvatski', 'accessibility-onetap' ); ?>
-									<img src="<?php echo esc_url( ACCESSIBILITY_ONETAP_PLUGINS_URL . 'assets/images/croatia.png' ); ?>" alt="flag">	
-								</li>
-								<li data-language="ie">
-									<?php esc_html_e( 'Gaeilge', 'accessibility-onetap' ); ?>
-									<img src="<?php echo esc_url( ACCESSIBILITY_ONETAP_PLUGINS_URL . 'assets/images/ireland.png' ); ?>" alt="flag">	
-								</li>
-								<li data-language="bg">
-									<?php esc_html_e( 'Български', 'accessibility-onetap' ); ?>
-									<img src="<?php echo esc_url( ACCESSIBILITY_ONETAP_PLUGINS_URL . 'assets/images/bulgarian.png' ); ?>" alt="flag">	
-								</li>			
-								<li data-language="no">
-									<?php esc_html_e( 'Norsk', 'accessibility-plugin-onetap-pro' ); ?>
-									<img src="<?php echo esc_url( ACCESSIBILITY_ONETAP_PLUGINS_URL . 'assets/images/norwegan.png' ); ?>" alt="flag">	
-								</li>
-								<li data-language="tr">
-									<?php esc_html_e( 'Türkçe', 'accessibility-plugin-onetap-pro' ); ?>
-									<img src="<?php echo esc_url( ACCESSIBILITY_ONETAP_PLUGINS_URL . 'assets/images/turkish.png' ); ?>" alt="flag">	
-								</li>
-								<li data-language="id">
-									<?php esc_html_e( 'Bahasa Indonesia', 'accessibility-plugin-onetap-pro' ); ?>
-									<img src="<?php echo esc_url( ACCESSIBILITY_ONETAP_PLUGINS_URL . 'assets/images/indonesian.png' ); ?>" alt="flag">	
-								</li>		
-								<li data-language="pt-br">
-									<?php esc_html_e( 'Português (Brasil)', 'accessibility-plugin-onetap-pro' ); ?>
-									<img src="<?php echo esc_url( ACCESSIBILITY_ONETAP_PLUGINS_URL . 'assets/images/brasilian.png' ); ?>" alt="flag">	
-								</li>	
-								<li data-language="ja">
-									<?php esc_html_e( '日本語', 'accessibility-plugin-onetap-pro' ); ?>
-									<img src="<?php echo esc_url( ACCESSIBILITY_ONETAP_PLUGINS_URL . 'assets/images/japanese.png' ); ?>" alt="flag">	
-								</li>	
-								<li data-language="ko">
-									<?php esc_html_e( '한국어', 'accessibility-plugin-onetap-pro' ); ?>
-									<img src="<?php echo esc_url( ACCESSIBILITY_ONETAP_PLUGINS_URL . 'assets/images/korean.png' ); ?>" alt="flag">	
-								</li>	
-								<li data-language="zh">
-									<?php esc_html_e( '简体中文', 'accessibility-plugin-onetap-pro' ); ?>
-									<img src="<?php echo esc_url( ACCESSIBILITY_ONETAP_PLUGINS_URL . 'assets/images/chinese-simplified.png' ); ?>" alt="flag">	
-								</li>	
-								<li data-language="ar">
-									<?php esc_html_e( 'العربية', 'accessibility-plugin-onetap-pro' ); ?>
-									<img src="<?php echo esc_url( ACCESSIBILITY_ONETAP_PLUGINS_URL . 'assets/images/arabic.png' ); ?>" alt="flag">	
-								</li>	
-								<li data-language="ru">
-									<?php esc_html_e( 'Русский', 'accessibility-plugin-onetap-pro' ); ?>
-									<img src="<?php echo esc_url( ACCESSIBILITY_ONETAP_PLUGINS_URL . 'assets/images/russian.png' ); ?>" alt="flag">	
-								</li>	
-								<li data-language="hi">
-									<?php esc_html_e( 'हिन्दी', 'accessibility-plugin-onetap-pro' ); ?>
-									<img src="<?php echo esc_url( ACCESSIBILITY_ONETAP_PLUGINS_URL . 'assets/images/hindi.png' ); ?>" alt="flag">	
-								</li>	
-								<li data-language="uk">
-									<?php esc_html_e( 'Українська', 'accessibility-plugin-onetap-pro' ); ?>
-									<img src="<?php echo esc_url( ACCESSIBILITY_ONETAP_PLUGINS_URL . 'assets/images/ukrainian.png' ); ?>" alt="flag">	
-								</li>	
-								<li data-language="sr">
-									<?php esc_html_e( 'Srpski', 'accessibility-plugin-onetap-pro' ); ?>
-									<img src="<?php echo esc_url( ACCESSIBILITY_ONETAP_PLUGINS_URL . 'assets/images/serbian.png' ); ?>" alt="flag">	
-								</li>														
+								<?php foreach ( $enabled_languages as $lang_code => $lang_data ) : ?>
+									<li role="listitem" data-language="<?php echo esc_attr( $lang_code ); ?>" class="<?php echo ( $lang_code === $active_language ) ? 'onetap-active' : ''; ?>">
+										<button type="button">
+											<?php echo esc_html( $lang_data['name'] ); ?>
+											<img src="<?php echo esc_url( ACCESSIBILITY_ONETAP_PLUGINS_URL . 'assets/images/' . $lang_data['flag'] ); ?>" alt="flag">
+										</button>
+									</li>
+								<?php endforeach; ?>
 							</ul>
 						</div>
 
 						<!-- Close -->
-						<div class="onetap-close" style="display: none;">
-							<i class="eicon-close"></i>
-						</div>
+						<button role="button" aria-label="Close toolbar" class="onetap-close">
+							<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><path d="M342.6 150.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L192 210.7 86.6 105.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L146.7 256 41.4 361.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L192 301.3 297.4 406.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L237.3 256 342.6 150.6z"/></svg>
+						</button>
 
 						<!-- Info -->
 						<div class="onetap-site-container">
 							<div class="onetap-site-info">
 								<div class="onetap-image">
-									<svg version="1.1" id="Ebene_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-										viewBox="0 0 659.1 659.1" style="enable-background:new 0 0 659.1 659.1;" xml:space="preserve">
-									<path fill="none" d="M168.6,7.5h322c89,0,161.1,72.1,161.1,161.1v322c0,89-72.1,161.1-161.1,161.1h-322
-										c-89,0-161.1-72.1-161.1-161.1v-322C7.5,79.6,79.6,7.5,168.6,7.5z"/>
-									<path fill="#FFFFFF" d="M490.6,7.5h-322C79.6,7.5,7.5,79.6,7.5,168.6v322c0,89,72.1,161.1,161.1,161.1h322c89,0,161.1-72.1,161.1-161.1
-										v-322C651.7,79.6,579.6,7.5,490.6,7.5z M329.6,136.2c23,0,41.6,18.6,41.6,41.6s-18.6,41.6-41.6,41.6S288,200.8,288,177.8
-										S306.6,136.2,329.6,136.2z M482.4,253.4l-97.4,22c-4.3,0.8-7.5,4.5-7.5,8.8c0,64.4,10.9,114.3,32.1,175.3l11.5,33.1
-										c4.2,12.2-2.6,25.3-15.1,29.4c-2.6,0.8,2.3,1.2-7.7,1.2s-19.3-6.1-22.7-15.8L329.5,385l-46.1,122.4c-4.3,12.4-18.3,18.9-31.1,14.3
-										c-12.2-4.4-18.3-17.8-14.1-29.7l11.3-32.5c21.3-61,32.1-110.9,32.1-175.3c0-4.3-3.1-8-7.5-8.8l-97.4-22c-11.6-2.2-19.8-12.8-18-24.1
-										c1.9-11.9,13.5-19.7,25.6-17.5l81,12.6c42.6,6.6,86,6.6,128.6,0l81-12.6v0.1c12-2.1,23.6,5.7,25.5,17.5
-										C502.2,240.7,494,251.3,482.4,253.4z"/>
+									<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 701.81 701.83">
+										<path fill="#FFFFFF" d="M331.08.55C190.9,8.53,70.26,97.88,20.83,230.33c-8.95,23.97-16.5,56.86-19.49,84.87-1.76,16.45-1.79,55.1-.07,71.18,8.8,81.9,43.7,155.21,101.34,212.85,57.73,57.73,132.07,93.03,213.44,101.34,16.84,1.72,54.16,1.69,70.59-.06,148.01-15.76,269.77-121.62,305.15-265.3,11.7-47.53,13.22-101.36,4.21-149.42-19.27-102.71-84.89-192.59-177.59-243.23C462.11,11.8,395.54-3.13,331.08.55ZM363.97,142.83c12.37,3.82,21.52,11.62,27.6,23.54,3.03,5.94,3.3,7.54,3.29,19.41-.01,12.48-.16,13.21-4.03,20.37-11.86,21.94-37.82,30.71-59.64,20.15-7.89-3.82-17.14-12.92-21.05-20.71-2.88-5.74-3.52-8.61-3.88-17.52-.53-13.01.78-18.23,6.86-27.33,11.17-16.72,31.5-23.89,50.84-17.91ZM239.63,230.98c56.8,8.19,67.86,9.37,95.7,10.22,36.3,1.11,59.67-.74,121.9-9.63,32.32-4.62,56.53-7.55,60.11-7.27,7.74.61,12.4,3.96,16.26,11.72,5.11,10.26,3.12,21.41-5.06,28.3-4.69,3.95-2.2,3.27-66.49,17.94-32.36,7.38-54.83,13.06-56.06,14.18-3.26,2.95-3.67,8.6-2.3,31.46,3.83,63.99,12.07,102.66,36.42,170.84,5.31,14.88,9.95,29.51,10.31,32.49,1.3,10.96-4.46,21.09-15.8,27.73-4.42,2.59-5.97,2.9-11.13,2.21-10.61-1.41-17.22-6.06-21.85-15.38-1.28-2.59-13.07-33.43-26.2-68.53-13.12-35.1-24.18-63.83-24.56-63.82-.39,0-11.27,28.17-24.19,62.6-12.92,34.43-24.93,65.63-26.68,69.34-8.74,18.47-36.45,20.12-45.98,2.74-5.48-9.99-4.95-13.08,9.64-56.7,22.94-68.59,30.75-106.34,34.2-165.25,1.57-26.79,1.21-28.53-6.51-31.25-2.59-.91-21.91-5.61-42.94-10.43-73.02-16.75-75.15-17.5-80.88-28.73-5.66-11.08-1.62-23.77,9.71-30.46,3.58-2.11,16.54-.93,62.4,5.68Z"/>
 									</svg>
 								</div>
 								<div class="onetap-title">
-									<h2>
+									<span class="onetap-heading">
 										<?php esc_html_e( 'Accessibility  Adjustments', 'accessibility-onetap' ); ?>
-									</h2>
-								</div>
-								<div class="onetap-desc">
-									<p>
-										<span>
-											<?php esc_html_e( 'Powered by', 'accessibility-onetap' ); ?>
-										</span>
-										<a href="<?php echo esc_url( 'https://wponetap.com/' ); ?>" target="_blank">
-											<?php esc_html_e( 'OneTap', 'accessibility-onetap' ); ?>
-										</a>
-									</p>
+									</span>
+								</div>					
+								<div class="onetap-information">
+									<div class="onetap-desc">
+										<p>
+											<span>
+												<?php esc_html_e( 'Powered by', 'accessibility-onetap' ); ?>
+											</span>
+											<a href="<?php echo esc_url( 'https://wponetap.com/?utm_source=plugin-guru.com&utm_medium=link&utm_campaign=ref-link-toolbar' ); ?>" target="_blank">
+												<?php esc_html_e( 'OneTap', 'accessibility-onetap' ); ?>
+											</a>
+										</p>
+									</div>
+
+									<!-- Accessibility status -->
+									<?php if ( get_option( 'onetap_show_accessibility' ) && ! empty( get_option( 'onetap_editor_generator' ) ) ) : ?>
+										<div class="onetap-statement">
+											<button role="button" aria-label="Open toolbar" class="open-accessibility-message">
+												<?php esc_html_e( 'Statement', 'accessibility-onetap' ); ?>
+											</button>
+										</div>			
+									<?php endif; ?>	
+
+									<!-- Hide Toolbar -->
+									<div class="onetap-hide-toolbar">
+										<button role="button" aria-label="Setting toolbar" class="open-form-hide-toolbar">
+											<?php esc_html_e( 'Hide Toolbar', 'accessibility-onetap' ); ?>
+										</button>
+									</div>	
 								</div>
 							</div>
 						</div>
 					</header>
 
-					<!-- Features content -->
-					<div class="onetap-features-container onetap-feature-content">
-						<div class="onetap-features">
-							<!-- Feature Bigger Text -->
-							<div class="onetap-box-feature onetap-bigger-text">
-								<div class="onetap-icon">
-									<span class="onetap-icon-animation">
-										<svg xmlns="http://www.w3.org/2000/svg" data-name="Layer 3" viewBox="0 0 24 24">
-											<path d="M3.815 3.278c-.484.115-.717.726-.432 1.13a.951.951 0 0 0 .277.248l.16.084 8.06.011c5.766.007 8.121-.002 8.274-.034.748-.155.775-1.244.035-1.431-.211-.053-16.153-.061-16.374-.008m7.97 4.01c-.325.088-.312.064-2.35 4.412-1.772 3.781-1.912 4.096-1.913 4.296a.706.706 0 0 0 .739.737.674.674 0 0 0 .544-.243c.052-.062.221-.386.375-.72l.28-.607 2.532-.002 2.533-.001.3.63c.165.347.34.672.388.724a.677.677 0 0 0 .526.217c.431 0 .741-.304.741-.727 0-.192-.154-.538-1.906-4.276-1.048-2.238-1.939-4.116-1.98-4.175-.164-.233-.508-.346-.809-.265m1.115 4.393c.484 1.034.886 1.898.893 1.92.009.025-.631.039-1.794.039-1.477 0-1.804-.01-1.787-.053C10.283 13.402 11.984 9.8 12 9.8c.011 0 .416.847.9 1.881m-9.085 7.597c-.484.115-.717.726-.432 1.13a.951.951 0 0 0 .277.248l.16.084 8.06.011c5.766.007 8.121-.002 8.274-.034.748-.155.775-1.244.035-1.431-.211-.053-16.153-.061-16.374-.008" fill-rule="evenodd"></path>
-										</svg>
-									</span>
-								</div>
-								<div class="onetap-title">
-									<h3><?php esc_html_e( 'Bigger Text', 'accessibility-onetap' ); ?></h3>
-									<p class="onetap-option-levels">
-										<span class="onetap-level onetap-level1"></span>
-										<span class="onetap-level onetap-level2"></span>
-										<span class="onetap-level onetap-level3"></span>
-									</p>
-								</div>
-							</div>
+					<!-- Accessibility status -->
+					<div class="accessibility-status-wrapper" style="display: none;">
+						<div class="accessibility-status-text">
+							<button role="button" aria-label="Close toolbar" class="close-accessibility-message">
+								<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.68 5.313c-.099.065-1.494 1.436-3.1 3.045-1.606 1.61-2.969 2.953-3.03 2.985-.061.033-.157.151-.217.268-.14.274-.143.515-.009.73.055.087 1.503 1.556 3.218 3.264 3.31 3.297 3.24 3.234 3.562 3.182a.828.828 0 0 0 .289-.132c.342-.246.487-.62.347-.898-.037-.076-1.169-1.239-2.514-2.587l-2.445-2.45h13.442l.178-.09c.25-.127.328-.281.328-.65s-.078-.523-.328-.65l-.178-.09H5.821l2.425-2.43c1.334-1.337 2.457-2.491 2.494-2.567.195-.388-.209-.989-.695-1.032-.154-.014-.215.003-.365.102" fill-rule="evenodd"></path></svg>
+								<?php esc_html_e( 'Back', 'accessibility-onetap' ); ?>
+							</button>							
+							<?php
+							$editor_generator   = get_option( 'onetap_editor_generator' );
+							$show_accessibility = get_option( 'onetap_show_accessibility' );
 
-							<!-- Feature Cursor -->
-							<div class="onetap-box-feature onetap-cursor">
-								<div class="onetap-icon">
-									<span class="onetap-icon-animation">
-										<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-											<path d="M4.72 3.286a1.931 1.931 0 0 0-.92.458c-.383.358-.599.985-.516 1.499.066.412 3.864 13.271 4.004 13.557a1.7 1.7 0 0 0 1.76.92c.37-.052.752-.236.991-.477.099-.101.592-.773 1.095-1.493.502-.721.924-1.31.938-1.31.013 0 .925.897 2.026 1.994 1.793 1.786 2.029 2.007 2.262 2.119a1.805 1.805 0 0 0 1.548.009c.245-.114.384-.239 1.4-1.254 1.015-1.016 1.14-1.155 1.254-1.4a1.805 1.805 0 0 0-.009-1.548c-.112-.233-.333-.469-2.119-2.262-1.097-1.101-1.994-2.013-1.994-2.026 0-.014.589-.436 1.31-.938.72-.503 1.392-.996 1.493-1.095.812-.803.579-2.252-.443-2.751-.464-.227-13.662-4.082-13.84-4.043l-.24.041m6.884 3.394c3.59 1.056 6.553 1.941 6.584 1.967.034.028.051.102.044.189-.012.139-.05.169-1.712 1.332-.935.654-1.742 1.229-1.792 1.277a.948.948 0 0 0-.156.21c-.076.147-.083.49-.013.627.027.054 1.092 1.142 2.365 2.419 2.021 2.025 2.316 2.336 2.316 2.44 0 .101-.141.259-.99 1.109-.85.85-1.006.99-1.109.99-.104 0-.414-.294-2.46-2.337-1.67-1.668-2.375-2.347-2.461-2.369a.85.85 0 0 0-.605.062c-.17.096-.127.038-1.727 2.324-.884 1.263-.914 1.3-1.052 1.312-.089.008-.161-.01-.191-.046C8.588 18.117 4.76 5.114 4.76 4.99c0-.114.113-.23.224-.23.051 0 3.03.864 6.62 1.92" fill-rule="evenodd"></path>
-										</svg>
-									</span>
-								</div>
-								<div class="onetap-title">
-									<h3><?php esc_html_e( 'Cursor', 'accessibility-onetap' ); ?></h3>
-									<p class="onetap-option-levels">
-										<span class="onetap-level onetap-level1"></span>
-										<span class="onetap-level onetap-level2"></span>
-										<span class="onetap-level onetap-level3"></span>
-									</p>
-								</div>
-							</div>
-
-							<!-- Feature Letter Spacing -->
-							<div class="onetap-box-feature onetap-letter-spacing">
-								<div class="onetap-icon">
-									<span class="onetap-icon-animation">
-										<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" style="enable-background:new 0 0 24 24" xml:space="preserve"><path d="M6.18 2.837c-.222.104-2.794 2.688-2.879 2.892a.661.661 0 0 0 .016.571c.104.222 2.688 2.794 2.892 2.879a.802.802 0 0 0 .805-.131c.113-.1.224-.366.225-.539.002-.282-.101-.427-.77-1.099l-.648-.65h12.358l-.648.65c-.669.672-.772.817-.77 1.099.001.173.112.439.225.539a.802.802 0 0 0 .805.131c.204-.085 2.788-2.657 2.892-2.879a.864.864 0 0 0 .075-.3.864.864 0 0 0-.075-.3c-.104-.222-2.688-2.794-2.892-2.879a.802.802 0 0 0-.805.131c-.113.1-.224.366-.225.539-.002.282.101.427.77 1.099l.648.65H5.821l.648-.65c.669-.672.772-.817.77-1.099-.001-.173-.112-.439-.225-.539a.792.792 0 0 0-.834-.115m-2.365 9.44a.8.8 0 0 0-.462.354l-.093.149v8.44l.093.149c.357.574 1.223.443 1.363-.207.059-.277.06-8.064.001-8.321a.747.747 0 0 0-.902-.564m8 0a.8.8 0 0 0-.462.354l-.093.149v8.44l.093.149c.357.574 1.223.443 1.363-.207.059-.277.06-8.064.001-8.321a.747.747 0 0 0-.902-.564m8 0a.8.8 0 0 0-.462.354l-.093.149v8.44l.093.149c.357.574 1.223.443 1.363-.207.059-.277.06-8.064.001-8.321a.747.747 0 0 0-.902-.564m-12 2a.8.8 0 0 0-.462.354l-.093.149v6.44l.093.149c.357.574 1.223.443 1.363-.207.059-.275.06-6.065.001-6.321a.747.747 0 0 0-.902-.564m8 0a.8.8 0 0 0-.462.354l-.093.149v6.44l.093.149c.357.574 1.223.443 1.363-.207.059-.275.06-6.065.001-6.321a.747.747 0 0 0-.902-.564" fill-rule="evenodd"></path></svg>
-									</span>
-								</div>
-								<div class="onetap-title">
-									<h3><?php esc_html_e( 'Letter Spacing', 'accessibility-onetap' ); ?></h3>
-									<p class="onetap-option-levels">
-										<span class="onetap-level onetap-level1"></span>
-										<span class="onetap-level onetap-level2"></span>
-										<span class="onetap-level onetap-level3"></span>
-									</p>
-								</div>
-							</div>							
-
-							<!-- Feature Readable Font -->
-							<div class="onetap-box-feature onetap-readable-font onetap-remove-margin-title">
-								<div class="onetap-icon">
-									<span class="onetap-icon-animation">
-										<svg xmlns="http://www.w3.org/2000/svg" data-name="Layer 3" viewBox="0 0 24 24">
-											<path d="M11.34 2.281C7.073 2.553 3.439 5.66 2.499 9.84a10.086 10.086 0 0 0 0 4.32 9.76 9.76 0 0 0 7.341 7.341c1.393.313 2.93.312 4.336-.003 3.289-.739 5.985-3.188 7.068-6.422a9.928 9.928 0 0 0 .257-5.236 9.76 9.76 0 0 0-7.341-7.341 10.445 10.445 0 0 0-2.82-.218m1.621 1.521a8.318 8.318 0 0 1 5.894 3.608c.543.802 1.034 1.968 1.222 2.899.124.611.163 1.019.163 1.691 0 1.332-.263 2.465-.845 3.642a8.146 8.146 0 0 1-3.753 3.753c-1.177.582-2.31.845-3.642.845a7.867 7.867 0 0 1-3.626-.836 8.266 8.266 0 0 1-4.572-6.443c-.054-.436-.054-1.486 0-1.922.195-1.582.857-3.123 1.846-4.299.337-.4.751-.811 1.168-1.159 1.084-.904 2.682-1.585 4.168-1.775.395-.051 1.579-.053 1.977-.004M11.614 7.62c-.134.08-.2.167-.345.45-.386.755-3.301 6.957-3.319 7.063a.892.892 0 0 0 .017.279c.101.448.57.699.984.526.244-.102.348-.238.612-.802l.251-.536h4.37l.237.508c.131.279.282.561.336.625a.84.84 0 0 0 .563.265c.29 0 .616-.238.699-.51.092-.305.097-.293-1.56-3.794-2.017-4.258-1.858-3.947-2.072-4.072a.771.771 0 0 0-.773-.002m1.117 3.92c.39.826.709 1.519.709 1.54 0 .026-.516.04-1.44.04-.991 0-1.44-.013-1.44-.043 0-.057 1.413-3.037 1.44-3.037.012 0 .341.675.731 1.5" fill-rule="evenodd"></path>
-										</svg>
-									</span>
-								</div>
-
-								<div class="onetap-title">
-									<h3><?php esc_html_e( 'Readable Font', 'accessibility-onetap' ); ?></h3>
-								</div>
-							</div>							
-
-							<!-- Feature text align -->
-							<div class="onetap-box-feature onetap-text-align">
-								<div class="onetap-icon">
-									<span class="onetap-icon-animation">
-										<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M7.533 2.282c-2.527.207-4.649 2.073-5.15 4.529-.124.602-.142 1.271-.142 5.189s.018 4.587.142 5.189c.445 2.183 2.245 3.983 4.428 4.428.602.124 1.271.142 5.189.142s4.587-.018 5.189-.141c2.179-.445 3.984-2.25 4.429-4.429.123-.602.141-1.271.141-5.189s-.018-4.587-.141-5.189c-.292-1.427-1.211-2.78-2.438-3.589-.858-.566-1.705-.854-2.771-.942-.546-.045-8.323-.044-8.876.002m9.487 1.583c1.616.474 2.683 1.556 3.128 3.175.067.243.072.568.072 4.96s-.005 4.717-.072 4.96c-.229.832-.597 1.484-1.15 2.038-.554.553-1.206.921-2.038 1.15-.243.067-.568.072-4.96.072s-4.717-.005-4.96-.072c-.832-.229-1.484-.597-2.038-1.15a4.422 4.422 0 0 1-1.146-2.038c-.073-.286-.076-.511-.076-4.98V7.3l.09-.326a4.39 4.39 0 0 1 1.132-1.972A4.397 4.397 0 0 1 7.4 3.786c.055-.009 2.179-.013 4.72-.01 4.531.007 4.625.009 4.9.089m-9.84 3.97a.61.61 0 0 0-.358.375c-.114.273-.039.659.164.838.224.199.036.192 5.023.191 4.427-.001 4.659-.004 4.811-.074a.61.61 0 0 0 .358-.375.74.74 0 0 0 0-.58.61.61 0 0 0-.358-.375c-.152-.07-.383-.073-4.82-.073s-4.668.003-4.82.073m.24 3.424a1.675 1.675 0 0 1-.149.038c-.147.032-.39.251-.457.411a.736.736 0 0 0 .201.842c.08.071.196.143.256.159.143.04 9.315.04 9.458 0 .152-.042.392-.262.457-.417a.742.742 0 0 0-.139-.786c-.25-.265.129-.245-4.967-.253a424.68 424.68 0 0 0-4.66.006m-.24 3.576a.61.61 0 0 0-.358.375c-.114.273-.039.659.164.838.224.199.036.192 5.023.191 4.427-.001 4.659-.004 4.811-.074a.61.61 0 0 0 .358-.375.74.74 0 0 0 0-.58.61.61 0 0 0-.358-.375c-.152-.07-.383-.073-4.82-.073s-4.668.003-4.82.073" fill-rule="evenodd"></path></svg>
-									</span>
-								</div>
-								<div class="onetap-title">
-									<h3 class="onetap-heading"><?php esc_html_e( 'Align Text', 'accessibility-onetap' ); ?></h3>
-									<p class="onetap-option-levels">
-										<span class="onetap-level onetap-level1"></span>
-										<span class="onetap-level onetap-level2"></span>
-										<span class="onetap-level onetap-level3"></span>
-									</p>
-								</div>
-							</div>							
-
-							<!-- Feature Line Height -->
-							<div class="onetap-box-feature onetap-line-height">
-								<div class="onetap-icon">
-									<span class="onetap-icon-animation">
-										<svg xmlns="http://www.w3.org/2000/svg" data-name="Layer 3" viewBox="0 0 24 24">
-											<path d="M2.815 3.278c-.484.115-.717.726-.432 1.13a.951.951 0 0 0 .277.248c.159.083.191.084 4.219.095 2.865.008 4.122-.002 4.274-.034.749-.155.777-1.244.036-1.431-.21-.052-8.155-.06-8.374-.008M17.9 3.259a1.795 1.795 0 0 1-.16.04c-.162.036-2.795 2.648-2.904 2.881a.907.907 0 0 0-.074.32c0 .18.108.446.224.548a.918.918 0 0 0 .514.192c.273 0 .424-.107 1.09-.771l.65-.648v12.358l-.65-.648c-.672-.669-.817-.772-1.099-.77-.173.001-.439.112-.539.225a.794.794 0 0 0-.116.834c.05.106.535.617 1.429 1.506 1.283 1.274 1.365 1.347 1.545 1.385a.935.935 0 0 0 .38 0c.18-.038.262-.111 1.545-1.385.894-.889 1.379-1.4 1.429-1.506a.794.794 0 0 0-.116-.834c-.1-.113-.366-.224-.539-.225-.282-.002-.427.101-1.099.77l-.65.648V5.821l.65.648c.666.664.817.771 1.09.771.16 0 .398-.089.514-.192.116-.102.224-.368.224-.548 0-.309-.099-.43-1.484-1.805-.734-.729-1.37-1.344-1.414-1.366-.091-.045-.38-.092-.44-.07M2.815 7.278c-.484.115-.717.726-.432 1.13a.951.951 0 0 0 .277.248c.158.083.205.084 3.218.095C8.02 8.759 9 8.749 9.151 8.718c.751-.156.78-1.245.038-1.432-.21-.052-6.156-.06-6.374-.008m0 4c-.484.115-.717.726-.432 1.13a.951.951 0 0 0 .277.248c.159.083.191.084 4.219.095 2.865.008 4.122-.002 4.274-.034.749-.155.777-1.244.036-1.431-.21-.052-8.155-.06-8.374-.008m0 4c-.484.115-.717.726-.432 1.13a.951.951 0 0 0 .277.248c.158.083.205.084 3.218.095 2.142.008 3.122-.002 3.273-.033.751-.156.78-1.245.038-1.432-.21-.052-6.156-.06-6.374-.008m0 4c-.484.115-.717.726-.432 1.13a.951.951 0 0 0 .277.248c.159.083.191.084 4.219.095 2.865.008 4.122-.002 4.274-.034.749-.155.777-1.244.036-1.431-.21-.052-8.155-.06-8.374-.008" fill-rule="evenodd"></path>
-										</svg>
-									</span>
-								</div>
-								<div class="onetap-title">
-									<h3 class="onetap-heading"><?php esc_html_e( 'Line Height', 'accessibility-onetap' ); ?></h3>
-									<p class="onetap-option-levels">
-										<span class="onetap-level onetap-level1"></span>
-										<span class="onetap-level onetap-level2"></span>
-										<span class="onetap-level onetap-level3"></span>
-									</p>
-								</div>
-							</div>							
+							if ( ! empty( $editor_generator ) && $show_accessibility ) {
+								echo wp_kses_post( $editor_generator );
+							}
+							?>
 						</div>
-					</div>
+					</div>						
 
-					<!-- Divider colors -->
-					<div class="onetap-divider-container">
-						<div class="onetap-divider">
-							<span class="onetap-divider-separator onetap-divider-colors">
-								<span class="onetap-divider__text onetap-colors">
-									<?php esc_html_e( 'Colors', 'accessibility-onetap' ); ?>
-								</span>
-							</span>
-						</div>
-					</div>
+					<!-- Toolbar hide duration -->
+					<div class="toolbar-hide-duration" style="display: none;">
+						<div class="box-hide-duration">
+							<span class="onetap-title"><?php esc_html_e( 'How long do you want to hide the toolbar?', 'accessibility-onetap' ); ?></span>
 
-					<!-- Features colors-->
-					<div class="onetap-features-container onetap-feature-colors">
-						<div class="onetap-features">
-							<!-- Feature Grayscale -->
-							<div class="onetap-box-feature onetap-grayscale">
-								<div class="onetap-icon">
-									<span class="onetap-icon-animation">
-										<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-											<path d="M11.32 2.281a9.812 9.812 0 0 0-5.418 2.111c-.363.287-1.223 1.147-1.51 1.51-1.12 1.417-1.801 3.021-2.055 4.838-.09.647-.09 1.874.001 2.52.254 1.817.936 3.423 2.054 4.838.287.363 1.147 1.223 1.51 1.51A10.013 10.013 0 0 0 9.9 21.516c1.326.29 2.874.29 4.2 0a10.013 10.013 0 0 0 3.998-1.908c.363-.287 1.223-1.147 1.51-1.51a10.013 10.013 0 0 0 1.908-3.998c.29-1.326.29-2.874 0-4.2a10.013 10.013 0 0 0-1.908-3.998c-.287-.363-1.147-1.223-1.51-1.51a9.843 9.843 0 0 0-6.778-2.111m-.08 9.725v8.206l-.251-.024c-.761-.071-1.789-.38-2.615-.786a7.592 7.592 0 0 1-2.128-1.498 8.305 8.305 0 0 1-2.444-4.943c-.054-.436-.054-1.486 0-1.922.185-1.499.807-3.005 1.71-4.139a8.38 8.38 0 0 1 5.089-3.037c.165-.03.376-.056.469-.059l.17-.004v8.206m2.441-8.084c1.228.253 2.593.9 3.503 1.659.986.823 1.68 1.695 2.218 2.793A7.864 7.864 0 0 1 20.24 12a7.864 7.864 0 0 1-.838 3.626c-.538 1.098-1.232 1.97-2.218 2.793-1.083.904-2.829 1.644-4.173 1.769l-.251.024V3.788l.251.024c.138.013.44.062.67.11" fill-rule="evenodd"></path>
-										</svg>
-									</span>
-								</div>
-								<div class="onetap-title">
-									<h3 class="onetap-heading"><?php esc_html_e( 'Grayscale', 'accessibility-onetap' ); ?></h3>
-									<p class="onetap-option-levels">
-										<span class="onetap-level onetap-level1"></span>
-										<span class="onetap-level onetap-level2"></span>
-										<span class="onetap-level onetap-level3"></span>
-									</p>
-								</div>
-							</div>
+							<form>
+								<fieldset>
+									<legend><?php esc_html_e( 'Hide Toolbar Duration', 'accessibility-onetap' ); ?></legend>
+									<label class="toolbar-duration-option active" for="only-for-this-session" tabindex="0">
+										<input type="radio" id="only-for-this-session" name="hide_toolbar_duration" tabindex="-1" checked>
+										<span>
+											<?php esc_html_e( 'Only for this session', 'accessibility-onetap' ); ?>
+										</span>
+									</label>
 
-							<!-- Feature Brightness -->
-							<div class="onetap-box-feature onetap-brightness">
-								<div class="onetap-icon">
-									<span class="onetap-icon-animation">
-										<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-											<path d="M11.66 1.276a.734.734 0 0 0-.398.413c-.097.232-.087 1.433.014 1.651.283.614 1.165.614 1.448 0 .063-.136.074-.263.074-.84s-.011-.704-.074-.84a.799.799 0 0 0-1.064-.384M4.701 4.149c-.135.035-.344.197-.447.348a.872.872 0 0 0-.094.687c.065.199.908 1.072 1.14 1.18a.847.847 0 0 0 .895-.136c.224-.206.305-.605.183-.899-.08-.195-.91-1.035-1.118-1.132a.924.924 0 0 0-.559-.048m14.039.045c-.21.102-1.039.942-1.118 1.135-.122.294-.041.693.183.899a.847.847 0 0 0 .895.136c.232-.108 1.075-.981 1.14-1.18a.838.838 0 0 0-.34-.932.838.838 0 0 0-.76-.058m-7.287 1.528a6.256 6.256 0 0 0-3.908 1.823 6.296 6.296 0 0 0 0 8.91 6.303 6.303 0 0 0 8.284.553c3.023-2.309 3.318-6.771.626-9.463-1.079-1.079-2.422-1.697-3.966-1.825-.511-.042-.503-.042-1.036.002m1.319 1.658a4.666 4.666 0 0 1 2.629 1.404 4.673 4.673 0 0 1 0 6.432c-2.251 2.371-6.145 1.779-7.612-1.156A4.765 4.765 0 0 1 7.32 12c0-2.28 1.62-4.209 3.877-4.618a5.652 5.652 0 0 1 1.575-.002M1.66 11.276c-.626.289-.608 1.196.029 1.462.232.097 1.433.087 1.651-.014.614-.283.614-1.165 0-1.448-.136-.063-.263-.074-.84-.074s-.704.011-.84.074m19 0c-.626.289-.608 1.196.029 1.462.232.097 1.433.087 1.651-.014.487-.224.614-.88.248-1.279-.191-.207-.351-.243-1.088-.243-.577 0-.704.011-.84.074M5.3 17.636c-.232.108-1.075.981-1.14 1.18-.198.612.412 1.222 1.024 1.024.199-.065 1.072-.908 1.18-1.14.139-.3.064-.714-.169-.928a.847.847 0 0 0-.895-.136m12.72 0a.796.796 0 0 0-.383 1.064c.097.208.937 1.038 1.132 1.118.223.093.433.077.675-.049a.797.797 0 0 0 .374-1c-.08-.195-.91-1.035-1.118-1.132a.843.843 0 0 0-.68-.001m-6.36 2.64a.734.734 0 0 0-.398.413c-.097.232-.087 1.433.014 1.651.224.487.88.614 1.279.248.207-.191.243-.351.243-1.088 0-.577-.011-.704-.074-.84a.799.799 0 0 0-1.064-.384" fill-rule="evenodd"></path>
-										</svg>
-									</span>
-								</div>
-								<div class="onetap-title">
-									<h3 class="onetap-heading"><?php esc_html_e( 'Brightness', 'accessibility-onetap' ); ?></h3>
-									<p class="onetap-option-levels">
-										<span class="onetap-level onetap-level1"></span>
-										<span class="onetap-level onetap-level2"></span>
-										<span class="onetap-level onetap-level3"></span>
-									</p>
-								</div>
-							</div>							
+									<label class="toolbar-duration-option" for="only-for-24-hours" tabindex="0">
+										<input type="radio" id="only-for-24-hours" name="hide_toolbar_duration" tabindex="-1">
+										<span>
+											<?php esc_html_e( '24 hours', 'accessibility-onetap' ); ?>
+										</span>
+									</label>
 
-							<!-- Feature Invert colors-->
-							<div class="onetap-box-feature onetap-invert-colors">
-								<div class="onetap-icon">
-									<span class="onetap-icon-animation">
-										<svg xmlns="http://www.w3.org/2000/svg" data-name="Layer 3" viewBox="0 0 24 24">
-											<path d="M11.68 2.267c-3.425.192-6.065 3.083-5.906 6.467.013.29.036.611.05.715.023.163.016.193-.049.216-.041.015-.258.113-.482.217-1.614.753-2.879 2.297-3.33 4.068a8.21 8.21 0 0 0-.203 1.57c0 1.602.706 3.276 1.863 4.42a6.433 6.433 0 0 0 3.437 1.726c.623.096 1.697.057 2.314-.084a6.072 6.072 0 0 0 2.246-1.004c.198-.141.372-.257.387-.258.015 0 .078.042.14.094.062.052.248.185.413.295 1.552 1.037 3.581 1.312 5.374.727 1.599-.522 2.893-1.644 3.668-3.182.228-.452.44-1.073.544-1.594.102-.515.102-1.728 0-2.28a6.298 6.298 0 0 0-2.696-4.083c-.319-.212-.909-.52-1.172-.612-.126-.044-.128-.048-.103-.235.366-2.787-.966-5.326-3.446-6.567-.85-.425-2.068-.671-3.049-.616m1.129 1.554c.959.168 1.828.62 2.529 1.316a4.753 4.753 0 0 1 1.325 2.443c.083.39.095 1.358.021 1.74a4.836 4.836 0 0 1-1.346 2.543 4.716 4.716 0 0 1-5.433.891 4.874 4.874 0 0 1-2.176-2.174 6.399 6.399 0 0 1-.413-1.26c-.074-.382-.062-1.35.021-1.74a4.753 4.753 0 0 1 1.325-2.443 4.774 4.774 0 0 1 2.479-1.311 6.09 6.09 0 0 1 1.668-.005M6.408 11.27c.046.105.171.331.278.502.738 1.192 1.888 2.133 3.165 2.588.743.264 1.35.366 2.229.374l.62.006.026.2c.081.611-.003 1.383-.223 2.041-.256.764-.591 1.31-1.139 1.856-1.432 1.426-3.555 1.806-5.359.96-1.803-.844-2.908-2.749-2.723-4.694.161-1.7 1.109-3.095 2.628-3.864.17-.086.334-.158.362-.158.029-.001.09.084.136.189m11.724-.011c2.294 1.156 3.262 3.937 2.172 6.242a4.466 4.466 0 0 1-.943 1.344c-.613.621-1.317 1.025-2.193 1.261-.519.139-1.369.173-1.928.077a4.697 4.697 0 0 1-1.866-.726 3.96 3.96 0 0 1-.334-.235c0-.008.11-.189.244-.403a6.547 6.547 0 0 0 .861-2.199c.077-.392.101-1.492.044-1.993-.03-.259-.027-.275.053-.296.128-.033.705-.318.978-.482.983-.59 1.966-1.66 2.372-2.579.046-.105.107-.19.136-.189.028 0 .211.08.404.178" fill-rule="evenodd"></path>
-										</svg>
-									</span>
-								</div>
-								<div class="onetap-title">
-									<h3 class="onetap-heading"><?php esc_html_e( 'Invert Colors', 'accessibility-onetap' ); ?></h3>
-									<p class="onetap-option-levels">
-										<span class="onetap-level onetap-level1"></span>
-										<span class="onetap-level onetap-level2"></span>
-										<span class="onetap-level onetap-level3"></span>
-									</p>
-								</div>
+									<label class="toolbar-duration-option" for="only-for-a-week" tabindex="0">
+										<input type="radio" id="only-for-a-week" name="hide_toolbar_duration" tabindex="-1">
+										<span>
+											<?php esc_html_e( 'A Week', 'accessibility-onetap' ); ?>
+										</span>
+									</label>
+								</fieldset>
+							</form>
+
+							<div class="box-btn-action">
+								<button type="button" class="close-box-hide-duration"><?php esc_html_e( 'Not Now', 'accessibility-onetap' ); ?></button>
+								<button type="button" class="hide-toolbar"><?php esc_html_e( 'Hide Toolbar', 'accessibility-onetap' ); ?></button>
 							</div>
 						</div>
-					</div>					
+					</div>							
 
-					<!-- Divider orientation -->
-					<div class="onetap-divider-container">
-						<div class="onetap-divider">
-							<span class="onetap-divider-separator onetap-divider-orientation">
-								<span class="onetap-divider__text onetap-orientation">
-									<?php esc_html_e( 'Orientation', 'accessibility-onetap' ); ?>
-								</span>
-							</span>
-						</div>
-					</div>					
+					<!-- Multi functional feature -->
+					<div class="onetap-features-container onetap-multi-functional-feature">
+						<div class="onetap-box-functions">
+							<div class="onetap-box-title">
+								<span><?php esc_html_e( 'Select your accessibility profile', 'accessibility-onetap' ); ?></span>
+							</div>
 
-					<!-- Features orientation -->
-					<div class="onetap-features-container onetap-feature-orientation">
-						<div class="onetap-features">
-							<!-- Feature Highlight Links -->
-							<div class="onetap-box-feature onetap-highlight-links onetap-remove-margin-title">
-								<div class="onetap-icon">
-									<span class="onetap-icon-animation">
-										<svg xmlns="http://www.w3.org/2000/svg" data-name="Layer 3" viewBox="0 0 24 24">
-											<path d="M16.28 2.227a6.03 6.03 0 0 0-1.768.517c-.656.332-.812.47-3.136 2.793C9.372 7.54 9.104 7.823 8.871 8.18a4.967 4.967 0 0 0-.648 1.394c-.149.516-.191.822-.189 1.406.003 1.29.418 2.363 1.317 3.407.462.536 1.45 1.173 1.82 1.173a.904.904 0 0 0 .522-.192c.229-.207.288-.59.137-.89-.092-.182-.201-.267-.717-.558-.478-.269-1.043-.937-1.305-1.54-.229-.528-.268-.738-.265-1.44.003-.589.012-.667.115-.98.125-.382.246-.637.454-.96.165-.256 4.036-4.163 4.482-4.525.929-.752 2.207-.965 3.368-.562a3.561 3.561 0 0 1 2.125 2.125c.381 1.098.208 2.325-.458 3.24-.089.122-.626.69-1.193 1.262-1.056 1.064-1.156 1.192-1.156 1.48 0 .16.089.398.192.514.102.116.368.224.548.224.306 0 .436-.103 1.581-1.263 1.306-1.322 1.556-1.66 1.877-2.53.798-2.165.001-4.63-1.91-5.902-.961-.64-2.182-.95-3.288-.836m-3.693 6.252a.755.755 0 0 0-.413 1.094c.079.133.177.211.49.387.463.26.969.718 1.232 1.114.229.346.44.86.526 1.285.1.491.064 1.219-.082 1.681a3.79 3.79 0 0 1-.619 1.177c-.283.353-4.186 4.227-4.412 4.38a4.124 4.124 0 0 1-1.057.492c-.417.12-1.406.129-1.812.016-1.047-.29-1.955-1.067-2.359-2.016-.217-.511-.258-.736-.259-1.409-.001-.702.064-1.011.319-1.527.224-.454.378-.636 1.444-1.713 1.034-1.044 1.135-1.173 1.135-1.46a.918.918 0 0 0-.192-.514c-.187-.211-.586-.28-.868-.15-.225.103-2.172 2.084-2.454 2.496a4.897 4.897 0 0 0-.886 2.868c0 1.185.334 2.161 1.062 3.1.944 1.218 2.357 1.9 3.938 1.9 1.062 0 1.924-.264 2.839-.87.27-.18.745-.628 2.296-2.168 1.075-1.068 2.088-2.094 2.252-2.279a5.18 5.18 0 0 0 1.216-2.557c.064-.391.052-1.249-.022-1.666-.269-1.507-1.266-2.856-2.612-3.536-.271-.136-.524-.182-.702-.125" fill-rule="evenodd"></path>
-										</svg>
-									</span>
+							<!-- Vision Impaired Mode -->
+							<div class="onetap-functional-feature onetap-box-vision-impaired-mode">
+								<div class="onetap-left">
+									<div class="onetap-icon">
+										<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M11.46 4.283c-2.079.139-4.351 1.323-6.322 3.295a14.954 14.954 0 0 0-2.469 3.232c-.322.557-.397.783-.397 1.19 0 .417.077.641.427 1.237.979 1.67 2.179 3.091 3.525 4.174 1.94 1.561 3.82 2.315 5.776 2.315 1.248 0 2.307-.259 3.54-.865 1.758-.865 3.587-2.458 4.866-4.241.555-.774 1.085-1.653 1.233-2.045.123-.324.124-.824.002-1.144-.142-.378-.709-1.318-1.235-2.051-.698-.971-1.728-2.065-2.63-2.791C15.674 4.897 13.6 4.14 11.46 4.283m1.507 1.555c1.632.279 3.257 1.223 4.854 2.821.857.857 1.446 1.615 2.103 2.71.178.297.316.572.316.63 0 .117-.481.944-.885 1.522-.922 1.318-2.18 2.567-3.414 3.389-2.416 1.61-4.736 1.759-7.13.458-1.487-.808-3.054-2.255-4.16-3.84-.408-.584-.891-1.413-.891-1.527 0-.058.137-.333.31-.623a13.009 13.009 0 0 1 2.109-2.719c2.239-2.24 4.556-3.203 6.788-2.821m-1.422 2.567c-.339.044-.93.238-1.225.402-.96.535-1.602 1.383-1.868 2.464-.082.338-.093 1.216-.018 1.529.319 1.329 1.161 2.311 2.346 2.735 2.183.78 4.486-.544 4.927-2.834.072-.375.05-1.144-.042-1.501-.294-1.129-.95-1.945-1.973-2.456-.657-.328-1.363-.439-2.147-.339m1.107 1.455c.385.1.706.289 1.012.596.457.456.671.967.672 1.604a2.292 2.292 0 0 1-1.616 2.185c-.342.109-.923.117-1.258.018-.788-.232-1.405-.853-1.602-1.611-.076-.291-.077-.85-.002-1.139a2.33 2.33 0 0 1 1.638-1.653c.274-.074.874-.074 1.156 0" fill-rule="evenodd"/></svg>
+									</div>
+									<div class="onetap-text">
+										<div class="onetap-title">
+											<span>
+												<?php esc_html_e( 'Vision Impaired Mode', 'accessibility-onetap' ); ?>
+											</span>
+										</div>
+										<div class="onetap-desc">
+											<span id="vision-impaired-desc">
+												<?php esc_html_e( "Enhances website's visuals", 'accessibility-onetap' ); ?>
+											</span>
+										</div>
+									</div>
 								</div>
-								<div class="onetap-title">
-									<h3 class="onetap-heading"><?php esc_html_e( 'Highlight Links', 'accessibility-onetap' ); ?></h3>
-								</div>
-							</div>	
-							
-							<!-- Stop Animations -->
-							<div class="onetap-box-feature onetap-stop-animations onetap-remove-margin-title">
-								<div class="onetap-icon">
-									<span class="onetap-icon-animation">
-										<svg xmlns="http://www.w3.org/2000/svg" data-name="Layer 3" viewBox="0 0 24 24"><path d="M11.815 2.277a.8.8 0 0 0-.462.354l-.093.149v3.44l.093.149c.357.574 1.223.443 1.363-.207.057-.268.058-3.072.001-3.321a.747.747 0 0 0-.902-.564M5.38 4.938a.75.75 0 0 0-.379 1.082c.041.066.593.635 1.227 1.265 1.087 1.082 1.163 1.148 1.343 1.186.572.119 1.019-.328.9-.9-.038-.18-.104-.256-1.186-1.343-.63-.634-1.201-1.188-1.27-1.23a.785.785 0 0 0-.635-.06m12.74-.011c-.106.03-.423.322-1.309 1.204-.643.64-1.199 1.226-1.235 1.302a.805.805 0 0 0 .029.692c.157.284.478.418.824.346.18-.038.256-.104 1.343-1.186.634-.63 1.185-1.199 1.225-1.265a.73.73 0 0 0-.112-.904c-.21-.21-.467-.274-.765-.189M2.815 11.278c-.484.115-.717.726-.432 1.13a.951.951 0 0 0 .277.248c.153.08.228.085 1.713.096 1.793.014 1.914.001 2.146-.231.399-.399.212-1.098-.33-1.235-.208-.052-3.16-.059-3.374-.008m15 0c-.484.115-.717.726-.432 1.13a.951.951 0 0 0 .277.248c.153.08.228.085 1.713.096 1.793.014 1.914.001 2.146-.231.399-.399.212-1.098-.33-1.235-.208-.052-3.16-.059-3.374-.008M7.56 15.53c-.166.035-.272.129-1.332 1.184-.634.63-1.186 1.2-1.227 1.266a.73.73 0 0 0 .114.905c.244.244.613.29.905.112.066-.04.635-.591 1.265-1.225 1.082-1.087 1.148-1.163 1.186-1.343.071-.341-.063-.669-.333-.814a.75.75 0 0 0-.578-.085m8.534-.011c-.423.099-.656.475-.565.91.038.18.104.256 1.186 1.343.63.634 1.199 1.185 1.265 1.225.654.397 1.414-.363 1.017-1.017-.04-.066-.591-.635-1.225-1.265-.947-.943-1.177-1.151-1.292-1.173a11.46 11.46 0 0 0-.2-.04.555.555 0 0 0-.186.017m-4.279 1.758a.8.8 0 0 0-.462.354l-.093.149v3.44l.093.149c.357.574 1.223.443 1.363-.207.057-.268.058-3.072.001-3.321a.747.747 0 0 0-.902-.564" fill-rule="evenodd"></path></svg>
-									</span>
-								</div>
-								<div class="onetap-title">
-									<h3 class="onetap-heading"><?php esc_html_e( 'Stop Animations', 'accessibility-onetap' ); ?></h3>
+								<div class="onetap-right">
+									<div class="box-swich">
+										<label class="switch label-mode-switch" tabindex="0" aria-label="<?php esc_html_e( 'Vision Impaired Mode', 'accessibility-onetap' ); ?>">
+											<input type="checkbox" name="onetap-box-vision-impaired-mode" id="onetap-box-vision-impaired-mode" value="1" role="switch" aria-checked="false">
+											<span class="slider round"></span>
+										</label>
+									</div>
 								</div>
 							</div>
 
-							<!-- Feature Hide Images -->
-							<div class="onetap-box-feature onetap-hide-images onetap-remove-margin-title">
-								<div class="onetap-icon">
-									<span class="onetap-icon-animation">
-									<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-										<path d="M7.533 2.282c-2.527.207-4.649 2.073-5.15 4.529-.124.602-.142 1.271-.142 5.189s.018 4.587.142 5.189c.445 2.183 2.245 3.983 4.428 4.428.602.124 1.271.142 5.189.142s4.587-.018 5.189-.141c2.179-.445 3.984-2.25 4.429-4.429.123-.602.141-1.271.141-5.189s-.018-4.587-.141-5.189c-.292-1.427-1.211-2.78-2.438-3.589-.858-.566-1.705-.854-2.771-.942-.546-.045-8.323-.044-8.876.002m9.487 1.583c.808.237 1.442.601 1.978 1.137.551.552.878 1.122 1.134 1.978.082.273.084.362.098 3.778l.013 3.498-.86-.849c-.723-.714-.9-.869-1.112-.968a1.84 1.84 0 0 0-1.544.002c-.218.101-.394.257-1.24 1.096l-.987.979-1.981-1.976c-1.799-1.794-2.005-1.987-2.24-2.097a1.838 1.838 0 0 0-1.558 0c-.238.112-.459.32-2.612 2.469L3.757 15.26l.013-4c.014-3.987.014-4.001.102-4.307a4.441 4.441 0 0 1 1.13-1.951A4.397 4.397 0 0 1 7.4 3.786c.055-.009 2.179-.013 4.72-.01 4.531.007 4.625.009 4.9.089m-2.824 3.736c-.633.109-.829.943-.311 1.318a.751.751 0 0 0 1.103-.254c.098-.188.086-.541-.024-.719a.745.745 0 0 0-.768-.345m-2.337 6.397c1.232 1.231 2.292 2.257 2.354 2.28.144.054.43.054.574 0 .062-.024.671-.6 1.354-1.28 1.073-1.07 1.257-1.238 1.36-1.238.104 0 .295.175 1.431 1.312l1.312 1.312-.026.178a4.346 4.346 0 0 1-1.22 2.436c-.554.553-1.206.921-2.038 1.15-.243.067-.568.072-4.96.072s-4.717-.005-4.96-.072c-1.402-.386-2.455-1.286-2.965-2.535l-.159-.389 2.732-2.732c2.391-2.391 2.747-2.732 2.851-2.732.104 0 .404.285 2.36 2.238" fill-rule="evenodd"></path>
-									</svg>
-									</span>
+							<!-- Seizure Safe Profile -->
+							<div class="onetap-functional-feature onetap-box-seizure-safe-profile-mode">
+								<div class="onetap-left">
+									<div class="onetap-icon">
+										<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M11.815 2.277a.8.8 0 0 0-.462.354c-.087.139-.094.197-.107.899-.013.731-.016.751-.1.768-.047.01-.221.039-.386.064-1.283.194-2.647.805-3.66 1.64A11.39 11.39 0 0 0 5.932 7.18c-.776.961-1.384 2.346-1.57 3.58-.025.165-.054.339-.064.386-.017.084-.037.087-.771.1-.739.014-.756.016-.915.121a.7.7 0 0 0-.345.64c0 .196.019.263.116.401.208.294.33.33 1.167.346.71.013.731.016.748.1.01.047.039.221.064.386.186 1.234.794 2.619 1.57 3.58.249.308.857.921 1.168 1.178 1.014.836 2.417 1.462 3.68 1.641.176.025.35.054.386.065.058.017.068.112.08.768.013.7.02.758.107.897.357.574 1.223.443 1.363-.207.024-.113.044-.483.044-.821 0-.704-.049-.629.46-.702 1.263-.179 2.666-.805 3.68-1.641.311-.256.918-.869 1.168-1.178.778-.962 1.399-2.385 1.571-3.6.073-.509-.002-.46.702-.46.781 0 .979-.04 1.179-.24.398-.398.21-1.097-.331-1.234-.102-.025-.472-.046-.824-.046-.732 0-.653.05-.726-.46-.172-1.215-.793-2.638-1.571-3.6-.25-.309-.857-.922-1.168-1.178-1.013-.835-2.377-1.446-3.66-1.64-.541-.082-.48.008-.481-.713-.001-.699-.038-.928-.179-1.113-.159-.209-.502-.325-.765-.259m-.569 4.233c.013.66.021.72.107.859.357.574 1.223.443 1.363-.207a5.61 5.61 0 0 0 .044-.786v-.581l.19.026c.717.1 1.599.423 2.297.841.778.466 1.621 1.309 2.09 2.091.417.694.742 1.58.841 2.293l.026.186-.712.014c-.667.013-.722.02-.865.109a.714.714 0 0 0-.36.648c0 .2.019.267.116.405.206.29.334.33 1.129.346l.692.014-.026.186c-.099.713-.424 1.599-.841 2.293-.469.782-1.312 1.625-2.09 2.091-.698.418-1.58.741-2.297.841l-.19.026v-.581c0-.743-.042-.946-.238-1.142-.349-.349-.903-.279-1.169.149-.087.139-.094.199-.107.861l-.014.712-.186-.026c-.712-.099-1.596-.423-2.293-.84-.76-.456-1.641-1.331-2.076-2.061-.43-.722-.756-1.61-.856-2.327l-.026-.19h.581c.745 0 .946-.042 1.144-.24.398-.398.21-1.097-.331-1.234-.102-.025-.457-.046-.789-.046h-.605l.026-.19c.1-.716.427-1.605.855-2.324C7.107 8.001 8 7.107 8.723 6.677c.699-.416 1.563-.739 2.277-.85.249-.039.231-.09.246.683m.174 2.835a3.349 3.349 0 0 0-.62.225c-.276.135-.408.234-.702.528-.294.294-.393.425-.528.702a2.741 2.741 0 0 0 1.942 3.917c.965.196 2.078-.224 2.671-1.008.847-1.119.755-2.637-.218-3.618-.666-.671-1.599-.944-2.545-.746m1.126 1.554c.255.115.487.342.614.603.133.269.139.751.014 1.023a1.328 1.328 0 0 1-.608.624c-.31.152-.767.157-1.064.011-.776-.38-.962-1.383-.37-1.993.385-.398.905-.496 1.414-.268" fill-rule="evenodd"/></svg>
+									</div>
+									<div class="onetap-text">
+										<div class="onetap-title">
+											<span>
+												<?php esc_html_e( 'Seizure Safe Profile', 'accessibility-onetap' ); ?>
+											</span>
+										</div>
+										<div class="onetap-desc">
+											<span id="seizure-safe-profile">
+												<?php esc_html_e( 'Clear flashes & reduces color', 'accessibility-onetap' ); ?>
+											</span>
+										</div>
+									</div>
 								</div>
-								<div class="onetap-title">
-									<h3 class="onetap-heading"><?php esc_html_e( 'Hide Images', 'accessibility-onetap' ); ?></h3>
+								<div class="onetap-right">
+									<div class="box-swich">
+										<label class="switch label-mode-switch" tabindex="0" aria-label="<?php esc_html_e( 'Seizure Safe Profile', 'accessibility-onetap' ); ?>">
+											<input type="checkbox" name="onetap-box-seizure-safe-profile" id="onetap-box-seizure-safe-profile" value="1" role="switch" aria-checked="false">
+											<span class="slider round"></span>
+										</label>
+									</div>
 								</div>
-							</div>	
+							</div>								
 
-							<!-- Feature Reading Mask -->
-							<div class="onetap-box-feature onetap-reading-mask onetap-remove-margin-title">
-								<div class="onetap-icon">
-									<span class="onetap-icon-animation">
-										<svg xmlns="http://www.w3.org/2000/svg" data-name="Layer 3" viewBox="0 0 24 24">
-											<path d="M3.699 3.816c-.149.065-.367.308-.408.455-.017.06-.031.667-.031 1.349.001 1.086.01 1.27.074 1.48A2.326 2.326 0 0 0 4.9 8.666c.229.071.554.074 7.1.074 6.546 0 6.871-.003 7.1-.074A2.326 2.326 0 0 0 20.666 7.1c.064-.21.073-.394.074-1.48 0-.682-.014-1.289-.031-1.349-.042-.152-.262-.392-.417-.457a.742.742 0 0 0-.786.139c-.243.23-.244.236-.266 1.593l-.02 1.247-.121.149a1.064 1.064 0 0 1-.259.224c-.134.071-.389.074-6.84.074s-6.706-.003-6.84-.074a1.064 1.064 0 0 1-.259-.224l-.121-.149-.02-1.247c-.022-1.357-.023-1.363-.266-1.593a.756.756 0 0 0-.795-.137m1.116 7.462c-.484.115-.717.726-.432 1.13a.939.939 0 0 0 .277.248l.16.084 7.06.011c5.04.007 7.121-.002 7.274-.034.748-.155.775-1.244.035-1.431-.211-.053-14.154-.061-14.374-.008m.365 4.003c-.852.114-1.557.722-1.831 1.579-.084.265-.089.347-.089 1.52 0 .682.014 1.289.031 1.349.042.152.262.392.417.457a.742.742 0 0 0 .786-.139c.243-.23.244-.236.266-1.593l.02-1.247.121-.149c.067-.082.183-.183.259-.224.134-.071.389-.074 6.84-.074s6.706.003 6.84.074c.076.041.192.142.259.224l.121.149.02 1.247c.022 1.357.023 1.363.266 1.593.205.194.521.25.786.139.155-.065.375-.305.417-.457.017-.06.031-.667.031-1.349-.001-1.086-.01-1.27-.074-1.48-.228-.75-.782-1.31-1.546-1.566-.21-.07-.532-.074-6.96-.079-3.707-.003-6.848.009-6.98.026" fill-rule="evenodd"></path>
-										</svg>
-									</span>
+							<!-- ADHD Friendly Mode -->
+							<div class="onetap-functional-feature onetap-box-adhd-friendly-mode">
+								<div class="onetap-left">
+									<div class="onetap-icon">
+										<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M11.08 2.281c-1.491.156-2.877.614-4.097 1.354C4.42 5.19 2.745 7.747 2.337 10.728c-.118.858-.082 2.127.085 3.042.153.841.536 1.987.77 2.304.198.27.596.357.918.201.355-.172.485-.556.329-.975a128.71 128.71 0 0 1-.227-.62c-.612-1.693-.609-3.662.009-5.44.698-2.009 2.228-3.723 4.159-4.661 1.21-.588 2.268-.831 3.62-.831 1.352 0 2.41.243 3.62.831a8.26 8.26 0 0 1 3.779 3.761 8.59 8.59 0 0 1 .804 2.737c.06.533.027 1.78-.06 2.263-.531 2.942-2.462 5.296-5.216 6.359-.939.363-1.84.52-2.967.517-1.142-.002-1.93-.149-2.983-.556-.505-.196-.623-.212-.848-.118a.734.734 0 0 0-.368 1.058c.083.151.147.204.392.325.653.324 1.779.627 2.747.739.684.079 1.854.059 2.54-.043a9.716 9.716 0 0 0 6.636-4.201c1.213-1.815 1.78-3.893 1.643-6.03a9.422 9.422 0 0 0-.977-3.69c-1.413-2.891-4.138-4.88-7.342-5.361-.5-.074-1.841-.108-2.32-.058m.42 3.582-.44.06a6.148 6.148 0 0 0-1.81.572c-1.811.912-3.031 2.613-3.331 4.645-.097.653-.039 1.83.104 2.105a.802.802 0 0 0 .463.357.732.732 0 0 0 .813-.313c.117-.178.121-.23.081-1.089-.024-.497-.017-.694.036-.997a4.667 4.667 0 0 1 4.136-3.84c2.404-.241 4.614 1.446 5.031 3.84.088.504.059 1.394-.061 1.875a4.692 4.692 0 0 1-3.075 3.322c-.669.224-1.3.283-2.071.194-.388-.045-.411-.043-.593.044a.745.745 0 0 0-.124 1.264c.285.217 1.466.288 2.343.139 2.382-.402 4.246-2.083 4.924-4.441.26-.907.272-2.122.028-3.1a6.14 6.14 0 0 0-4.974-4.577c-.303-.048-1.285-.087-1.48-.06m-1.667 4.578c-.342.181-.474.664-.28 1.026.07.131.274.286.438.331.082.023.365.042.629.042h.479l-3.027 3.03c-1.689 1.69-3.047 3.08-3.07 3.143-.215.575.317 1.147.92.987.162-.042.447-.315 3.208-3.072l3.03-3.026.001.519c.001.603.055.776.302.964.134.102.183.115.437.115s.303-.013.438-.116a.875.875 0 0 0 .228-.288c.072-.163.076-.27.065-1.731l-.011-1.558-.123-.153c-.238-.299-.207-.294-1.957-.292-1.464.001-1.569.006-1.707.079" fill-rule="evenodd"/></svg>
+									</div>
+									<div class="onetap-text">
+										<div class="onetap-title">
+											<span>
+												<?php esc_html_e( 'ADHD Friendly Mode', 'accessibility-onetap' ); ?>
+											</span>
+										</div>
+										<div class="onetap-desc">
+											<span id="adhd-friendly-mode">
+												<?php esc_html_e( 'Focused browsing, distraction-free', 'accessibility-onetap' ); ?>
+											</span>
+										</div>
+									</div>
 								</div>
-								<div class="onetap-title">
-									<h3 class="onetap-heading"><?php esc_html_e( 'Reading Mask', 'accessibility-onetap' ); ?></h3>
-								</div>
-							</div>	
-
-							<!-- Feature  Reading Line -->
-							<div class="onetap-box-feature onetap-reading-line onetap-remove-margin-title">
-								<div class="onetap-icon">
-									<span class="onetap-icon-animation">
-										<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-											<path d="M5.74 3.266a3.841 3.841 0 0 0-2.334 1.031c-.526.494-.95 1.287-1.093 2.045-.037.194-.053.671-.053 1.578 0 1.29.001 1.301.093 1.449.357.574 1.223.443 1.363-.207.026-.123.044-.667.044-1.356 0-1.271.021-1.425.25-1.863.165-.314.619-.768.933-.933.507-.266.065-.25 7.057-.25 6.994 0 6.554-.016 7.054.25.466.249.868.708 1.073 1.224.085.214.091.298.111 1.606.022 1.356.024 1.383.115 1.529a.74.74 0 0 0 1.368-.235c.071-.342.029-2.536-.056-2.909-.334-1.469-1.393-2.529-2.89-2.894-.251-.061-.828-.068-6.575-.073a830.09 830.09 0 0 0-6.46.008m-3.925 8.01c-.486.123-.717.728-.432 1.132.219.31.309.332 1.337.332.495 0 .949-.014 1.009-.031.152-.042.392-.262.457-.417a.742.742 0 0 0-.139-.786c-.223-.235-.269-.245-1.227-.253-.484-.005-.936.006-1.005.023m4.636.001c-.177.045-.305.135-.438.309-.098.128-.113.183-.113.417 0 .242.013.285.124.423.249.308.275.314 1.363.314h.966l.172-.121c.236-.166.334-.346.334-.619s-.097-.453-.334-.619l-.172-.121-.886-.008c-.488-.004-.945.007-1.016.025m4.643-.001c-.659.166-.791 1.031-.208 1.364.172.099.186.1 1.114.1.928 0 .942-.001 1.114-.1a.737.737 0 0 0 .006-1.274c-.178-.105-.188-.106-1.04-.114-.473-.004-.917.007-.986.024m4.597.001a.88.88 0 0 0-.479.375.88.88 0 0 0-.069.348c-.002.273.094.452.332.619l.172.121h.966c1.088 0 1.114-.006 1.363-.314.112-.138.124-.181.124-.426s-.012-.288-.124-.426c-.244-.302-.287-.313-1.276-.322-.484-.004-.938.007-1.009.025m4.729-.017a2.274 2.274 0 0 1-.149.037c-.147.032-.39.251-.457.411a.742.742 0 0 0 .139.786c.218.23.278.244 1.154.259.992.017 1.196-.016 1.412-.232.399-.399.212-1.098-.33-1.235-.164-.041-1.658-.063-1.769-.026M2.815 14.277a.8.8 0 0 0-.462.354c-.089.143-.093.181-.092.949.002 1.092.093 1.531.458 2.208a3.736 3.736 0 0 0 2.623 1.899c.409.078 12.907.078 13.316 0a3.768 3.768 0 0 0 3.004-2.912c.084-.388.122-1.61.06-1.909a.74.74 0 0 0-1.369-.235c-.087.14-.094.201-.116 1.029-.021.777-.034.906-.112 1.106a2.426 2.426 0 0 1-1.071 1.224c-.5.266-.06.25-7.054.25-6.992 0-6.55.016-7.057-.25-.314-.165-.768-.619-.933-.933-.206-.394-.25-.633-.251-1.375-.001-.731-.037-.959-.179-1.146-.159-.209-.502-.325-.765-.259" fill-rule="evenodd"></path>
-										</svg>
-									</span>
-								</div>
-								<div class="onetap-title">
-									<h3 class="onetap-heading"><?php esc_html_e( 'Reading Line', 'accessibility-onetap' ); ?></h3>
-								</div>
-							</div>
-
-							<!-- Feature Highlight All -->
-							<div class="onetap-box-feature onetap-highlight-all onetap-remove-margin-title">
-								<div class="onetap-icon">
-									<span class="onetap-icon-animation">
-										<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M7.533 2.282c-2.527.207-4.649 2.073-5.15 4.529-.124.602-.142 1.271-.142 5.189s.018 4.587.142 5.189c.445 2.183 2.245 3.983 4.428 4.428.602.124 1.271.142 5.189.142s4.587-.018 5.189-.141c2.179-.445 3.984-2.25 4.429-4.429.123-.602.141-1.271.141-5.189s-.018-4.587-.141-5.189c-.292-1.427-1.211-2.78-2.438-3.589-.858-.566-1.705-.854-2.771-.942-.546-.045-8.323-.044-8.876.002m9.487 1.583c1.616.474 2.683 1.556 3.128 3.175.067.243.072.568.072 4.96s-.005 4.717-.072 4.96c-.229.832-.597 1.484-1.15 2.038-.554.553-1.206.921-2.038 1.15-.243.067-.568.072-4.96.072s-4.717-.005-4.96-.072c-.832-.229-1.484-.597-2.038-1.15a4.422 4.422 0 0 1-1.146-2.038c-.073-.286-.076-.511-.076-4.98V7.3l.09-.326a4.39 4.39 0 0 1 1.132-1.972A4.397 4.397 0 0 1 7.4 3.786c.055-.009 2.179-.013 4.72-.01 4.531.007 4.625.009 4.9.089m-9.84 3.97a.61.61 0 0 0-.358.375c-.114.273-.039.659.164.838.224.199.036.192 5.023.191 4.427-.001 4.659-.004 4.811-.074a.61.61 0 0 0 .358-.375.74.74 0 0 0 0-.58.61.61 0 0 0-.358-.375c-.152-.07-.383-.073-4.82-.073s-4.668.003-4.82.073m.24 3.424a1.675 1.675 0 0 1-.149.038c-.147.032-.39.251-.457.411a.736.736 0 0 0 .201.842c.08.071.196.143.256.159.143.04 9.315.04 9.458 0 .152-.042.392-.262.457-.417a.742.742 0 0 0-.139-.786c-.25-.265.129-.245-4.967-.253a424.68 424.68 0 0 0-4.66.006m-.24 3.576a.61.61 0 0 0-.358.375c-.114.273-.039.659.164.838.224.199.036.192 5.023.191 4.427-.001 4.659-.004 4.811-.074a.61.61 0 0 0 .358-.375.74.74 0 0 0 0-.58.61.61 0 0 0-.358-.375c-.152-.07-.383-.073-4.82-.073s-4.668.003-4.82.073" fill-rule="evenodd"></path></svg>
-									</span>
-								</div>
-
-								<div class="onetap-title">
-									<h3 class="onetap-heading"><?php esc_html_e( 'Highlight Al', 'accessibility-onetap' ); ?></h3>
+								<div class="onetap-right">
+									<div class="box-swich">
+										<label class="switch label-mode-switch" tabindex="0" aria-label="<?php esc_html_e( 'ADHD Friendly Mode', 'accessibility-onetap' ); ?>">
+											<input type="checkbox" name="onetap-box-adhd-friendly-mode" id="onetap-box-adhd-friendly-mode" value="1" role="switch" aria-checked="false">
+											<span class="slider round"></span>
+										</label>
+									</div>
 								</div>
 							</div>									
+
+							<!-- Blindness Mode -->
+							<div class="onetap-functional-feature onetap-box-blindness-mode">
+								<div class="onetap-left">
+									<div class="onetap-icon">
+										<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M15.815 2.277a.8.8 0 0 0-.462.354l-.093.149v18.44l.093.149c.357.574 1.223.443 1.363-.207.06-.28.061-18.061.001-18.321a.747.747 0 0 0-.902-.564m-12 3a.8.8 0 0 0-.462.354l-.093.149v12.44l.093.149c.357.574 1.223.443 1.363-.207.06-.279.061-12.062.001-12.321a.747.747 0 0 0-.902-.564m8 0a.8.8 0 0 0-.462.354l-.093.149v12.44l.093.149c.357.574 1.223.443 1.363-.207.06-.279.061-12.062.001-12.321a.747.747 0 0 0-.902-.564m8 2a.8.8 0 0 0-.462.354l-.093.149v8.44l.093.149c.357.574 1.223.443 1.363-.207.059-.277.06-8.064.001-8.321a.747.747 0 0 0-.902-.564m-12 1a.8.8 0 0 0-.462.354l-.093.149v6.44l.093.149c.357.574 1.223.443 1.363-.207.059-.275.06-6.065.001-6.321a.747.747 0 0 0-.902-.564" fill-rule="evenodd"/></svg>
+									</div>
+									<div class="onetap-text">
+										<div class="onetap-title">
+											<span>
+												<?php esc_html_e( 'Blindness Mode', 'accessibility-onetap' ); ?>
+											</span>
+										</div>
+										<div class="onetap-desc">
+											<span id="blindness-mode">
+												<?php esc_html_e( 'Reduces distractions, improves focus', 'accessibility-onetap' ); ?>
+											</span>
+										</div>
+									</div>
+								</div>
+								<div class="onetap-right">
+									<div class="box-swich">
+										<label class="switch label-mode-switch" tabindex="0" aria-label="<?php esc_html_e( 'Blindness Mode', 'accessibility-onetap' ); ?>">
+											<input type="checkbox" name="onetap-box-blindness-mode" id="onetap-box-blindness-mode" value="1" role="switch" aria-checked="false">
+											<span class="slider round"></span>
+										</label>
+									</div>
+								</div>
+							</div>								
+
+							<!-- Epilepsy Safe Mode -->
+							<div class="onetap-functional-feature onetap-box-epilepsy-safe-mode">
+								<div class="onetap-left">
+									<div class="onetap-icon">
+										<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M11.34 2.281C7.073 2.553 3.439 5.66 2.499 9.84a10.086 10.086 0 0 0 0 4.32 9.76 9.76 0 0 0 7.341 7.341c1.393.313 2.93.312 4.336-.003 3.289-.739 5.985-3.188 7.068-6.422a9.928 9.928 0 0 0 .257-5.236 9.76 9.76 0 0 0-7.341-7.341 10.445 10.445 0 0 0-2.82-.218m1.621 1.521a8.318 8.318 0 0 1 5.894 3.608c.543.802 1.034 1.968 1.222 2.899.124.611.163 1.019.163 1.691 0 1.332-.263 2.465-.845 3.642a8.146 8.146 0 0 1-3.753 3.753c-1.177.582-2.31.845-3.642.845a7.867 7.867 0 0 1-3.626-.836 8.266 8.266 0 0 1-4.572-6.443c-.054-.436-.054-1.486 0-1.922.195-1.582.857-3.123 1.846-4.299.337-.4.751-.811 1.168-1.159 1.084-.904 2.682-1.585 4.168-1.775.395-.051 1.579-.053 1.977-.004m-1.262 1.974c-.149.065-.367.308-.408.455-.017.06-.031.964-.031 2.009v1.9l.093.149c.361.582 1.228.441 1.365-.221.032-.15.042-.784.034-2.014-.013-1.965-.006-1.902-.258-2.141a.756.756 0 0 0-.795-.137M7.815 7.277a.802.802 0 0 0-.459.349c-.121.196-.124.547-.006.738.047.075.351.399.677.721.535.527.612.588.783.625.578.123 1.023-.322.9-.9-.037-.171-.098-.248-.625-.783-.322-.326-.639-.626-.705-.666a.855.855 0 0 0-.565-.084m8.085-.018a1.849 1.849 0 0 1-.157.04c-.13.029-1.247 1.101-1.393 1.337-.118.191-.115.542.006.738.176.285.484.41.833.337.175-.037.244-.093.837-.685.592-.593.648-.662.685-.837.071-.341-.053-.659-.322-.822-.124-.075-.406-.138-.489-.108M6.38 11.26a2.274 2.274 0 0 1-.149.037c-.147.032-.39.251-.457.411a.742.742 0 0 0 .139.786c.239.252.176.245 2.141.258 2.052.014 2.15.004 2.385-.231.399-.399.212-1.098-.33-1.235-.127-.032-.731-.045-1.937-.043-.963.002-1.77.009-1.792.017m7.515.017c-.485.119-.717.727-.432 1.131a.939.939 0 0 0 .277.248c.156.082.211.084 2.04.084 1.034 0 1.929-.014 1.989-.031.152-.042.392-.262.457-.417a.742.742 0 0 0-.139-.786c-.24-.254-.167-.245-2.207-.253-1.023-.004-1.916.007-1.985.024m-2.08 2.08a.8.8 0 0 0-.462.354l-.093.149v1.9c0 1.045.014 1.949.031 2.009.042.152.262.392.417.457a.742.742 0 0 0 .786-.139c.252-.239.245-.175.258-2.143.013-1.912-.001-2.104-.171-2.326-.16-.211-.502-.327-.766-.261m-2.915.902a1.849 1.849 0 0 1-.157.04c-.13.029-1.247 1.101-1.393 1.337-.118.191-.115.542.006.738.176.285.484.41.833.337.175-.037.244-.093.837-.685.592-.593.648-.662.685-.837.071-.341-.053-.659-.322-.822-.124-.075-.406-.138-.489-.108m5.915.018a.802.802 0 0 0-.459.349c-.121.196-.124.547-.006.738.047.075.351.399.677.721.535.527.612.588.783.625.578.123 1.023-.322.9-.9-.037-.171-.098-.248-.625-.783-.322-.326-.639-.626-.705-.666a.855.855 0 0 0-.565-.084" fill-rule="evenodd"/></svg>
+									</div>
+									<div class="onetap-text">
+										<div class="onetap-title">
+											<span>
+												<?php esc_html_e( 'Epilepsy Safe Mode', 'accessibility-onetap' ); ?>
+											</span>
+										</div>
+										<div class="onetap-desc">
+											<span id="epilepsy-safe-mode">
+												<?php esc_html_e( 'Dims colors and stops blinking', 'accessibility-onetap' ); ?>
+											</span>
+										</div>
+									</div>
+								</div>
+								<div class="onetap-right">
+									<div class="box-swich">
+										<label class="switch label-mode-switch" tabindex="0" aria-label="<?php esc_html_e( 'Epilepsy Safe Mode', 'accessibility-onetap' ); ?>">
+											<input type="checkbox" name="onetap-box-epilepsy-safe-mode" id="onetap-box-epilepsy-safe-mode" value="1" role="switch" aria-checked="false">
+											<span class="slider round"></span>
+										</label>
+									</div>
+								</div>
+							</div>								
 						</div>
 					</div>					
+
+					<!-- Features Content Modules-->
+					<div class="onetap-features-container onetap-feature-content-modules">
+						<div class="onetap-features">
+							<div class="onetap-box-title">
+								<span class="onetap-title"><?php esc_html_e( 'Content Modules', 'accessibility-onetap' ); ?></span>
+							</div>
+						
+							<div class="onetap-box-features">
+								<div class="onetap-box-step-controls onetap-font-size">
+									<!-- Feature Bigger Text -->
+									<div class="onetap-box-feature onetap-bigger-text onetap-new-level">
+
+										<div class="onetap-title">
+											<span class="onetap-heading"><?php esc_html_e( 'Font Size', 'accessibility-onetap' ); ?></span>
+											<div class="box-btn">
+												<button class="onetap-btn onetap-btn-increase" aria-label="<?php esc_html_e( 'Increase Font Size', 'accessibility-onetap' ); ?>">
+													<span style="display: none !important;" class="onetap-screen-reader-text"><?php esc_html_e( '+', 'accessibility-onetap' ); ?></span>
+													<svg xmlns="http://www.w3.org/2000/svg" width="17" height="16" viewBox="0 0 17 16" fill="none"><path d="M8.5 1V15M1.5 8H15.5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+												</button>
+												<p class="onetap-info"><?php esc_html_e( 'Default', 'accessibility-onetap' ); ?></p>
+
+												<button class="onetap-btn onetap-btn-decrease" aria-label="<?php esc_html_e( 'Decrease Font Size', 'accessibility-onetap' ); ?>">
+													<span style="display: none !important;" class="onetap-screen-reader-text"><?php esc_html_e( '-', 'accessibility-onetap' ); ?></span>
+													<svg xmlns="http://www.w3.org/2000/svg" width="17" height="2" viewBox="0 0 17 2" fill="none"><path d="M1.5 1H15.5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+												</button>
+											</div>
+											<p class="onetap-option-levels">
+												<span class="onetap-level onetap-level1"></span>
+												<span class="onetap-level onetap-level2"></span>
+												<span class="onetap-level onetap-level3"></span>
+											</p>
+										</div>
+									</div>		
+								</div>
+
+								<!-- Feature Readable Font -->
+								<button type="button" role="button" aria-pressed="false" class="onetap-box-feature onetap-readable-font">
+									<div class="onetap-icon">
+										<span class="onetap-icon-animation">
+											<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M11.34 2.281C7.073 2.553 3.439 5.66 2.499 9.84a10.086 10.086 0 0 0 0 4.32 9.76 9.76 0 0 0 7.341 7.341c1.393.313 2.93.312 4.336-.003 3.289-.739 5.985-3.188 7.068-6.422a9.928 9.928 0 0 0 .257-5.236 9.76 9.76 0 0 0-7.341-7.341 10.445 10.445 0 0 0-2.82-.218m1.621 1.521a8.318 8.318 0 0 1 5.894 3.608c.543.802 1.034 1.968 1.222 2.899.124.611.163 1.019.163 1.691 0 1.332-.263 2.465-.845 3.642a8.146 8.146 0 0 1-3.753 3.753c-1.177.582-2.31.845-3.642.845a7.867 7.867 0 0 1-3.626-.836 8.266 8.266 0 0 1-4.572-6.443c-.054-.436-.054-1.486 0-1.922.195-1.582.857-3.123 1.846-4.299.337-.4.751-.811 1.168-1.159 1.084-.904 2.682-1.585 4.168-1.775.395-.051 1.579-.053 1.977-.004M11.614 7.62c-.134.08-.2.167-.345.45-.386.755-3.301 6.957-3.319 7.063a.892.892 0 0 0 .017.279c.101.448.57.699.984.526.244-.102.348-.238.612-.802l.251-.536h4.37l.237.508c.131.279.282.561.336.625a.84.84 0 0 0 .563.265c.29 0 .616-.238.699-.51.092-.305.097-.293-1.56-3.794-2.017-4.258-1.858-3.947-2.072-4.072a.771.771 0 0 0-.773-.002m1.117 3.92c.39.826.709 1.519.709 1.54 0 .026-.516.04-1.44.04-.991 0-1.44-.013-1.44-.043 0-.057 1.413-3.037 1.44-3.037.012 0 .341.675.731 1.5" fill-rule="evenodd"/></svg>
+										</span>
+									</div>
+
+									<div class="onetap-title">
+										<span class="onetap-heading"><?php esc_html_e( 'Readable Font', 'accessibility-onetap' ); ?></span>
+									</div>
+								</button>							
+
+								<div class="onetap-box-step-controls onetap-line-height">
+									<!-- Feature Line Height -->
+									<div class="onetap-box-feature onetap-line-height onetap-new-level">
+										<div class="onetap-title">
+											<span class="onetap-heading"><?php esc_html_e( 'Line Height', 'accessibility-onetap' ); ?></span>
+											<div class="box-btn">
+												<button class="onetap-btn onetap-btn-increase" aria-label="<?php esc_html_e( 'Increase Line Height', 'accessibility-onetap' ); ?>">
+													<span style="display: none !important;" class="onetap-screen-reader-text"><?php esc_html_e( '+', 'accessibility-onetap' ); ?></span>
+													<svg xmlns="http://www.w3.org/2000/svg" width="17" height="16" viewBox="0 0 17 16" fill="none"><path d="M8.5 1V15M1.5 8H15.5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+												</button>
+												<p class="onetap-info"><?php esc_html_e( 'Default', 'accessibility-onetap' ); ?></p>
+
+												<button class="onetap-btn onetap-btn-decrease" aria-label="<?php esc_html_e( 'Decrease Line Height', 'accessibility-onetap' ); ?>">
+													<span style="display: none !important;" class="onetap-screen-reader-text"><?php esc_html_e( '-', 'accessibility-onetap' ); ?></span>
+													<svg xmlns="http://www.w3.org/2000/svg" width="17" height="2" viewBox="0 0 17 2" fill="none"><path d="M1.5 1H15.5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+												</button>
+											</div>
+											<p class="onetap-option-levels">
+												<span class="onetap-level onetap-level1"></span>
+												<span class="onetap-level onetap-level2"></span>
+												<span class="onetap-level onetap-level3"></span>
+											</p>
+										</div>
+									</div>										
+								</div>
+
+								<!-- Feature Cursor -->
+								<button type="button" role="button" aria-pressed="false" class="onetap-box-feature onetap-cursor">
+									<div class="onetap-icon">
+										<span class="onetap-icon-animation">
+											<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M7.922 3.562a1.577 1.577 0 0 0-1.089.908l-.093.23v13.006l.099.145c.21.306.614.408.943.237.087-.045.788-.478 1.558-.962a76.104 76.104 0 0 1 1.404-.873l.92 1.807c.717 1.412.95 1.836 1.082 1.968.355.355.908.515 1.373.395.314-.08 2.678-1.285 2.908-1.481.333-.285.538-.893.453-1.343-.027-.143-.337-.802-.943-2.009-.497-.988-.897-1.803-.889-1.811.007-.008.738-.302 1.623-.654.886-.352 1.662-.678 1.726-.723a.826.826 0 0 0 .205-.265.673.673 0 0 0-.072-.707c-.162-.221-10.122-7.686-10.388-7.786a1.646 1.646 0 0 0-.82-.082m9.155 8.078c0 .011-.629.269-1.399.574-.816.322-1.452.597-1.525.658-.156.131-.233.313-.233.551 0 .163.129.44 1.082 2.32l1.081 2.135-1.158.58-1.159.579-1.053-2.087c-.579-1.148-1.096-2.138-1.148-2.2-.137-.164-.292-.23-.537-.23-.247 0-.237-.005-1.888 1.034l-.96.604-.01-5.549c-.006-3.052-.002-5.572.009-5.601.013-.033 1.625 1.153 4.459 3.28a524.02 524.02 0 0 1 4.439 3.352" fill-rule="evenodd"/></svg>
+										</span>
+									</div>
+
+									<div class="onetap-title">
+										<span class="onetap-heading"><?php esc_html_e( 'Cursor', 'accessibility-onetap' ); ?></span>
+									</div>
+								</button>								
+
+								<!-- Feature Letter Spacing -->
+								<button type="button" role="button" aria-pressed="false" class="onetap-box-feature onetap-letter-spacing">
+									<div class="onetap-icon">
+										<span class="onetap-icon-animation">
+											<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 256 256">
+												<path d="M2.815 3.278c-.484.115-.717.726-.432 1.13.075.1.17.184.277.248.159.083.191.084 4.219.095 2.865.008 4.122-.002 4.274-.034.749-.155.777-1.244.036-1.431-.21-.052-8.155-.06-8.374-.008M17.9 3.259c-.053.016-.106.03-.16.04-.162.036-2.795 2.648-2.904 2.881a.907.907 0 0 0-.074.32c0 .18.108.446.224.548a.918.918 0 0 0 .514.192c.273 0 .424-.107 1.09-.771l.65-.648v12.358l-.65-.648c-.672-.669-.817-.772-1.099-.77-.173.001-.439.112-.539.225a.794.794 0 0 0-.116.834c.05.106.535.617 1.429 1.506 1.283 1.274 1.365 1.347 1.545 1.385a.935.935 0 0 0 .38 0c.18-.038.262-.111 1.545-1.385.894-.889 1.379-1.4 1.429-1.506a.794.794 0 0 0-.116-.834c-.1-.113-.366-.224-.539-.225-.282-.002-.427.101-1.099.77l-.65.648V5.821l.65.648c.666.664.817.771 1.09.771.16 0 .398-.089.514-.192.116-.102.224-.368.224-.548 0-.309-.099-.43-1.484-1.805-.734-.729-1.37-1.344-1.414-1.366-.091-.045-.38-.092-.44-.07M2.815 7.278c-.484.115-.717.726-.432 1.13.075.1.17.184.277.248.158.083.205.084 3.218.095C8.02 8.759 9 8.749 9.151 8.718c.751-.156.78-1.245.038-1.432-.21-.052-6.156-.06-6.374-.008m0 4c-.484.115-.717.726-.432 1.13.075.1.17.184.277.248.159.083.191.084 4.219.095 2.865.008 4.122-.002 4.274-.034.749-.155.777-1.244.036-1.431-.21-.052-8.155-.06-8.374-.008m0 4c-.484.115-.717.726-.432 1.13.075.1.17.184.277.248.158.083.205.084 3.218.095 2.142.008 3.122-.002 3.273-.033.751-.156.78-1.245.038-1.432-.21-.052-6.156-.06-6.374-.008m0 4c-.484.115-.717.726-.432 1.13.075.1.17.184.277.248.159.083.191.084 4.219.095 2.865.008 4.122-.002 4.274-.034.749-.155.777-1.244.036-1.431-.21-.052-8.155-.06-8.374-.008" transform="rotate(90 126.65 129.331) scale(10.66667)" fill-rule="evenodd" stroke-miterlimit="10" font-family="none" font-weight="none" font-size="none" text-anchor="none" style="mix-blend-mode:normal"/>
+											</svg>
+										</span>
+									</div>
+									<div class="onetap-title">
+										<span class="onetap-heading"><?php esc_html_e( 'Letter Spacing', 'accessibility-onetap' ); ?></span>
+									</div>
+								</button>									
+
+								<!-- Feature Align Text -->
+								<button type="button" role="button" aria-pressed="false" class="onetap-box-feature onetap-align-center">
+									<div class="onetap-icon">
+										<span class="onetap-icon-animation">
+											<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M3.72 3.805c-.262.104-.451.395-.451.695a.75.75 0 0 0 .464.697c.158.06 16.376.06 16.534 0a.75.75 0 0 0 .464-.697.75.75 0 0 0-.464-.697c-.151-.058-16.403-.055-16.547.002m2 5c-.262.104-.451.395-.451.695a.75.75 0 0 0 .464.697c.158.06 12.376.06 12.534 0a.75.75 0 0 0 .464-.697.75.75 0 0 0-.464-.697c-.151-.058-12.403-.055-12.547.002m-2 5c-.262.104-.451.395-.451.695a.75.75 0 0 0 .464.697c.158.06 16.376.06 16.534 0a.75.75 0 0 0 .464-.697.75.75 0 0 0-.464-.697c-.151-.058-16.403-.055-16.547.002m4 5c-.262.104-.451.395-.451.695a.75.75 0 0 0 .464.697c.077.03 1.429.043 4.267.043s4.19-.013 4.267-.043a.75.75 0 0 0 .464-.697.75.75 0 0 0-.464-.697c-.15-.057-8.404-.055-8.547.002" fill-rule="evenodd"/></svg>
+										</span>
+									</div>
+									<div class="onetap-title">
+										<span class="onetap-heading"><?php esc_html_e( 'Align Text', 'accessibility-onetap' ); ?></span>
+									</div>
+								</button>									
+
+								<!-- Feature Letter Spacing -->
+								<button type="button" role="button" aria-pressed="false" class="onetap-box-feature onetap-font-weight">
+									<div class="onetap-icon">
+										<span class="onetap-icon-animation">
+											<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M7.533 2.282c-2.527.207-4.649 2.073-5.15 4.529-.124.602-.142 1.271-.142 5.189s.018 4.587.142 5.189c.445 2.183 2.245 3.983 4.428 4.428.602.124 1.271.142 5.189.142s4.587-.018 5.189-.141c2.179-.445 3.984-2.25 4.429-4.429.123-.602.141-1.271.141-5.189s-.018-4.587-.141-5.189c-.292-1.427-1.211-2.78-2.438-3.589-.858-.566-1.705-.854-2.771-.942-.546-.045-8.323-.044-8.876.002m9.487 1.583c1.616.474 2.683 1.556 3.128 3.175.067.243.072.568.072 4.96s-.005 4.717-.072 4.96c-.229.832-.597 1.484-1.15 2.038-.554.553-1.206.921-2.038 1.15-.243.067-.568.072-4.96.072s-4.717-.005-4.96-.072c-.832-.229-1.484-.597-2.038-1.15a4.422 4.422 0 0 1-1.146-2.038c-.073-.286-.076-.511-.076-4.98V7.3l.09-.326a4.39 4.39 0 0 1 1.132-1.972A4.397 4.397 0 0 1 7.4 3.786c.055-.009 2.179-.013 4.72-.01 4.531.007 4.625.009 4.9.089M8.291 6.843c-.242.095-.525.353-.658.602l-.093.175v8.76l.093.175c.138.257.415.507.67.603.215.08.289.082 3.12.082 3.285 0 3.256.002 3.877-.3a2.893 2.893 0 0 0 1.074-.873c.385-.507.566-.99.612-1.627.064-.898-.234-1.658-.915-2.335l-.357-.355.099-.105c.191-.203.415-.6.526-.931.146-.436.184-1.135.087-1.602-.208-1.006-.997-1.88-2.006-2.223l-.32-.108-2.8-.01c-2.729-.008-2.805-.007-3.009.072m5.492 1.44c.31.057.576.205.801.445.712.762.466 1.961-.495 2.405-.187.086-.217.087-2.639.098L9 11.242V8.24h2.273c1.463 0 2.357.015 2.51.043m.637 4.529c.271.085.474.212.663.414.707.758.472 1.938-.474 2.387l-.269.127-2.67.012-2.67.011V12.76l2.63.001c2.005 0 2.668.012 2.79.051" fill-rule="evenodd"/></svg>
+										</span>
+									</div>
+									<div class="onetap-title">
+										<span class="onetap-heading"><?php esc_html_e( 'Font Weight', 'accessibility-onetap' ); ?></span>
+									</div>
+								</button>										
+								
+							</div>
+						</div>
+					</div>
+
+					<!-- Features Color Modules -->
+					<div class="onetap-features-container onetap-feature-color-modules">
+						<div class="onetap-features">
+							<div class="onetap-box-title">
+								<span class="onetap-title"><?php esc_html_e( 'Color Modules', 'accessibility-onetap' ); ?></span>
+							</div>
+
+							<div class="onetap-box-features">
+
+								<!-- Feature Light Contrast -->
+								<button type="button" role="button" aria-pressed="false" class="onetap-box-feature onetap-light-contrast">
+									<div class="onetap-icon">
+										<span class="onetap-icon-animation">
+											<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M11.66 1.276a.734.734 0 0 0-.398.413c-.097.232-.087 1.433.014 1.651.283.614 1.165.614 1.448 0 .063-.136.074-.263.074-.84s-.011-.704-.074-.84a.799.799 0 0 0-1.064-.384M4.701 4.149c-.135.035-.344.197-.447.348a.872.872 0 0 0-.094.687c.065.199.908 1.072 1.14 1.18a.847.847 0 0 0 .895-.136c.224-.206.305-.605.183-.899-.08-.195-.91-1.035-1.118-1.132a.924.924 0 0 0-.559-.048m14.039.045c-.21.102-1.039.942-1.118 1.135-.122.294-.041.693.183.899a.847.847 0 0 0 .895.136c.232-.108 1.075-.981 1.14-1.18a.838.838 0 0 0-.34-.932.838.838 0 0 0-.76-.058m-7.287 1.528a6.256 6.256 0 0 0-3.908 1.823 6.296 6.296 0 0 0 0 8.91 6.303 6.303 0 0 0 8.284.553c3.023-2.309 3.318-6.771.626-9.463-1.079-1.079-2.422-1.697-3.966-1.825-.511-.042-.503-.042-1.036.002m1.319 1.658a4.666 4.666 0 0 1 2.629 1.404 4.673 4.673 0 0 1 0 6.432c-2.251 2.371-6.145 1.779-7.612-1.156A4.765 4.765 0 0 1 7.32 12c0-2.28 1.62-4.209 3.877-4.618a5.652 5.652 0 0 1 1.575-.002M1.66 11.276c-.626.289-.608 1.196.029 1.462.232.097 1.433.087 1.651-.014.614-.283.614-1.165 0-1.448-.136-.063-.263-.074-.84-.074s-.704.011-.84.074m19 0c-.626.289-.608 1.196.029 1.462.232.097 1.433.087 1.651-.014.487-.224.614-.88.248-1.279-.191-.207-.351-.243-1.088-.243-.577 0-.704.011-.84.074M5.3 17.636c-.232.108-1.075.981-1.14 1.18-.198.612.412 1.222 1.024 1.024.199-.065 1.072-.908 1.18-1.14.139-.3.064-.714-.169-.928a.847.847 0 0 0-.895-.136m12.72 0a.796.796 0 0 0-.383 1.064c.097.208.937 1.038 1.132 1.118.223.093.433.077.675-.049a.797.797 0 0 0 .374-1c-.08-.195-.91-1.035-1.118-1.132a.843.843 0 0 0-.68-.001m-6.36 2.64a.734.734 0 0 0-.398.413c-.097.232-.087 1.433.014 1.651.224.487.88.614 1.279.248.207-.191.243-.351.243-1.088 0-.577-.011-.704-.074-.84a.799.799 0 0 0-1.064-.384" fill-rule="evenodd"/></svg>
+										</span>
+									</div>
+									<div class="onetap-title">
+										<span class="onetap-heading"><?php esc_html_e( 'Light Contrast', 'accessibility-onetap' ); ?></span>
+									</div>
+								</button>
+
+								<!-- Feature High Contrast -->
+								<button type="button" role="button" aria-pressed="false" class="onetap-box-feature onetap-high-contrast">
+									<div class="onetap-icon">
+										<span class="onetap-icon-animation">
+											<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M11.34 2.281C7.073 2.553 3.439 5.66 2.499 9.84a10.086 10.086 0 0 0 0 4.32 9.76 9.76 0 0 0 7.341 7.341c1.393.313 2.93.312 4.336-.003 3.289-.739 5.985-3.188 7.068-6.422a9.928 9.928 0 0 0 .257-5.236 9.76 9.76 0 0 0-7.341-7.341 10.445 10.445 0 0 0-2.82-.218m1.621 1.521a8.318 8.318 0 0 1 5.894 3.608c.543.802 1.034 1.968 1.222 2.899.124.611.163 1.019.163 1.691 0 1.332-.263 2.465-.845 3.642a8.146 8.146 0 0 1-3.753 3.753c-1.177.582-2.31.845-3.642.845a7.867 7.867 0 0 1-3.626-.836 8.266 8.266 0 0 1-4.572-6.443c-.054-.436-.054-1.486 0-1.922.195-1.582.857-3.123 1.846-4.299.337-.4.751-.811 1.168-1.159 1.084-.904 2.682-1.585 4.168-1.775.395-.051 1.579-.053 1.977-.004m-1.262 2.011c-.15.069-.368.313-.408.458-.017.06-.031 2.656-.031 5.769 0 6.313-.025 5.767.277 6.032.179.157.335.186.852.154 2.505-.153 4.703-1.825 5.504-4.186.261-.767.323-1.159.323-2.04s-.062-1.273-.323-2.04C17.08 7.564 14.82 5.873 12.3 5.776c-.358-.014-.511-.005-.601.037m1.751 1.668a5.68 5.68 0 0 1 1.21.578c.309.202 1.079.972 1.281 1.281 1.272 1.95 1.013 4.444-.627 6.045a4.708 4.708 0 0 1-1.391.952c-.346.152-.954.343-1.087.343-.074 0-.076-.119-.076-4.685V7.31l.17.027c.093.015.328.08.52.144" fill-rule="evenodd"/></svg>
+										</span>
+										</div>
+									<div class="onetap-title">
+										<span class="onetap-heading"><?php esc_html_e( 'High Contrast', 'accessibility-onetap' ); ?></span>
+									</div>
+								</button>
+
+								<!-- Monochrome -->
+								<button type="button" role="button" aria-pressed="false" class="onetap-box-feature onetap-monochrome">
+									<div class="onetap-icon">
+										<span class="onetap-icon-animation">
+											<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M11.32 2.281a9.812 9.812 0 0 0-5.418 2.111c-.363.287-1.223 1.147-1.51 1.51-1.12 1.417-1.801 3.021-2.055 4.838-.09.647-.09 1.874.001 2.52.254 1.817.936 3.423 2.054 4.838.287.363 1.147 1.223 1.51 1.51A10.013 10.013 0 0 0 9.9 21.516c1.326.29 2.874.29 4.2 0a10.013 10.013 0 0 0 3.998-1.908c.363-.287 1.223-1.147 1.51-1.51a10.013 10.013 0 0 0 1.908-3.998c.29-1.326.29-2.874 0-4.2a10.013 10.013 0 0 0-1.908-3.998c-.287-.363-1.147-1.223-1.51-1.51a9.843 9.843 0 0 0-6.778-2.111m-.08 3.239v1.72H8.26c-1.639 0-2.98-.012-2.98-.026 0-.049.459-.598.778-.929a8.301 8.301 0 0 1 4.543-2.422c.165-.03.376-.056.469-.059l.17-.004v1.72m2.441-1.598c1.228.253 2.593.9 3.503 1.659.986.823 1.68 1.695 2.218 2.793A7.864 7.864 0 0 1 20.24 12a7.864 7.864 0 0 1-.838 3.626c-.538 1.098-1.232 1.97-2.218 2.793-1.083.904-2.829 1.644-4.173 1.769l-.251.024V3.788l.251.024c.138.013.44.062.67.11M11.24 10v1.24H3.8v-.133c0-.377.249-1.42.487-2.037l.119-.31h6.834V10m0 4v1.24H4.406l-.119-.31c-.238-.617-.487-1.66-.487-2.037v-.133h7.44V14m0 4.486v1.726l-.251-.024c-.761-.071-1.789-.38-2.615-.786-.875-.429-1.445-.833-2.167-1.537-.31-.303-.927-1.021-.927-1.079 0-.014 1.341-.026 2.98-.026h2.98v1.726" fill-rule="evenodd"/></svg>
+										</span>
+									</div>
+									<div class="onetap-title">
+										<span class="onetap-heading"><?php esc_html_e( 'Monochrome', 'accessibility-onetap' ); ?></span>
+									</div>
+								</button>									
+							</div>
+						</div>
+					</div>						
+
+					<!-- Features Orientation Modules-->
+					<div class="onetap-features-container onetap-feature-orientation-modules">
+						<div class="onetap-features">
+							<div class="onetap-box-title">
+								<span class="onetap-title"><?php esc_html_e( 'Orientation Modules', 'accessibility-onetap' ); ?></span>
+							</div>
+
+							<div class="onetap-box-features">
+
+								<!-- Feature Reading Line -->
+								<button type="button" role="button" aria-pressed="false" class="onetap-box-feature onetap-reading-line">
+									<div class="onetap-icon">
+										<span class="onetap-icon-animation">
+											<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M5.74 4.266a3.841 3.841 0 0 0-2.334 1.031c-.526.494-.95 1.287-1.093 2.045-.037.194-.053.671-.053 1.578 0 1.29.001 1.301.093 1.449.357.574 1.223.443 1.363-.207.026-.123.044-.667.044-1.356 0-1.271.021-1.425.25-1.863.165-.314.619-.768.933-.933.507-.266.065-.25 7.057-.25 6.994 0 6.554-.016 7.054.25.466.249.868.708 1.073 1.224.085.214.091.298.111 1.606.022 1.356.024 1.383.115 1.529a.74.74 0 0 0 1.368-.235c.071-.342.029-2.536-.056-2.909-.334-1.469-1.393-2.529-2.89-2.894-.251-.061-.828-.068-6.575-.073a830.09 830.09 0 0 0-6.46.008m-3.925 8.012c-.484.115-.717.726-.432 1.13.193.273.35.328.98.346.71.019.953-.03 1.156-.233.399-.399.212-1.098-.33-1.235-.201-.05-1.173-.056-1.374-.008m4.796.001a.858.858 0 0 0-.478.373c-.093.18-.087.542.012.712.043.074.156.189.25.255.167.118.182.12.741.135.74.019.978-.028 1.183-.233.41-.41.206-1.116-.357-1.237-.23-.049-1.151-.053-1.351-.005m4.615.005c-.338.08-.546.352-.546.716 0 .373.206.635.564.717.228.053 1.284.053 1.512 0 .358-.082.564-.344.564-.717s-.206-.635-.564-.717c-.215-.05-1.317-.049-1.53.001m4.781.001c-.533.126-.722.84-.326 1.236.205.205.444.252 1.179.233.535-.014.576-.021.729-.122a.699.699 0 0 0 .344-.632.7.7 0 0 0-.345-.633c-.157-.104-.182-.107-.785-.115-.343-.004-.701.011-.796.033m4.647-.007c-.645.154-.786 1.02-.22 1.353.178.104.213.11.83.123.819.018 1.046-.024 1.255-.233.399-.399.212-1.098-.33-1.235-.202-.05-1.331-.056-1.535-.008M2.815 15.277a.8.8 0 0 0-.462.354c-.089.143-.093.181-.092.949.002 1.092.093 1.531.458 2.208a3.736 3.736 0 0 0 2.623 1.899c.409.078 12.907.078 13.316 0a3.768 3.768 0 0 0 3.004-2.912c.084-.388.122-1.61.06-1.909a.74.74 0 0 0-1.369-.235c-.087.14-.094.201-.116 1.029-.021.777-.034.906-.112 1.106a2.426 2.426 0 0 1-1.071 1.224c-.5.266-.06.25-7.054.25-6.992 0-6.55.016-7.057-.25-.314-.165-.768-.619-.933-.933-.206-.394-.25-.633-.251-1.375-.001-.731-.037-.959-.179-1.146-.159-.209-.502-.325-.765-.259" fill-rule="evenodd"/></svg>
+										</span>
+									</div>
+									<div class="onetap-title">
+										<span class="onetap-heading"><?php esc_html_e( 'Reading Line', 'accessibility-onetap' ); ?></span>
+									</div>
+								</button>
+
+								<!-- Feature Reading Mask -->
+								<button type="button" role="button" aria-pressed="false" class="onetap-box-feature onetap-reading-mask">
+									<div class="onetap-icon">
+										<span class="onetap-icon-animation">
+											<svg data-name="Layer 3" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3.699 3.816c-.149.065-.367.308-.408.455-.017.06-.031.667-.031 1.349.001 1.086.01 1.27.074 1.48A2.326 2.326 0 0 0 4.9 8.666c.229.071.554.074 7.1.074 6.546 0 6.871-.003 7.1-.074A2.326 2.326 0 0 0 20.666 7.1c.064-.21.073-.394.074-1.48 0-.682-.014-1.289-.031-1.349-.042-.152-.262-.392-.417-.457a.742.742 0 0 0-.786.139c-.243.23-.244.236-.266 1.593l-.02 1.247-.121.149a1.064 1.064 0 0 1-.259.224c-.134.071-.389.074-6.84.074s-6.706-.003-6.84-.074a1.064 1.064 0 0 1-.259-.224l-.121-.149-.02-1.247c-.022-1.357-.023-1.363-.266-1.593a.756.756 0 0 0-.795-.137m1.116 7.462c-.484.115-.717.726-.432 1.13a.939.939 0 0 0 .277.248l.16.084 7.06.011c5.04.007 7.121-.002 7.274-.034.748-.155.775-1.244.035-1.431-.211-.053-14.154-.061-14.374-.008m.365 4.003c-.852.114-1.557.722-1.831 1.579-.084.265-.089.347-.089 1.52 0 .682.014 1.289.031 1.349.042.152.262.392.417.457a.742.742 0 0 0 .786-.139c.243-.23.244-.236.266-1.593l.02-1.247.121-.149c.067-.082.183-.183.259-.224.134-.071.389-.074 6.84-.074s6.706.003 6.84.074c.076.041.192.142.259.224l.121.149.02 1.247c.022 1.357.023 1.363.266 1.593.205.194.521.25.786.139.155-.065.375-.305.417-.457.017-.06.031-.667.031-1.349-.001-1.086-.01-1.27-.074-1.48-.228-.75-.782-1.31-1.546-1.566-.21-.07-.532-.074-6.96-.079-3.707-.003-6.848.009-6.98.026" fill-rule="evenodd"/></svg>
+										</span>
+									</div>
+									<div class="onetap-title">
+										<span class="onetap-heading"><?php esc_html_e( 'Reading Mask', 'accessibility-onetap' ); ?></span>
+									</div>
+								</button>
+
+								<!-- Feature Hide Images -->
+								<button type="button" role="button" aria-pressed="false" class="onetap-box-feature onetap-hide-images">
+									<div class="onetap-icon">
+										<span class="onetap-icon-animation">
+											<svg data-name="Layer 3" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10.815 2.277c-.486.121-.717.727-.432 1.131a.939.939 0 0 0 .277.248c.158.083.209.084 3.58.104l3.42.02.32.11c.538.184.878.399 1.304.826.427.426.642.766.826 1.304l.11.32.012 2.413.012 2.413-.252-.203c-.593-.481-1.196-.689-1.992-.689-.757 0-1.265.161-1.86.588-.132.095-1.112 1.046-2.179 2.114l-1.939 1.942-.441-.432c-.531-.521-.785-.715-1.181-.903a3.377 3.377 0 0 0-2.12-.243 4.121 4.121 0 0 0-1.147.502c-.106.071-.908.842-1.783 1.713l-1.59 1.583v-3.047c0-2.074-.014-3.113-.044-3.253-.141-.656-1.003-.787-1.363-.207l-.093.149v3.36c0 3.09.006 3.389.073 3.72.397 1.966 1.841 3.41 3.807 3.807.338.068.701.073 5.86.073 5.159 0 5.522-.005 5.86-.073 1.966-.397 3.41-1.841 3.807-3.807.068-.338.073-.701.073-5.86 0-5.159-.005-5.522-.073-5.86-.39-1.929-1.785-3.356-3.703-3.787-.374-.084-.467-.087-3.704-.097-1.826-.006-3.376.004-3.445.021M4.18 3.835a.61.61 0 0 0-.358.375.742.742 0 0 0 0 .581c.036.089.274.363.589.679l.528.53-.528.53c-.546.549-.652.707-.65.979.001.173.112.439.225.539a.918.918 0 0 0 .514.192c.263 0 .426-.109.97-.651L6 7.061l.53.528c.549.546.707.652.979.65.173-.001.439-.112.539-.225A.918.918 0 0 0 8.24 7.5c0-.263-.109-.426-.651-.97L7.061 6l.528-.53c.542-.544.651-.707.651-.97a.918.918 0 0 0-.192-.514c-.1-.113-.366-.224-.539-.225-.272-.002-.43.104-.979.65L6 4.939l-.53-.528c-.316-.315-.59-.553-.679-.589a.756.756 0 0 0-.611.013m14.515 8.075c.231.11.378.232.912.76l.637.628-.013 2.181-.012 2.181-.109.32c-.184.537-.399.878-.826 1.304-.534.535-1.13.846-1.787.934l-.203.028-2.11-2.13-2.11-2.13 1.913-1.914c1.052-1.053 1.979-1.96 2.06-2.016a2.49 2.49 0 0 1 .38-.2c.201-.084.285-.096.613-.087.333.01.414.027.655.141m-9.198 2.911c.108.032.279.107.38.165.179.104 1.16 1.071 3.943 3.885l1.356 1.371-4.418-.011-4.418-.011-.32-.11c-.552-.189-.877-.397-1.33-.852-.225-.227-.41-.435-.41-.464 0-.029.832-.884 1.85-1.899 1.86-1.856 1.965-1.949 2.368-2.076.225-.071.762-.07.999.002" fill-rule="evenodd"/></svg>
+										</span>
+									</div>
+									<div class="onetap-title">
+										<span class="onetap-heading"><?php esc_html_e( 'Hide Images', 'accessibility-onetap' ); ?></span>
+									</div>
+								</button>									
+
+								<!-- Feature Highlight All -->
+								<button type="button" role="button" aria-pressed="false" class="onetap-box-feature onetap-highlight-all">
+									<div class="onetap-icon">
+										<span class="onetap-icon-animation">
+											<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M3.84 2.265a1.794 1.794 0 0 0-1.514 1.23c-.056.173-.066.402-.066 1.485 0 1.412.013 1.515.243 1.9.223.372.597.673.972.78.102.03.316.066.475.081l.29.027v8.464l-.29.027c-.522.05-.833.182-1.163.496a1.996 1.996 0 0 0-.471.785c-.08.287-.08 2.633 0 2.92.154.55.624 1.034 1.179 1.214.173.056.402.066 1.485.066 1.412 0 1.515-.013 1.9-.243.372-.223.673-.597.78-.972.03-.102.066-.315.081-.475l.027-.29h8.462l.027.29c.015.159.052.373.082.475.11.377.409.75.781.972.385.23.488.243 1.9.243 1.083 0 1.312-.01 1.485-.066a1.852 1.852 0 0 0 1.179-1.214c.08-.287.08-2.633 0-2.92a1.996 1.996 0 0 0-.471-.785c-.33-.314-.641-.446-1.163-.496l-.29-.027V7.768l.29-.027c.16-.015.373-.051.475-.081.375-.107.749-.408.972-.78.23-.385.243-.488.243-1.9 0-1.083-.01-1.312-.066-1.485a1.852 1.852 0 0 0-1.214-1.179c-.287-.08-2.633-.08-2.92 0a1.996 1.996 0 0 0-.785.471c-.313.329-.448.645-.498 1.163l-.027.29H7.768l-.027-.29c-.037-.394-.109-.625-.273-.877a1.745 1.745 0 0 0-.582-.571c-.349-.217-.451-.231-1.726-.243a29.52 29.52 0 0 0-1.32.006m2.327 1.561c.067.061.073.152.073 1.167 0 .968-.008 1.11-.066 1.174-.061.067-.152.073-1.167.073-.968 0-1.11-.008-1.174-.066-.067-.061-.073-.152-.073-1.167 0-.968.008-1.11.066-1.174.061-.067.152-.073 1.167-.073.968 0 1.11.008 1.174.066m14 0c.067.061.073.152.073 1.167 0 .968-.008 1.11-.066 1.174-.061.067-.152.073-1.167.073-.968 0-1.11-.008-1.174-.066-.067-.061-.073-.152-.073-1.167 0-.968.008-1.11.066-1.174.061-.067.152-.073 1.167-.073.968 0 1.11.008 1.174.066m-3.91 2.224c.037.391.11.623.275.877.33.509.752.751 1.418.814l.29.027v8.464l-.29.027c-.394.037-.625.109-.877.273-.508.329-.753.755-.816 1.418l-.027.29H7.768l-.027-.29c-.063-.666-.305-1.088-.814-1.418-.252-.164-.483-.236-.877-.273l-.29-.027V7.768l.29-.027c.666-.063 1.088-.305 1.418-.814.164-.252.236-.483.273-.877l.027-.29h8.462l.027.29M6.167 17.826c.067.061.073.152.073 1.167 0 .968-.008 1.11-.066 1.174-.061.067-.152.073-1.167.073-.968 0-1.11-.008-1.174-.066-.067-.061-.073-.152-.073-1.167 0-.968.008-1.11.066-1.174.061-.067.152-.073 1.167-.073.968 0 1.11.008 1.174.066m14 0c.067.061.073.152.073 1.167 0 .968-.008 1.11-.066 1.174-.061.067-.152.073-1.167.073-.968 0-1.11-.008-1.174-.066-.067-.061-.073-.152-.073-1.167 0-.968.008-1.11.066-1.174.061-.067.152-.073 1.167-.073.968 0 1.11.008 1.174.066" fill-rule="evenodd"/></svg>
+										</span>
+									</div>
+
+									<div class="onetap-title">
+										<span class="onetap-heading"><?php esc_html_e( 'Highlight Content', 'accessibility-onetap' ); ?></span>
+									</div>
+								</button>	
+
+								<!-- Stop Animations -->
+								<button type="button" role="button" aria-pressed="false" class="onetap-box-feature onetap-stop-animations">
+									<div class="onetap-icon">
+										<span class="onetap-icon-animation">
+											<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M8.98 2.266c-.7.065-1.263.26-1.86.646-.242.157-3.724 3.595-4.041 3.991a4.019 4.019 0 0 0-.766 1.679c-.077.403-.077 6.433 0 6.836.111.588.401 1.224.766 1.679.317.396 3.799 3.834 4.041 3.991.469.303.962.505 1.464.6.4.075 6.432.075 6.832 0a4.107 4.107 0 0 0 1.464-.6c.242-.157 3.724-3.595 4.041-3.991a4.019 4.019 0 0 0 .766-1.679c.076-.402.077-6.433.001-6.834a3.993 3.993 0 0 0-.619-1.484c-.175-.262-3.567-3.696-3.972-4.021a4.091 4.091 0 0 0-1.562-.747c-.241-.058-.652-.067-3.335-.073a180.917 180.917 0 0 0-3.22.007m6.358 1.555c.545.142.584.175 2.625 2.216 1.58 1.581 1.924 1.944 2.026 2.143.256.496.251.418.251 3.82 0 3.402.005 3.324-.251 3.82-.102.199-.446.562-2.026 2.143-2.046 2.046-2.076 2.071-2.629 2.214-.363.093-6.313.095-6.672.002-.545-.142-.584-.175-2.625-2.216-2.041-2.041-2.074-2.08-2.216-2.625-.092-.352-.092-6.324 0-6.676.142-.545.175-.584 2.216-2.625 2.029-2.029 2.08-2.072 2.607-2.214.332-.089 6.353-.091 6.694-.002m.562 3.438a1.795 1.795 0 0 1-.16.04c-.091.02-1.119 1.024-4.212 4.113-2.25 2.249-4.13 4.149-4.177 4.224-.119.19-.117.541.005.738.176.284.484.409.833.338.186-.039.304-.152 4.301-4.145 2.349-2.347 4.138-4.164 4.175-4.242a.765.765 0 0 0-.249-.932c-.142-.098-.417-.169-.516-.134" fill-rule="evenodd"/></svg>
+										</span>
+									</div>
+									<div class="onetap-title">
+										<span class="onetap-heading"><?php esc_html_e( 'Stop Animations', 'accessibility-onetap' ); ?></span>
+									</div>
+								</button>								
+
+								<!-- Feature Highlight Links -->
+								<button type="button" role="button" aria-pressed="false" class="onetap-box-feature onetap-highlight-links">
+									<div class="onetap-icon">
+										<span class="onetap-icon-animation">
+											<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M6.452 6.821c-1.416.259-2.595 1.015-3.339 2.14-.581.879-.837 1.726-.839 2.779-.002.844.139 1.459.505 2.205.721 1.468 2.074 2.466 3.718 2.744.184.032.812.049 1.803.05 1.341.001 1.534-.007 1.64-.065.242-.134.42-.419.42-.674a.886.886 0 0 0-.212-.513c-.212-.227-.197-.225-1.948-.249l-1.62-.022-.38-.128c-1.121-.377-1.923-1.179-2.284-2.288a3.75 3.75 0 0 1-.099-1.721c.14-.697.451-1.267.983-1.799.427-.427.794-.659 1.331-.843.494-.168.829-.197 2.299-.197 1.289 0 1.352-.004 1.52-.085.26-.126.39-.344.39-.655 0-.311-.13-.529-.39-.655-.17-.082-.223-.085-1.693-.081-1.064.003-1.603.02-1.805.057m7.595.025c-.258.127-.387.346-.387.654 0 .311.13.529.39.655.168.081.231.085 1.52.085 1.47 0 1.805.029 2.299.197.537.184.904.416 1.331.843.532.532.843 1.102.983 1.799a3.75 3.75 0 0 1-.099 1.721c-.361 1.109-1.163 1.911-2.284 2.288l-.38.128-1.62.022c-1.751.024-1.736.022-1.948.249a.886.886 0 0 0-.212.513c0 .255.178.54.42.674.106.058.299.066 1.64.065.991-.001 1.619-.018 1.803-.05.767-.129 1.614-.484 2.202-.921a4.935 4.935 0 0 0 2.021-4.026c-.003-1.057-.258-1.902-.839-2.781-.621-.939-1.674-1.709-2.738-2.001-.657-.18-.896-.2-2.449-.2-1.433 0-1.486.003-1.653.086m-6.232 4.432c-.484.115-.717.726-.432 1.13a.939.939 0 0 0 .277.248c.159.083.191.084 4.219.095 2.865.008 4.122-.002 4.274-.034.749-.155.777-1.244.036-1.431-.21-.052-8.155-.06-8.374-.008" fill-rule="evenodd"/></svg>
+										</span>
+									</div>
+									<div class="onetap-title">
+										<span class="onetap-heading"><?php esc_html_e( 'Highlight Links', 'accessibility-onetap' ); ?></span>
+									</div>
+								</button>								
+
+							</div>
+						</div>
+					</div>
 
 					<!-- Reset settings -->
 					<div class="onetap-reset-settings">
-						<span>
+						<button type="button" aria-label="Reset all settings">
 							<?php esc_html_e( 'Reset Settings', 'accessibility-onetap' ); ?>
-						</span>
+						</button>
 					</div>
 
 					<!-- Footer bottom -->
@@ -4429,34 +5921,6 @@ class Accessibility_Onetap_Public {
 								</li>
 							</ul>
 						</div>
-
-						<!-- Divider version -->
-						<div class="onetap-divider-container">
-							<div class="onetap-divider">
-								<span class="onetap-divider-separator">
-									<span class="onetap-divider__text">
-										<?php
-										// Construct the file path of the plugin.
-										$plugin_file = ACCESSIBILITY_ONETAP_DIR_PATH . 'accessibility-onetap.php';
-
-										// Check if the plugin file exists.
-										if ( file_exists( $plugin_file ) ) {
-											// Include the necessary WordPress file for plugin data retrieval.
-											require_once ABSPATH . 'wp-admin/includes/plugin.php';
-
-											// Retrieve the plugin data.
-											$plugin_info = get_plugin_data( $plugin_file );
-
-											// Extract relevant plugin information.
-											$plugin_version = $plugin_info['Version'];
-											esc_html_e( 'Version ', 'accessibility-onetap' );
-											echo esc_html( $plugin_version );
-										}
-										?>
-									</span>
-								</span>
-							</div>
-						</div>
 					</footer>
 				</div>
 			</section>
@@ -4466,5 +5930,142 @@ class Accessibility_Onetap_Public {
 		<div class="onetap-markup-reading-mask onetap-bottom"></div>
 		<div class="onetap-markup-text-magnifier" style="display: none;"></div>
 		<?php
+	}
+
+	/**
+	 * Register shortcodes for the plugin.
+	 *
+	 * @since    1.0.0
+	 */
+	public function register_shortcodes() {
+		add_shortcode( 'onetap_free_accessibility', array( $this, 'onetap_accessibility_shortcode' ) );
+	}
+
+	/**
+	 * Register shortcode for accessibility toolbar.
+	 *
+	 * This shortcode allows users to display the accessibility toolbar
+	 * anywhere on their website using [onetap_accessibility] shortcode.
+	 *
+	 * @since    1.0.0
+	 * @param    array $atts Shortcode attributes.
+	 * @return   string HTML output of the accessibility toolbar.
+	 */
+	public function onetap_accessibility_shortcode( $atts ) {
+		// Parse shortcode attributes with defaults.
+		$atts = shortcode_atts(
+			array(
+				'show_toggle' => 'true',  // Show/hide the toggle button.
+				'position'    => 'inline', // Position: inline, fixed.
+			),
+			$atts,
+			'onetap_accessibility'
+		);
+
+		// Start output buffering to capture the HTML.
+		ob_start();
+
+		?>
+		<div class="onetap-shortcode-container" data-position="<?php echo esc_attr( $atts['position'] ); ?>">
+			<?php
+			// Render the complete accessibility template directly.
+			$this->render_accessibility_template();
+			?>
+		</div>
+		<?php
+
+		// Return the buffered content.
+		return ob_get_clean();
+	}
+
+	/**
+	 * Exclude plugin CSS from WP Rocket optimization.
+	 *
+	 * @since    1.0.0
+	 * @param    array $excluded_files Array of excluded CSS files.
+	 * @return   array Modified array with plugin CSS excluded.
+	 */
+	public function exclude_css_from_wp_rocket( $excluded_files ) {
+		// Ensure $excluded_files is an array.
+		if ( ! is_array( $excluded_files ) ) {
+			$excluded_files = array();
+		}
+
+		// Get the CSS file URL.
+		$css_url = plugins_url( $this->plugin_name ) . '/assets/css/accessibility-onetap-front-end.min.css';
+
+		// Get relative path from site URL.
+		$css_path = str_replace( home_url(), '', $css_url );
+
+		// Add multiple formats for better compatibility with WP Rocket.
+		$excluded_files[] = $css_url; // Full URL.
+		$excluded_files[] = $css_path; // Relative path.
+		$excluded_files[] = '/wp-content/plugins/' . $this->plugin_name . '/assets/css/accessibility-onetap-front-end.min.css'; // Absolute path.
+
+		// Remove duplicates.
+		$excluded_files = array_unique( $excluded_files );
+
+		return $excluded_files;
+	}
+
+	/**
+	 * Exclude plugin JS from WP Rocket optimization.
+	 *
+	 * @since    1.0.0
+	 * @param    array $excluded_files Array of excluded JS files.
+	 * @return   array Modified array with plugin JS excluded.
+	 */
+	public function exclude_js_from_wp_rocket( $excluded_files ) {
+		// Ensure $excluded_files is an array.
+		if ( ! is_array( $excluded_files ) ) {
+			$excluded_files = array();
+		}
+
+		// Get the JS file URL.
+		$js_url = plugins_url( $this->plugin_name ) . '/assets/js/script.min.js';
+
+		// Get relative path from site URL.
+		$js_path = str_replace( home_url(), '', $js_url );
+
+		// Add multiple formats for better compatibility with WP Rocket.
+		$excluded_files[] = $js_url; // Full URL.
+		$excluded_files[] = $js_path; // Relative path.
+		$excluded_files[] = '/wp-content/plugins/' . $this->plugin_name . '/assets/js/script.min.js'; // Absolute path.
+
+		// Remove duplicates.
+		$excluded_files = array_unique( $excluded_files );
+
+		return $excluded_files;
+	}
+
+	/**
+	 * Exclude plugin JS from WP Rocket defer optimization.
+	 * This is important because the script uses defer strategy.
+	 *
+	 * @since    1.0.0
+	 * @param    array $excluded_files Array of excluded JS files from defer.
+	 * @return   array Modified array with plugin JS excluded from defer.
+	 */
+	public function exclude_js_from_wp_rocket_defer( $excluded_files ) {
+		// Ensure $excluded_files is an array.
+		if ( ! is_array( $excluded_files ) ) {
+			$excluded_files = array();
+		}
+
+		// Get the JS file URL.
+		$js_url = plugins_url( $this->plugin_name ) . '/assets/js/script.min.js';
+
+		// Get relative path from site URL.
+		$js_path = str_replace( home_url(), '', $js_url );
+
+		// Add multiple formats for better compatibility with WP Rocket.
+		$excluded_files[] = $js_url; // Full URL.
+		$excluded_files[] = $js_path; // Relative path.
+		$excluded_files[] = '/wp-content/plugins/' . $this->plugin_name . '/assets/js/script.min.js'; // Absolute path.
+
+		// Remove duplicates.
+		$excluded_files = array_unique( $excluded_files );
+
+		return $excluded_files;
 	}
 }

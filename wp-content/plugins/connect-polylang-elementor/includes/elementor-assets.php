@@ -49,7 +49,7 @@ class ElementorAssets {
 			return;
 		}
 
-		$is_preview = isset( $_GET['elementor_preview'] );
+		$is_preview = ! empty( sanitize_key( wp_unslash( $_GET['elementor_preview'] ) ) );
 
 		if ( ! cpel_is_elementor_editor() && ! $is_preview ) {
 			return;
@@ -178,12 +178,12 @@ class ElementorAssets {
 			return;
 		}
 
-		$current_url = add_query_arg( $_SERVER['QUERY_STRING'], '', admin_url( 'post.php' ) );
-		$server_host = wp_parse_url( "//{$_SERVER['HTTP_HOST']}", PHP_URL_HOST );
-		$post_host   = wp_parse_url( \pll_get_post_language( intval( $_GET['post'] ), 'home_url' ), PHP_URL_HOST );
+		$current_url = add_query_arg( wp_unslash( $_SERVER['QUERY_STRING'] ), '', admin_url( 'post.php' ) );
+		$server_host = wp_parse_url( '//' . sanitize_text_field( wp_unslash( $_SERVER['HTTP_HOST'] ) ), PHP_URL_HOST );
+		$post_host   = wp_parse_url( pll_get_post_language( absint( $_GET['post'] ), 'home_url' ), PHP_URL_HOST );
 
 		if ( null !== $post_host && $server_host !== $post_host ) {
-			\wp_redirect( \str_replace( $server_host, $post_host, $current_url ) );
+			wp_safe_redirect( str_replace( $server_host, $post_host, $current_url ) );
 			exit;
 		}
 

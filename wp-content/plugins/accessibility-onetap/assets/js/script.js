@@ -2,42 +2,202 @@
 ( function( $ ) {
 	'use strict';
 
-	const accessibilityOnetapToggleClose = $( '.onetap-accessibility-plugin .onetap-close' );
-	const accessibilityOnetapToggleOpen = $( '.onetap-accessibility-plugin .onetap-toggle' );
-	const accessibilityOnetapAccessibility = $( '.onetap-accessibility-plugin .onetap-accessibility' );
-	const accessibilityOnetapLanguageList = $( '.onetap-accessibility-plugin .onetap-list-of-languages' );
-	const accessibilityOnetapToggleLanguages = $( '.onetap-accessibility-plugin .onetap-languages' );
+	// Apply OneTap body classes as early as possible
+	function onetapApplyBodyClasses() {
+		try {
+			if ( ! document || ! document.body ) {
+				return;
+			}
 
-	const accessibilityOnetapSkipElements = '.onetap-plugin-onetap, .onetap-plugin-onetap *, .onetap-toggle, .onetap-toggle *, #wpadminbar, #wpadminbar *, rs-fullwidth-wrap, rs-fullwidth-wrap *, rs-module-wrap, rs-module-wrap *, sr7-module, sr7-module *';
+			'onetap-root onetap-accessibility-plugin onetap-body-class onetap-custom-class onetap-classes'.split( ' ' ).forEach( function( cls ) {
+				document.body.classList.add( cls );
+			} );
 
-	// Open Accessibility.
-	accessibilityOnetapToggleOpen.click( function( event ) {
+			const moduleClassMapping = {
+				'bigger-text': 'onetap_hide_bigger_text',
+				'highlight-links': 'onetap_hide_highlight_links',
+				'line-height': 'onetap_hide_line_height',
+				'readable-font': 'onetap_hide_readable_font',
+				cursor: 'onetap_hide_cursor',
+				'text-magnifier': 'onetap_hide_text_magnifier',
+				'dyslexic-font': 'onetap_hide_dyslexic_font',
+				'text-align': 'onetap_hide_text_align',
+				'align-center': 'onetap_hide_align_center',
+				'letter-spacing': 'onetap_hide_letter_spacing',
+				'font-weight': 'onetap_hide_font_weight',
+				'dark-contrast': 'onetap_hide_dark_contrast',
+				'light-contrast': 'onetap_hide_light_contrast',
+				'high-contrast': 'onetap_hide_high_contrast',
+				monochrome: 'onetap_hide_monochrome',
+				saturation: 'onetap_hide_saturation',
+				'reading-line': 'onetap_hide_reading_line',
+				'reading-mask': 'onetap_hide_reading_mask',
+				'read-page': 'onetap_hide_read_page',
+				'keyboard-navigation': 'onetap_hide_keyboard_navigation',
+				'hide-images': 'onetap_hide_hide_images',
+				'mute-sounds': 'onetap_hide_mute_sounds',
+				'highlight-titles': 'onetap_hide_highlight_titles',
+				'highlight-all': 'onetap_hide_highlight_all',
+				'stop-animations': 'onetap_hide_stop_animations',
+			};
+
+			const showModules = ( typeof window !== 'undefined' && window.onetapAjaxObject && window.onetapAjaxObject.showModules ) ? window.onetapAjaxObject.showModules : null;
+			if ( showModules ) {
+				Object.keys( moduleClassMapping ).forEach( function( key ) {
+					const value = showModules[ key ];
+					if ( typeof value === 'string' && value.trim() === 'off' ) {
+						document.body.classList.add( moduleClassMapping[ key ] );
+					}
+				} );
+			}
+		} catch ( e ) {
+			console.log( 'OneTap: failed to add body classes via JS.', e );
+		}
+	}
+
+	if ( document && document.body ) {
+		onetapApplyBodyClasses();
+	} else {
+		document.addEventListener( 'DOMContentLoaded', onetapApplyBodyClasses );
+	}
+
+	const onetapToggleClose = $( '.onetap-accessibility-plugin .onetap-close' );
+	const onetapToggleOpen = $( '.onetap-accessibility-plugin .onetap-toggle' );
+	const onetapToggleOpenStatement = $( '.onetap-accessibility-plugin .onetap-statement button' );
+	const onetapToggleCloseStatement = $( '.accessibility-status-text button' );
+	const onetapToggleOpenHideToolbar = $( '.onetap-accessibility-plugin .onetap-hide-toolbar button' );
+	const onetapToggleCloseHideToolbar = $( '.close-box-hide-duration' );
+	const onetapAccessibility = $( '.onetap-accessibility-plugin .onetap-accessibility' );
+	const onetapToggleLanguages = $( '.onetap-accessibility-plugin .onetap-languages' );
+	const onetapLanguageList = $( '.onetap-accessibility-settings .onetap-list-of-languages' );
+	const onetapSkipElements = '.onetap-plugin-onetap, .onetap-plugin-onetap *, .onetap-toggle, .onetap-toggle *, #wpadminbar, #wpadminbar *, rs-fullwidth-wrap, rs-fullwidth-wrap *, rs-module-wrap, rs-module-wrap *, sr7-module, sr7-module *, .onetap-markup-reading-mask';
+
+	// Ensure body has required classes even if theme doesn't output body_class
+	$( function() {
+		// Open Accessibility (delegated to handle timing/dynamic DOM)
+		$( document ).on( 'click', '.onetap-accessibility-plugin .onetap-toggle', function( event ) {
+			event.stopPropagation();
+			$( '.onetap-accessibility-plugin .onetap-accessibility' ).removeClass( 'onetap-toggle-close' ).addClass( 'onetap-toggle-open' );
+			$( '.onetap-accessibility-plugin .onetap-close' ).show( 100 );
+			$( '.onetap-accessibility-plugin .onetap-languages' ).focus();
+		} );
+	} );
+
+	$( 'a[href="#onetap-toolbar"]' ).on( 'click', function( event ) {
 		event.stopPropagation();
-		accessibilityOnetapAccessibility.removeClass( 'onetap-toggle-close' ).addClass( 'onetap-toggle-open' );
-		accessibilityOnetapToggleClose.show( 100 );
+		onetapAccessibility.removeClass( 'onetap-toggle-close' ).addClass( 'onetap-toggle-open' );
+		onetapToggleClose.show( 100 );
+		onetapToggleLanguages.focus();
+	} );
+
+	$( document ).on( 'keydown', function( e ) {
+		// Detect if the platform is macOS
+		const isMac = navigator.platform.toUpperCase().indexOf( 'MAC' ) >= 0;
+		const isShortcut = (
+			( isMac && e.metaKey && e.key === '.' ) ||
+			( ! isMac && e.ctrlKey && e.key === '.' ) ||
+			( e.altKey && e.key === '.' )
+		);
+
+		// Trigger the accessibility panel if the correct shortcut is pressed
+		if ( isShortcut ) {
+			e.stopPropagation(); // Stop the event from bubbling up
+			e.preventDefault(); // Prevent default behavior (optional)
+
+			// Open the accessibility panel
+			onetapAccessibility.removeClass( 'onetap-toggle-close' ).addClass( 'onetap-toggle-open' );
+			onetapToggleClose.show( 100 ); // Show the close button
+			onetapToggleLanguages.focus(); // Focus on the language toggle
+		}
 	} );
 
 	// Close Accessibility.
-	accessibilityOnetapToggleClose.click( function( event ) {
+	onetapToggleClose.click( function( event ) {
 		event.stopPropagation();
-		accessibilityOnetapAccessibility.removeClass( 'onetap-toggle-open' ).addClass( 'onetap-toggle-close' );
-		accessibilityOnetapToggleClose.hide( 100 );
+		onetapAccessibility.removeClass( 'onetap-toggle-open' ).addClass( 'onetap-toggle-close' );
+		onetapToggleClose.hide( 100 );
+		onetapToggleOpen.focus();
+	} );
+
+	$( document ).on( 'keydown', function( e ) {
+		// Close the accessibility panel with Escape key
+		if ( e.key === 'Escape' ) {
+			e.stopPropagation();
+			e.preventDefault();
+
+			onetapAccessibility.removeClass( 'onetap-toggle-open' ).addClass( 'onetap-toggle-close' );
+			onetapToggleClose.hide( 100 );
+			onetapToggleOpen.focus();
+		}
+	} );
+
+	// When the close button of the language popup gains focus
+	onetapToggleClose.on( 'focus', function( event ) {
+		event.stopPropagation();
+		$( this ).attr( 'aria-expanded', false );
+
+		$( this ).removeClass( 'onetap-active' );
+		onetapToggleLanguages.removeClass( 'onetap-active' );
+		onetapLanguageList.fadeOut( 350 );
+	} );
+
+	// Open Statement
+	onetapToggleOpenStatement.click( function() {
+		$( '.onetap-accessibility' ).removeClass( 'active-hide-toolbar' );
+		$( '.toolbar-hide-duration' ).hide();
+
+		$( '.onetap-accessibility' ).addClass( 'active-statement' );
+		$( '.accessibility-status-wrapper' ).show();
+		$( '.accessibility-status-text button' ).focus();
+	} );
+
+	// Close Statement
+	onetapToggleCloseStatement.click( function() {
+		$( '.onetap-accessibility' ).removeClass( 'active-statement' );
+		$( '.accessibility-status-wrapper' ).hide();
+		$( '.onetap-statement button' ).focus();
+	} );
+
+	// Open Hide Toolbar
+	onetapToggleOpenHideToolbar.click( function() {
+		$( '.onetap-accessibility' ).removeClass( 'active-statement' );
+		$( '.accessibility-status-wrapper' ).hide();
+
+		$( '.onetap-accessibility' ).addClass( 'active-hide-toolbar' );
+		$( '.toolbar-hide-duration' ).show();
+	} );
+
+	// Close Hide Toolbar
+	onetapToggleCloseHideToolbar.click( function() {
+		$( '.onetap-accessibility' ).removeClass( 'active-hide-toolbar' );
+		$( '.toolbar-hide-duration' ).hide();
+		$( '.open-form-hide-toolbar' ).focus();
+	} );
+
+	// Active input radio - Hide Toolbar
+	$( '.toolbar-hide-duration .box-hide-duration form label' ).on( 'click', function() {
+		$( '.toolbar-hide-duration .box-hide-duration form label' ).removeClass( 'active' );
+		$( this ).addClass( 'active' );
 	} );
 
 	// Prevent auto-close when clicking inside accessibility panel.
-	accessibilityOnetapAccessibility.click( function( event ) {
-		accessibilityOnetapLanguageList.fadeOut( 350 );
-		accessibilityOnetapToggleLanguages.removeClass( 'onetap-active' );
+	onetapAccessibility.click( function( event ) {
+		onetapLanguageList.fadeOut( 350 );
+		onetapToggleLanguages.removeClass( 'onetap-active' );
 		if ( ! $( event.target ).closest( '.onetap-reset-settings' ).length ) {
 			event.stopPropagation();
 		}
 	} );
 
 	// Toggle list of languages.
-	accessibilityOnetapToggleLanguages.click( function( event ) {
+	onetapToggleLanguages.click( function( event ) {
 		event.stopPropagation();
+		// Toggle aria-expanded true/false
+		const isExpanded = $( this ).attr( 'aria-expanded' ) === 'true';
+		$( this ).attr( 'aria-expanded', ! isExpanded );
+
 		$( this ).toggleClass( 'onetap-active' );
-		accessibilityOnetapLanguageList.fadeToggle( 350 );
+		onetapLanguageList.fadeToggle( 350 );
 	} );
 
 	// Auto-close elements when clicking outside
@@ -47,45 +207,45 @@
 
 		// If clicking outside the accessibility panel, close accessibility
 		if ( ! isClickInsideAccessibility ) {
-			accessibilityOnetapAccessibility.removeClass( 'onetap-toggle-open' ).addClass( 'onetap-toggle-close' );
-			accessibilityOnetapToggleClose.hide( 100 );
+			onetapAccessibility.removeClass( 'onetap-toggle-open' ).addClass( 'onetap-toggle-close' );
+			onetapToggleClose.hide( 100 );
 		}
 
 		// If clicking outside the language list, close the language list
 		if ( ! isClickInsideLanguages ) {
-			accessibilityOnetapLanguageList.fadeOut( 350 );
-			accessibilityOnetapToggleLanguages.removeClass( 'onetap-active' );
+			onetapLanguageList.fadeOut( 350 );
+			onetapToggleLanguages.removeClass( 'onetap-active' );
 		}
 	} );
 
 	// Get the current date
-	const accessibilityOnetapToday = new Date();
+	const onetapToday = new Date();
 
-	// Extract the accessibilityOnetapYear, accessibilityOnetapMonth, and accessibilityOnetapDay
-	const accessibilityOnetapYear = accessibilityOnetapToday.getFullYear(); // Get the full accessibilityOnetapYear (e.g., 2024)
-	const accessibilityOnetapMonth = String( accessibilityOnetapToday.getMonth() + 1 ).padStart( 2, '0' ); // Get the accessibilityOnetapMonth (0-11) and add 1; pad with 0 if needed
-	const accessibilityOnetapDay = String( accessibilityOnetapToday.getDate() ).padStart( 2, '0' ); // Get the accessibilityOnetapDay of the accessibilityOnetapMonth (1-31) and pad with 0 if needed
+	// Extract the onetapYear, onetapMonth, and onetapDay
+	const onetapYear = onetapToday.getFullYear(); // Get the full onetapYear (e.g., 2024)
+	const onetapMonth = String( onetapToday.getMonth() + 1 ).padStart( 2, '0' ); // Get the onetapMonth (0-11) and add 1; pad with 0 if needed
+	const onetapDay = String( onetapToday.getDate() ).padStart( 2, '0' ); // Get the onetapDay of the onetapMonth (1-31) and pad with 0 if needed
 
 	// Create a formatted date string for the start date in the format YYYY-MM-DD
-	const accessibilityOnetapStartDate = `${ accessibilityOnetapYear }-${ accessibilityOnetapMonth }-${ accessibilityOnetapDay }`;
+	const onetapStartDate = `${ onetapYear }-${ onetapMonth }-${ onetapDay }`;
 
 	// Create a new date object for the end date by adding 2 days to the current date
-	const accessibilityOnetapEndDateObject = new Date( accessibilityOnetapToday ); // Create a new Date object based on accessibilityOnetapToday
-	accessibilityOnetapEndDateObject.setDate( accessibilityOnetapEndDateObject.getDate() + 2 ); // Add 2 days
+	const onetapEndDateObject = new Date( onetapToday ); // Create a new Date object based on onetapToday
+	onetapEndDateObject.setDate( onetapEndDateObject.getDate() + 2 ); // Add 2 days
 
 	// Extract the year, month, and day for the end date
-	const accessibilityOnetapEndYear = accessibilityOnetapEndDateObject.getFullYear();
-	const accessibilityOnetapEndMonth = String( accessibilityOnetapEndDateObject.getMonth() + 1 ).padStart( 2, '0' );
-	const accessibilityOnetapEndDay = String( accessibilityOnetapEndDateObject.getDate() ).padStart( 2, '0' );
+	const onetapEndYear = onetapEndDateObject.getFullYear();
+	const onetapEndMonth = String( onetapEndDateObject.getMonth() + 1 ).padStart( 2, '0' );
+	const onetapEndDay = String( onetapEndDateObject.getDate() ).padStart( 2, '0' );
 
 	// Create a formatted date string for the end date
-	const accessibilityOnetapEndDate = `${ accessibilityOnetapEndYear }-${ accessibilityOnetapEndMonth }-${ accessibilityOnetapEndDay }`;
+	const onetapEndDate = `${ onetapEndYear }-${ onetapEndMonth }-${ onetapEndDay }`;
 
-	// console.log(accessibilityOnetapStartDate); // Output the start date
-	// console.log(accessibilityOnetapEndDate);   // Output the end date
+	// console.log(onetapStartDate); // Output the start date
+	// console.log(onetapEndDate);   // Output the end date
 
-	// Default values for accessibilityOnetapLocalStorage
-	const accessibilityOnetapDefault = {
+	// Default values for onetapLocalStorage
+	const onetapAccessibilityDefault = {
 		dynamicFeatureSet: {
 			visionImpairedMode: false,
 			seizureSafeProfileMode: false,
@@ -95,70 +255,96 @@
 		},
 		activeBorders: {
 			biggerText: 0,
-			cursor: 0,
 			lineHeight: 0,
-			letterSpacing: 0,
-			textAlign: 0,
-			textMagnifier: 0,
-			invertColors: 0,
-			brightness: 0,
-			contrast: 0,
-			grayscale: 0,
-			saturation: 0,
 		},
 		biggerText: false,
-		cursor: false,
-		lineHeight: false,
-		letterSpacing: false,
-		readableFont: false,
-		dyslexicFont: false,
-		textAlign: false,
-		textMagnifier: false,
 		highlightLinks: false,
-		invertColors: false,
-		brightness: false,
-		contrast: false,
-		grayscale: false,
+		lineHeight: false,
+		readableFont: false,
+		cursor: false,
+		textMagnifier: false,
+		dyslexicFont: false,
+		alignLeft: false,
+		alignCenter: false,
+		alignRight: false,
+		letterSpacing: false,
+		fontWeight: false,
+		darkContrast: false,
+		lightContrast: false,
+		highContrast: false,
+		monochrome: false,
 		saturation: false,
 		readingLine: false,
-		keyboardNavigation: false,
-		highlightTitles: false,
 		readingMask: false,
-		hideImages: false,
-		highlightAll: false,
 		readPage: false,
+		keyboardNavigation: false,
+		hideImages: false,
 		muteSounds: false,
+		highlightTitles: false,
+		highlightAll: false,
 		stopAnimations: false,
 		information: {
-			updated: 'onetap-version-13',
-			language: accessibilityOnetapAjaxObject.getSettings.language,
+			updated: 'onetap-version-23',
+			language: onetapAjaxObject.getSettings.language,
 			developer: 'Yuky Hendiawan',
-			startDate: accessibilityOnetapStartDate,
-			endDate: accessibilityOnetapEndDate,
+			startDate: onetapStartDate,
+			endDate: onetapEndDate,
 		},
 	};
 
-	// If 'accessibilityOnetapLocalStorage' does not exist in localStorage, create it
-	const accessibilityOnetapLocalStorage = 'accessibility-onetap';
-	if ( ! localStorage.getItem( accessibilityOnetapLocalStorage ) ) {
-		localStorage.setItem( accessibilityOnetapLocalStorage, JSON.stringify( accessibilityOnetapDefault ) );
+	// If 'onetapLocalStorage' does not exist in localStorage, create it
+	const onetapLocalStorage = 'onetap-accessibility-free';
+	if ( ! localStorage.getItem( onetapLocalStorage ) ) {
+		localStorage.setItem( onetapLocalStorage, JSON.stringify( onetapAccessibilityDefault ) );
 	} else {
 		// Retrieve the existing data from localStorage
-		const accessibilityData = JSON.parse( localStorage.getItem( accessibilityOnetapLocalStorage ) );
+		const accessibilityData = JSON.parse( localStorage.getItem( onetapLocalStorage ) );
 
-		// Check if 'information.updated' exists and whether its value is 'onetap-version-13'
+		// Check if 'information.updated' exists and whether its value is 'onetap-version-23'
 		if ( typeof accessibilityData.information === 'undefined' ||
 			typeof accessibilityData.information.updated === 'undefined' ||
-			accessibilityData.information.updated !== 'onetap-version-13' ) {
-			localStorage.removeItem( accessibilityOnetapLocalStorage );
-			localStorage.setItem( accessibilityOnetapLocalStorage, JSON.stringify( accessibilityOnetapDefault ) );
+			accessibilityData.information.updated !== 'onetap-version-23' ) {
+			localStorage.removeItem( onetapLocalStorage );
+			localStorage.setItem( onetapLocalStorage, JSON.stringify( onetapAccessibilityDefault ) );
 		}
 	}
 
 	// Retrieves accessibility data from local storage.
-	function accessibilityOnetapGetData() {
-		const accessibilityData = JSON.parse( localStorage.getItem( accessibilityOnetapLocalStorage ) );
-		return accessibilityData;
+	function getDataAccessibilityData() {
+		try {
+			const storedData = localStorage.getItem( onetapLocalStorage );
+			if ( ! storedData ) {
+				return null;
+			}
+			const accessibilityData = JSON.parse( storedData );
+			return accessibilityData;
+		} catch ( error ) {
+			console.warn( 'Error parsing accessibility data from localStorage:', error );
+			return null;
+		}
+	}
+
+	/**
+	 * Updates the 'data-on' and 'data-off' attributes of elements with the class 'label-mode-switch-inner'.
+	 * If the attribute value exceeds 3 characters, it truncates it and appends '...'.
+	 */
+	function updateLabelModeSwitch() {
+		$( '.onetap-accessibility .label-mode-switch-inner' ).each( function() {
+			const $this = $( this );
+			let dataOn = $this.attr( 'data-on' );
+			let dataOff = $this.attr( 'data-off' );
+
+			if ( dataOn.length > 3 ) {
+				dataOn = dataOn.substring( 0, 3 ) + '.';
+			}
+
+			if ( dataOff.length > 3 ) {
+				dataOff = dataOff.substring( 0, 3 ) + '.';
+			}
+
+			$this.attr( 'data-on', dataOn );
+			$this.attr( 'data-off', dataOff );
+		} );
 	}
 
 	// Updates the country flag based on the selected language.
@@ -168,11 +354,16 @@
 		$( 'nav.onetap-accessibility .onetap-accessibility-settings .onetap-languages .onetap-icon img' ).removeClass( 'onetap-active' );
 
 		// Add the 'onetap-active' class to the image with the alt attribute matching the selected language
-		$( 'nav.onetap-accessibility .onetap-accessibility-settings .onetap-languages .onetap-icon img[alt="' + accessibilityOnetapGetData().information.language + '"]' ).addClass( 'onetap-active' );
+		$( 'nav.onetap-accessibility .onetap-accessibility-settings .onetap-languages .onetap-icon img[alt="' + getDataAccessibilityData().information.language + '"]' ).addClass( 'onetap-active' );
 	}
 
 	// Event handler for language selection
 	$( 'nav.onetap-accessibility header.onetap-header-top .onetap-list-of-languages ul li' ).click( function() {
+		// Update visual active state: clear from all items, then apply to the clicked one
+		const $languageItems = $( 'nav.onetap-accessibility header.onetap-header-top .onetap-list-of-languages ul li' );
+		$languageItems.removeClass( 'onetap-active' );
+		$( this ).addClass( 'onetap-active' );
+
 		const selectedLanguage = $( this ).attr( 'data-language' ); // Get the selected language from the data attribute
 		const languageName = $( this ).text(); // Get the name of the selected language
 
@@ -183,161 +374,680 @@
 		$( 'nav.onetap-accessibility .onetap-accessibility-settings .onetap-languages .onetap-icon img[alt="' + selectedLanguage + '"]' ).addClass( 'onetap-active' );
 
 		// Remove active class from the language toggle
-		$( accessibilityOnetapToggleLanguages ).removeClass( 'onetap-active' );
+		$( onetapToggleLanguages ).removeClass( 'onetap-active' );
 
 		// Update the displayed language name
 		$( 'nav.onetap-accessibility header.onetap-header-top .onetap-languages .onetap-text span' ).text( languageName );
 
 		// Update the header content based on the selected language
-		accessibilityOnetapUpdateContentBasedOnLanguage( selectedLanguage );
+		onetapUpdateContentBasedOnLanguage( selectedLanguage );
 
 		// Fade out the language settings panel
 		$( '.onetap-accessibility-settings header.onetap-header-top .onetap-list-of-languages' ).fadeOut( 350 );
 
-		const getDataAccessibilityDefault = accessibilityOnetapGetData();
+		// Updates the 'data-on' and 'data-off' attributes
+		updateLabelModeSwitch();
+
+		const getDataAccessibilityDefault = getDataAccessibilityData();
 		getDataAccessibilityDefault.information.language = selectedLanguage;
-		localStorage.setItem( accessibilityOnetapLocalStorage, JSON.stringify( getDataAccessibilityDefault ) );
+		localStorage.setItem( onetapLocalStorage, JSON.stringify( getDataAccessibilityDefault ) );
+
+		// The function to apply language translations to feature boxes
+		applyLanguageTranslationsToFeatures( selectedLanguage );
+		applyLanguageTranslationsToFunctionalFeatures( selectedLanguage );
+
+		if ( selectedLanguage === 'il' || selectedLanguage === 'ir' || selectedLanguage === 'ar' ) {
+			$( 'nav.onetap-plugin-onetap' ).addClass( 'onetap-rtl' );
+		} else {
+			$( 'nav.onetap-plugin-onetap' ).removeClass( 'onetap-rtl' );
+		}
 	} );
 
+	// Retrieve accessibility settings from localStorage
+	const getDataLocalStorage = getDataAccessibilityData();
+
+	// List of feature modes and their corresponding checkbox IDs
+	const featureModes = {
+		visionImpairedMode: '#onetap-box-vision-impaired-mode',
+		seizureSafeProfileMode: '#onetap-box-seizure-safe-profile',
+		adhdFriendlyMode: '#onetap-box-adhd-friendly-mode',
+		blindnessMode: '#onetap-box-blindness-mode',
+		epilepsySafeMode: '#onetap-box-epilepsy-safe-mode',
+	};
+
+	// Function to initialize checkboxes based on saved settings
+	function initializeModePresetToggle() {
+		$.each( featureModes, function( key, selector ) {
+			const checkbox = $( selector );
+
+			// Set the checkbox state based on saved feature settings
+			if ( getDataLocalStorage.dynamicFeatureSet[ key ] ) {
+				checkbox.prop( 'checked', true ).val( 1 );
+				$( selector ).closest( '.onetap-functional-feature' ).addClass( 'onetap-active' );
+				$( selector ).attr( 'aria-checked', true );
+			} else {
+				$( selector ).attr( 'aria-checked', false );
+			}
+		} );
+	}
+
+	// Function to handle checkbox state changes
+	function handleModePresetToggle() {
+		// Remove existing event listeners to prevent duplication
+		$( '.onetap-functional-feature input' ).off( 'change' );
+
+		$( '.onetap-functional-feature input' ).on( 'change', function() {
+			// Find the feature key corresponding to the checkbox
+			const featureKey = Object.keys( featureModes ).find( ( key ) => featureModes[ key ] === '#' + this.id );
+
+			// Get attr by id.
+			const getID = $( this ).attr( 'id' );
+
+			if ( featureKey ) {
+				const isChecked = $( this ).is( ':checked' );
+
+				// Update the feature settings in localStorage
+				const getDataAccessibilityDefault = getDataAccessibilityData();
+				Object.assign( getDataAccessibilityDefault.dynamicFeatureSet, {
+					visionImpairedMode: false,
+					seizureSafeProfileMode: false,
+					adhdFriendlyMode: false,
+					blindnessMode: false,
+					epilepsySafeMode: false,
+					[ featureKey ]: isChecked,
+				} );
+
+				// If user is checking a mode, uncheck all other modes first
+				if ( isChecked ) {
+					const checkboxPresetToggle = [
+						'#onetap-box-vision-impaired-mode',
+						'#onetap-box-seizure-safe-profile',
+						'#onetap-box-adhd-friendly-mode',
+						'#onetap-box-blindness-mode',
+						'#onetap-box-epilepsy-safe-mode',
+					];
+
+					checkboxPresetToggle.forEach( ( id ) => {
+						const checkbox = document.querySelector( id );
+						if ( checkbox && checkbox.id !== getID ) {
+							checkbox.checked = false;
+							$( id ).attr( 'aria-checked', false );
+							$( id ).closest( '.onetap-functional-feature' ).removeClass( 'onetap-active' );
+						}
+					} );
+				}
+
+				// Set the checkbox state based on user action (checked or unchecked)
+				$( this ).prop( 'checked', isChecked ).val( isChecked ? 1 : 0 );
+				$( this ).attr( 'aria-checked', isChecked );
+
+				// Manage the onetap-active class on the container
+				if ( isChecked ) {
+					$( this ).closest( '.onetap-functional-feature' ).addClass( 'onetap-active' );
+				} else {
+					$( this ).closest( '.onetap-functional-feature' ).removeClass( 'onetap-active' );
+				}
+
+				localStorage.setItem( onetapLocalStorage, JSON.stringify( getDataAccessibilityDefault ) );
+
+				// If user is unchecking, disable all modes
+				if ( ! isChecked ) {
+					onetapVisionImpairedMode( false );
+					onetapSeizureSafeProfileMode( false );
+					onetapADHDFriendlyMode( false );
+					onetapBlindnessMode( false );
+					onetapEpilepsySafeMode( false );
+				} else {
+					// If user is checking a mode, disable all other modes first
+					onetapVisionImpairedMode( false );
+					onetapSeizureSafeProfileMode( false );
+					onetapADHDFriendlyMode( false );
+					onetapBlindnessMode( false );
+					onetapEpilepsySafeMode( false );
+
+					// Then enable the selected mode
+					if ( featureKey === 'visionImpairedMode' && 'onetap-box-vision-impaired-mode' === getID ) {
+						onetapVisionImpairedMode( true );
+					} else if ( featureKey === 'seizureSafeProfileMode' && 'onetap-box-seizure-safe-profile' === getID ) {
+						onetapSeizureSafeProfileMode( true );
+					} else if ( featureKey === 'adhdFriendlyMode' && 'onetap-box-adhd-friendly-mode' === getID ) {
+						onetapADHDFriendlyMode( true );
+					} else if ( featureKey === 'blindnessMode' && 'onetap-box-blindness-mode' === getID ) {
+						onetapBlindnessMode( true );
+					} else if ( featureKey === 'epilepsySafeMode' && 'onetap-box-epilepsy-safe-mode' === getID ) {
+						onetapEpilepsySafeMode( true );
+					}
+				}
+			}
+		} );
+
+		// Keyboard support: toggle checkbox on Enter or Space key label-mode-switch (mode preset)
+		$( 'nav.onetap-accessibility .label-mode-switch' ).off( 'keydown' );
+		$( 'nav.onetap-accessibility .label-mode-switch' ).on( 'keydown', function( e ) {
+			const key = e.key;
+
+			if ( key === 'Enter' || key === ' ' ) {
+				e.preventDefault(); // Prevent page scroll or form submit
+
+				const checkbox = $( this ).find( 'input[type="checkbox"]' )[ 0 ];
+				if ( checkbox ) {
+					checkbox.checked = ! checkbox.checked;
+					$( checkbox ).trigger( 'change' );
+				}
+			}
+		} );
+	}
+
+	// Listen for any keydown event on the document
+	$( document ).on( 'keydown', function( e ) {
+		// Check if the user is pressing ALT + F11
+		if ( e.altKey && e.key === 'F11' ) {
+			e.preventDefault(); // Prevent the default browser action for F11
+
+			// Get the configuration value for keyboard navigation from the global object
+			const value = onetapAjaxObject?.showModules?.[ 'keyboard-navigation' ];
+
+			// If the value is a non-empty string and is set to 'on'
+			if ( 'string' === typeof value && '' !== value.trim() && 'on' === value ) {
+				// Simulate a click on the keyboard navigation feature box
+				$( 'nav.onetap-accessibility .onetap-features .onetap-box-feature.onetap-keyboard-navigation' ).trigger( 'click' );
+			}
+		}
+
+		// Check if the user is pressing ALT + SHIFT + K
+		if ( e.altKey && e.shiftKey && e.key.toLowerCase() === 'k' ) {
+			e.preventDefault(); // Prevent the default browser action for F11
+
+			// Get the configuration value for keyboard navigation from the global object
+			const value = onetapAjaxObject?.showModules?.[ 'keyboard-navigation' ];
+
+			// If the value is a non-empty string and is set to 'on'
+			if ( 'string' === typeof value && '' !== value.trim() && 'on' === value ) {
+				// Simulate a click on the keyboard navigation feature box
+				$( 'nav.onetap-accessibility .onetap-features .onetap-box-feature.onetap-keyboard-navigation' ).trigger( 'click' );
+			}
+		}
+	} );
+
+	// Initialize checkboxes and event listeners when the DOM is ready
+	$( document ).ready( function() {
+		initializeModePresetToggle(); // Initialize checkboxes based on saved data
+		handleModePresetToggle(); // Set up event listener for checkbox changes
+	} );
+
+	// Also initialize when the window loads (fallback)
+	$( window ).on( 'load', function() {
+		initializeModePresetToggle(); // Initialize checkboxes based on saved data
+	} );
+
+	// Function to manage Vision Impaired Mode
+	function onetapVisionImpairedMode( status ) {
+		if ( ! localStorage.getItem( onetapLocalStorage ) ) {
+			return;
+		}
+
+		const getDataAccessibilityDefault = getDataAccessibilityData();
+		const settings = [
+			{ key: 'bigger-text', prop: 'biggerText', border: true },
+			{ key: 'saturation', prop: 'saturation', border: true },
+			{ key: 'readable-font', prop: 'readableFont', border: false },
+		];
+
+		settings.forEach( ( { key, prop, border } ) => {
+			if ( onetapAjaxObject.showModules[ key ] === 'on' ) {
+				getDataAccessibilityDefault[ prop ] = status;
+				if ( border ) {
+					getDataAccessibilityDefault.activeBorders[ prop ] = status ? 1 : 0;
+				}
+				localStorage.setItem( onetapLocalStorage, JSON.stringify( getDataAccessibilityDefault ) );
+			}
+		} );
+
+		location.reload();
+	}
+
+	// Function to manage Seizure Safe Profile Mode
+	function onetapSeizureSafeProfileMode( status ) {
+		if ( ! localStorage.getItem( onetapLocalStorage ) ) {
+			return;
+		}
+
+		const getDataAccessibilityDefault = getDataAccessibilityData();
+		const settings = [
+			{ key: 'stop-animations', prop: 'stopAnimations', border: true },
+			{ key: 'monochrome', prop: 'monochrome', border: true },
+		];
+
+		settings.forEach( ( { key, prop, border } ) => {
+			if ( onetapAjaxObject.showModules[ key ] === 'on' ) {
+				getDataAccessibilityDefault[ prop ] = status;
+				if ( border ) {
+					getDataAccessibilityDefault.activeBorders[ prop ] = status ? 2 : 0;
+				}
+				localStorage.setItem( onetapLocalStorage, JSON.stringify( getDataAccessibilityDefault ) );
+			}
+		} );
+
+		location.reload();
+	}
+
+	// Function to manage ADHD Friendly Mode
+	function onetapADHDFriendlyMode( status ) {
+		if ( ! localStorage.getItem( onetapLocalStorage ) ) {
+			return;
+		}
+
+		const getDataAccessibilityDefault = getDataAccessibilityData();
+		const settings = [
+			{ key: 'stop-animations', prop: 'stopAnimations', border: true },
+			{ key: 'saturation', prop: 'saturation', border: true },
+			{ key: 'reading-mask', prop: 'readingMask', border: true },
+		];
+
+		settings.forEach( ( { key, prop, border } ) => {
+			if ( onetapAjaxObject.showModules[ key ] === 'on' ) {
+				getDataAccessibilityDefault[ prop ] = status;
+				if ( border ) {
+					getDataAccessibilityDefault.activeBorders[ prop ] = status ? 1 : 0;
+				}
+				localStorage.setItem( onetapLocalStorage, JSON.stringify( getDataAccessibilityDefault ) );
+			}
+		} );
+
+		location.reload();
+	}
+
+	// Function to manage Blindness Mode
+	function onetapBlindnessMode( status ) {
+		if ( ! localStorage.getItem( onetapLocalStorage ) ) {
+			return;
+		}
+
+		const getDataAccessibilityDefault = getDataAccessibilityData();
+		const settings = [
+			{ key: 'read-page', prop: 'readPage', border: true },
+			{ key: 'brightness', prop: 'brightness', border: true },
+			{ key: 'high-contrast', prop: 'highContrast', border: false },
+		];
+
+		settings.forEach( ( { key, prop, border } ) => {
+			if ( onetapAjaxObject.showModules[ key ] === 'on' ) {
+				getDataAccessibilityDefault[ prop ] = status;
+				if ( border ) {
+					getDataAccessibilityDefault.activeBorders[ prop ] = status ? 3 : 0;
+				}
+				localStorage.setItem( onetapLocalStorage, JSON.stringify( getDataAccessibilityDefault ) );
+			}
+		} );
+
+		location.reload();
+	}
+
+	// Function to manage Epilepsy Safe Mode
+	function onetapEpilepsySafeMode( status ) {
+		if ( ! localStorage.getItem( onetapLocalStorage ) ) {
+			return;
+		}
+
+		const getDataAccessibilityDefault = getDataAccessibilityData();
+		const settings = [
+			{ key: 'stop-animations', prop: 'stopAnimations', border: true },
+			{ key: 'monochrome', prop: 'monochrome', border: true },
+			{ key: 'mute-sounds', prop: 'muteSounds', border: true },
+		];
+
+		settings.forEach( ( { key, prop, border } ) => {
+			if ( onetapAjaxObject.showModules[ key ] === 'on' ) {
+				getDataAccessibilityDefault[ prop ] = status;
+				if ( border ) {
+					getDataAccessibilityDefault.activeBorders[ prop ] = status ? 2 : 0;
+				}
+				localStorage.setItem( onetapLocalStorage, JSON.stringify( getDataAccessibilityDefault ) );
+			}
+		} );
+
+		location.reload();
+	}
+
 	// Function to update content based on the selected language
-	accessibilityOnetapUpdateContentBasedOnLanguage( accessibilityOnetapGetData().information.language );
-	function accessibilityOnetapUpdateContentBasedOnLanguage( language ) {
+	onetapUpdateContentBasedOnLanguage( getDataAccessibilityData().information.language );
+	function onetapUpdateContentBasedOnLanguage( language ) {
 		// Define a list of valid languages
-		const validLanguages = [ 'en', 'de', 'es', 'fr', 'it', 'pl', 'se', 'fi', 'pt', 'ro', 'si', 'sk', 'nl', 'dk', 'gr', 'cz', 'hu', 'lt', 'lv', 'ee', 'hr', 'ie', 'bg', 'no', 'tr', 'id', 'pt-br', 'ja', 'ko', 'zh', 'ar', 'ru', 'hi', 'uk', 'sr' ];
+		const validLanguages = [ 'en', 'de', 'es', 'fr', 'it', 'pl', 'se', 'fi', 'pt', 'ro', 'si', 'sk', 'nl', 'dk', 'gr', 'cz', 'hu', 'lt', 'lv', 'ee', 'hr', 'ie', 'bg', 'no', 'tr', 'id', 'pt-br', 'ja', 'ko', 'zh', 'ar', 'ru', 'hi', 'uk', 'sr', 'gb', 'ir', 'il', 'mk', 'th', 'vn' ];
 
 		// Check if the provided language is valid
 		if ( validLanguages.includes( language ) ) {
-			const languageData = accessibilityOnetapAjaxObject.languages[ language ];
+			const languageData = onetapAjaxObject.languages[ language ];
+
+			if ( language === 'il' || language === 'ir' || language === 'ar' ) {
+				$( 'nav.onetap-plugin-onetap' ).addClass( 'onetap-rtl' );
+			} else {
+				$( 'nav.onetap-plugin-onetap' ).removeClass( 'onetap-rtl' );
+			}
+
+			// Update visual active state: clear from all items, then apply to the clicked one
+			const $languageItems = $( 'nav.onetap-accessibility header.onetap-header-top .onetap-list-of-languages ul li' );
+			$languageItems.removeClass( 'onetap-active' );
+			$( 'nav.onetap-accessibility header.onetap-header-top .onetap-list-of-languages ul li[data-language="' + language + '"]' ).addClass( 'onetap-active' );
+
+			// Update the language flag icon image with the full path from pluginInfo
+			$( 'nav.onetap-accessibility.onetap-plugin-onetap .onetap-container .onetap-accessibility-settings header.onetap-header-top .onetap-languages.onetap-disable .onetap-icon img' ).attr( 'src', onetapAjaxObject.pluginInfo.imagesUrl + onetapAjaxObject.languageList[ language ].image );
 
 			// Define an array of selectors and their corresponding data keys
 			const updates = [
-				// Header.
+				// Global elements
+				{ selector: 'nav.onetap-accessibility.onetap-plugin-onetap .onetap-container .accessibility-status-wrapper .accessibility-status-text button', text: languageData.global.back },
+				{ selector: 'nav.onetap-accessibility.onetap-plugin-onetap .onetap-container .accessibility-status-wrapper .accessibility-status-text button[data-default]', text: languageData.global.default },
+
+				// Header elements
 				{ selector: 'nav.onetap-accessibility header.onetap-header-top .onetap-languages .onetap-text span', text: languageData.header.language },
-				{ selector: 'nav.onetap-accessibility header.onetap-header-top .onetap-site-container .onetap-site-info .onetap-title h2', text: languageData.header.title },
+				{ selector: 'nav.onetap-accessibility header.onetap-header-top .onetap-site-container .onetap-site-info .onetap-title span', text: languageData.header.title },
 				{ selector: 'nav.onetap-accessibility header.onetap-header-top .onetap-site-container .onetap-site-info .onetap-desc p span', text: languageData.header.desc },
 				{ selector: 'nav.onetap-accessibility header.onetap-header-top .onetap-site-container .onetap-site-info .onetap-desc p a', text: languageData.header.anchor },
+				{ selector: 'nav.onetap-accessibility header.onetap-header-top .onetap-site-container .onetap-site-info .onetap-statement button', text: languageData.header.statement },
+				{ selector: 'nav.onetap-accessibility header.onetap-header-top .onetap-site-container .onetap-site-info .onetap-hide-toolbar button', text: languageData.header.hideToolbar },
 
-				// Multi Functions Title.
-				{ selector: 'nav.onetap-accessibility .onetap-container .onetap-accessibility-settings .onetap-multi-functional-feature .onetap-box-functions .onetap-box-title h2', text: languageData.multiFunctionalFeature.title },
+				// Hide toolbar elements
+				{ selector: 'nav.onetap-accessibility.onetap-plugin-onetap .onetap-container .toolbar-hide-duration .box-hide-duration span.onetap-title', text: languageData.hideToolbar.title },
+				{ selector: 'nav.onetap-accessibility.onetap-plugin-onetap .onetap-container .toolbar-hide-duration .box-hide-duration [for="only-for-this-session"] span', text: languageData.hideToolbar.radio1 },
+				{ selector: 'nav.onetap-accessibility.onetap-plugin-onetap .onetap-container .toolbar-hide-duration .box-hide-duration [for="only-for-24-hours"] span', text: languageData.hideToolbar.radio2 },
+				{ selector: 'nav.onetap-accessibility.onetap-plugin-onetap .onetap-container .toolbar-hide-duration .box-hide-duration [for="only-for-a-week"] span', text: languageData.hideToolbar.radio3 },
+				{ selector: 'nav.onetap-accessibility.onetap-plugin-onetap .onetap-container .toolbar-hide-duration .box-hide-duration button.close-box-hide-duration', text: languageData.hideToolbar.button1 },
+				{ selector: 'nav.onetap-accessibility.onetap-plugin-onetap .onetap-container .toolbar-hide-duration .box-hide-duration button.hide-toolbar', text: languageData.hideToolbar.button2 },
 
-				// Vision Impaired Mode.
+				// Unsupported page reader elements
+				{ selector: 'nav.onetap-accessibility.onetap-plugin-onetap .onetap-container .onetap-accessibility-settings .onetap-features-container .onetap-features .onetap-box-feature .onetap-message .title', text: languageData.unsupportedPageReader.title },
+				{ selector: 'nav.onetap-accessibility.onetap-plugin-onetap .onetap-container .onetap-accessibility-settings .onetap-features-container .onetap-features .onetap-box-feature .onetap-message .desc', text: languageData.unsupportedPageReader.desc },
+				{ selector: 'nav.onetap-accessibility.onetap-plugin-onetap .onetap-container .onetap-accessibility-settings .onetap-features-container .onetap-features .onetap-box-feature .onetap-message .desc .link', text: languageData.unsupportedPageReader.link },
+
+				// Multi-functional feature elements
+				{ selector: 'nav.onetap-accessibility .onetap-container .onetap-accessibility-settings .onetap-multi-functional-feature .onetap-box-functions .onetap-box-title span', text: languageData.multiFunctionalFeature.title },
+
+				// Vision impaired mode
 				{ selector: 'nav.onetap-accessibility .onetap-container .onetap-accessibility-settings .onetap-multi-functional-feature .onetap-box-functions .onetap-box-vision-impaired-mode .onetap-left .onetap-text .onetap-title span', text: languageData.multiFunctionalFeature.visionImpairedMode.title },
 				{ selector: 'nav.onetap-accessibility .onetap-container .onetap-accessibility-settings .onetap-multi-functional-feature .onetap-box-functions .onetap-box-vision-impaired-mode .onetap-left .onetap-text .onetap-desc span', text: languageData.multiFunctionalFeature.visionImpairedMode.desc },
 				{ selectorOn: 'nav.onetap-accessibility .onetap-container .onetap-accessibility-settings .onetap-multi-functional-feature .onetap-box-functions .onetap-box-vision-impaired-mode .onetap-right .onetap-toggle-container .label-mode-switch .label-mode-switch-inner', on: languageData.multiFunctionalFeature.visionImpairedMode.on },
 				{ selectorOff: 'nav.onetap-accessibility .onetap-container .onetap-accessibility-settings .onetap-multi-functional-feature .onetap-box-functions .onetap-box-vision-impaired-mode .onetap-right .onetap-toggle-container .label-mode-switch .label-mode-switch-inner', off: languageData.multiFunctionalFeature.visionImpairedMode.off },
 
-				// Seizure Safe Profile.
+				// Seizure safe profile mode
 				{ selector: 'nav.onetap-accessibility .onetap-container .onetap-accessibility-settings .onetap-multi-functional-feature .onetap-box-functions .onetap-box-seizure-safe-profile-mode .onetap-left .onetap-text .onetap-title span', text: languageData.multiFunctionalFeature.seizureSafeProfile.title },
 				{ selector: 'nav.onetap-accessibility .onetap-container .onetap-accessibility-settings .onetap-multi-functional-feature .onetap-box-functions .onetap-box-seizure-safe-profile-mode .onetap-left .onetap-text .onetap-desc span', text: languageData.multiFunctionalFeature.seizureSafeProfile.desc },
 				{ selectorOn: 'nav.onetap-accessibility .onetap-container .onetap-accessibility-settings .onetap-multi-functional-feature .onetap-box-functions .onetap-box-seizure-safe-profile-mode .onetap-right .onetap-toggle-container .label-mode-switch .label-mode-switch-inner', on: languageData.multiFunctionalFeature.seizureSafeProfile.on },
 				{ selectorOff: 'nav.onetap-accessibility .onetap-container .onetap-accessibility-settings .onetap-multi-functional-feature .onetap-box-functions .onetap-box-seizure-safe-profile-mode .onetap-right .onetap-toggle-container .label-mode-switch .label-mode-switch-inner', off: languageData.multiFunctionalFeature.seizureSafeProfile.off },
 
-				// ADHD Friendly Mode.
+				// ADHD friendly mode
 				{ selector: 'nav.onetap-accessibility .onetap-container .onetap-accessibility-settings .onetap-multi-functional-feature .onetap-box-functions .onetap-box-adhd-friendly-mode .onetap-left .onetap-text .onetap-title span', text: languageData.multiFunctionalFeature.aDHDFriendlyMode.title },
 				{ selector: 'nav.onetap-accessibility .onetap-container .onetap-accessibility-settings .onetap-multi-functional-feature .onetap-box-functions .onetap-box-adhd-friendly-mode .onetap-left .onetap-text .onetap-desc span', text: languageData.multiFunctionalFeature.aDHDFriendlyMode.desc },
 				{ selectorOn: 'nav.onetap-accessibility .onetap-container .onetap-accessibility-settings .onetap-multi-functional-feature .onetap-box-functions .onetap-box-adhd-friendly-mode .onetap-right .onetap-toggle-container .label-mode-switch .label-mode-switch-inner', on: languageData.multiFunctionalFeature.aDHDFriendlyMode.on },
 				{ selectorOff: 'nav.onetap-accessibility .onetap-container .onetap-accessibility-settings .onetap-multi-functional-feature .onetap-box-functions .onetap-box-adhd-friendly-mode .onetap-right .onetap-toggle-container .label-mode-switch .label-mode-switch-inner', off: languageData.multiFunctionalFeature.aDHDFriendlyMode.off },
 
-				// Blindness Mode.
+				// Blindness mode
 				{ selector: 'nav.onetap-accessibility .onetap-container .onetap-accessibility-settings .onetap-multi-functional-feature .onetap-box-functions .onetap-box-blindness-mode .onetap-left .onetap-text .onetap-title span', text: languageData.multiFunctionalFeature.blindnessMode.title },
 				{ selector: 'nav.onetap-accessibility .onetap-container .onetap-accessibility-settings .onetap-multi-functional-feature .onetap-box-functions .onetap-box-blindness-mode .onetap-left .onetap-text .onetap-desc span', text: languageData.multiFunctionalFeature.blindnessMode.desc },
 				{ selectorOn: 'nav.onetap-accessibility .onetap-container .onetap-accessibility-settings .onetap-multi-functional-feature .onetap-box-functions .onetap-box-blindness-mode .onetap-right .onetap-toggle-container .label-mode-switch .label-mode-switch-inner', on: languageData.multiFunctionalFeature.blindnessMode.on },
 				{ selectorOff: 'nav.onetap-accessibility .onetap-container .onetap-accessibility-settings .onetap-multi-functional-feature .onetap-box-functions .onetap-box-blindness-mode .onetap-right .onetap-toggle-container .label-mode-switch .label-mode-switch-inner', off: languageData.multiFunctionalFeature.blindnessMode.off },
 
-				// Epilepsy Safe Mode.
+				// Epilepsy safe mode
 				{ selector: 'nav.onetap-accessibility .onetap-container .onetap-accessibility-settings .onetap-multi-functional-feature .onetap-box-functions .onetap-box-epilepsy-safe-mode .onetap-left .onetap-text .onetap-title span', text: languageData.multiFunctionalFeature.epilepsySafeMode.title },
 				{ selector: 'nav.onetap-accessibility .onetap-container .onetap-accessibility-settings .onetap-multi-functional-feature .onetap-box-functions .onetap-box-epilepsy-safe-mode .onetap-left .onetap-text .onetap-desc span', text: languageData.multiFunctionalFeature.epilepsySafeMode.desc },
 				{ selectorOn: 'nav.onetap-accessibility .onetap-container .onetap-accessibility-settings .onetap-multi-functional-feature .onetap-box-functions .onetap-box-epilepsy-safe-mode .onetap-right .onetap-toggle-container .label-mode-switch .label-mode-switch-inner', on: languageData.multiFunctionalFeature.epilepsySafeMode.on },
 				{ selectorOff: 'nav.onetap-accessibility .onetap-container .onetap-accessibility-settings .onetap-multi-functional-feature .onetap-box-functions .onetap-box-epilepsy-safe-mode .onetap-right .onetap-toggle-container .label-mode-switch .label-mode-switch-inner', off: languageData.multiFunctionalFeature.epilepsySafeMode.off },
 
-				// Content.
-				{ selector: 'nav.onetap-accessibility .onetap-features .onetap-bigger-text .onetap-title h3', text: languageData.content.biggerText },
-				{ selector: 'nav.onetap-accessibility .onetap-features .onetap-cursor .onetap-title h3', text: languageData.content.cursor },
-				{ selector: 'nav.onetap-accessibility .onetap-features .onetap-line-height .onetap-title h3', text: languageData.content.lineHeight },
-				{ selector: 'nav.onetap-accessibility .onetap-features .onetap-letter-spacing .onetap-title h3', text: languageData.content.letterSpacing },
-				{ selector: 'nav.onetap-accessibility .onetap-features .onetap-readable-font .onetap-title h3', text: languageData.content.readableFont },
-				{ selector: 'nav.onetap-accessibility .onetap-features .onetap-dyslexic-font .onetap-title h3', text: languageData.content.dyslexicFont },
+				// Titles section
+				{ selector: 'nav.onetap-accessibility .onetap-features-container.onetap-feature-content-modules .onetap-box-title .onetap-title', text: languageData.titles.contentModules },
+				{ selector: 'nav.onetap-accessibility .onetap-features-container.onetap-feature-color-modules .onetap-box-title .onetap-title', text: languageData.titles.colorModules },
+				{ selector: 'nav.onetap-accessibility .onetap-features-container.onetap-feature-orientation-modules .onetap-box-title .onetap-title', text: languageData.titles.orientationModules },
 
-				// Content Bottom.
-				{ selector: 'nav.onetap-accessibility .onetap-features .onetap-text-align .onetap-title h3', text: languageData.contentBottom.textAlign },
-				{ selector: 'nav.onetap-accessibility .onetap-features .onetap-text-magnifier .onetap-title h3', text: languageData.contentBottom.textMagnifier },
-				{ selector: 'nav.onetap-accessibility .onetap-features .onetap-highlight-links .onetap-title h3', text: languageData.contentBottom.highlightLinks },
+				// Features section - Content features
+				{ selector: 'nav.onetap-accessibility .onetap-features .onetap-bigger-text .onetap-title > span', text: languageData.features.biggerText },
+				{ selector: 'nav.onetap-accessibility .onetap-features .onetap-bigger-text .onetap-title .onetap-info', text: languageData.global.default },
+				{ selector: 'nav.onetap-accessibility .onetap-features .onetap-highlight-links .onetap-title > span', text: languageData.features.highlightLinks },
+				{ selector: 'nav.onetap-accessibility .onetap-features .onetap-line-height .onetap-title > span', text: languageData.features.lineHeight },
+				{ selector: 'nav.onetap-accessibility .onetap-features .onetap-line-height .onetap-title .onetap-info', text: languageData.global.default },
+				{ selector: 'nav.onetap-accessibility .onetap-features .onetap-readable-font .onetap-title > span', text: languageData.features.readableFont },
+				{ selector: 'nav.onetap-accessibility .onetap-features .onetap-cursor .onetap-title > span', text: languageData.features.cursor },
+				{ selector: 'nav.onetap-accessibility .onetap-features .onetap-text-magnifier .onetap-title > span', text: languageData.features.textMagnifier },
+				{ selector: 'nav.onetap-accessibility .onetap-features .onetap-dyslexic-font .onetap-title > span', text: languageData.features.dyslexicFont },
+				{ selector: 'nav.onetap-accessibility .onetap-features .onetap-align-center .onetap-title > span', text: languageData.features.alignCenter },
+				{ selector: 'nav.onetap-accessibility .onetap-features .onetap-letter-spacing .onetap-title > span', text: languageData.features.letterSpacing },
+				{ selector: 'nav.onetap-accessibility .onetap-features .onetap-font-weight .onetap-title > span', text: languageData.features.fontWeight },
 
-				// Colors.
-				{ selector: 'nav.onetap-accessibility .onetap-features .onetap-invert-colors .onetap-title h3', text: languageData.colors.invertColors },
-				{ selector: 'nav.onetap-accessibility .onetap-features .onetap-brightness .onetap-title h3', text: languageData.colors.brightness },
-				{ selector: 'nav.onetap-accessibility .onetap-features .onetap-contrast .onetap-title h3', text: languageData.colors.contrast },
-				{ selector: 'nav.onetap-accessibility .onetap-features .onetap-grayscale .onetap-title h3', text: languageData.colors.grayscale },
-				{ selector: 'nav.onetap-accessibility .onetap-features .onetap-saturation .onetap-title h3', text: languageData.colors.saturation },
+				// Features section - Color features
+				{ selector: 'nav.onetap-accessibility .onetap-features .onetap-dark-contrast .onetap-title > span', text: languageData.features.darkContrast },
+				{ selector: 'nav.onetap-accessibility .onetap-features .onetap-light-contrast .onetap-title > span', text: languageData.features.lightContrast },
+				{ selector: 'nav.onetap-accessibility .onetap-features .onetap-high-contrast .onetap-title > span', text: languageData.features.highContrast },
+				{ selector: 'nav.onetap-accessibility .onetap-features .onetap-monochrome .onetap-title > span', text: languageData.features.monochrome },
+				{ selector: 'nav.onetap-accessibility .onetap-features .onetap-saturation .onetap-title > span', text: languageData.features.saturation },
 
-				// Orientation.
-				{ selector: 'nav.onetap-accessibility .onetap-features .onetap-reading-line .onetap-title h3', text: languageData.orientation.readingLine },
-				{ selector: 'nav.onetap-accessibility .onetap-features .onetap-keyboard-navigation .onetap-title h3', text: languageData.orientation.keyboardNavigation },
-				{ selector: 'nav.onetap-accessibility .onetap-features .onetap-highlight-titles .onetap-title h3', text: languageData.orientation.highlightTitles },
-				{ selector: 'nav.onetap-accessibility .onetap-features .onetap-reading-mask .onetap-title h3', text: languageData.orientation.readingMask },
-				{ selector: 'nav.onetap-accessibility .onetap-features .onetap-hide-images .onetap-title h3', text: languageData.orientation.hideImages },
-				{ selector: 'nav.onetap-accessibility .onetap-features .onetap-highlight-all .onetap-title h3', text: languageData.orientation.highlightAll },
+				// Features section - Orientation features
+				{ selector: 'nav.onetap-accessibility .onetap-features .onetap-reading-line .onetap-title > span', text: languageData.features.readingLine },
+				{ selector: 'nav.onetap-accessibility .onetap-features .onetap-reading-mask .onetap-title > span', text: languageData.features.readingMask },
+				{ selector: 'nav.onetap-accessibility .onetap-features .onetap-read-page .onetap-title > span', text: languageData.features.readPage },
+				{ selector: 'nav.onetap-accessibility .onetap-features .onetap-keyboard-navigation .onetap-title > span', text: languageData.features.keyboardNavigation },
+				{ selector: 'nav.onetap-accessibility .onetap-features .onetap-hide-images .onetap-title > span', text: languageData.features.hideImages },
+				{ selector: 'nav.onetap-accessibility .onetap-features .onetap-mute-sounds .onetap-title > span', text: languageData.features.muteSounds },
+				{ selector: 'nav.onetap-accessibility .onetap-features .onetap-highlight-titles .onetap-title > span', text: languageData.features.highlightTitles },
+				{ selector: 'nav.onetap-accessibility .onetap-features .onetap-highlight-all .onetap-title > span', text: languageData.features.highlightAll },
+				{ selector: 'nav.onetap-accessibility .onetap-features .onetap-stop-animations .onetap-title > span', text: languageData.features.stopAnimations },
 
-				// Content Bottom.
-				{ selector: 'nav.onetap-accessibility .onetap-features .onetap-read-page .onetap-title h3', text: languageData.orientationBottom.readPage },
-				{ selector: 'nav.onetap-accessibility .onetap-features .onetap-mute-sounds .onetap-title h3', text: languageData.orientationBottom.muteSounds },
-				{ selector: 'nav.onetap-accessibility .onetap-features .onetap-stop-animations .onetap-title h3', text: languageData.orientationBottom.stopAnimations },
-
-				// Divider.
-				{ selector: 'nav.onetap-accessibility .onetap-divider-separator .onetap-content', text: languageData.divider.content },
-				{ selector: 'nav.onetap-accessibility .onetap-divider-separator .onetap-colors', text: languageData.divider.colors },
-				{ selector: 'nav.onetap-accessibility .onetap-divider-separator .onetap-orientation', text: languageData.divider.navigation },
-
-				// ResetSettings.
-				{ selector: 'nav.onetap-accessibility .onetap-accessibility-settings .onetap-reset-settings span', text: languageData.resetSettings },
-
-				// Footer.
-				{ selector: 'nav.onetap-accessibility .onetap-footer-bottom .onetap-icon-list-text', text: languageData.footer.accessibilityStatement },
-				{ selector: 'nav.onetap-accessibility footer.onetap-footer-bottom .onetap-divider-container .onetap-divider__text', text: languageData.footer.version },
+				// Reset settings
+				{ selector: 'nav.onetap-accessibility .onetap-accessibility-settings .onetap-reset-settings button', text: languageData.features.resetSettings },
 			];
 
 			// Update each element with the corresponding text
 			updates.forEach( ( update ) => {
 				$( update.selector ).text( update.text );
+
+				// Update aria-label for all multi-functional feature title spans
+				if ( update.selector && update.selector.includes( '.onetap-multi-functional-feature' ) && update.selector.includes( '.onetap-title span' ) ) {
+					$( update.selector ).parent().parent().parent().parent().find( '.onetap-right .label-mode-switch' ).attr( 'aria-label', update.text );
+				}
+
+				// Check if update.selectorOn exist.
+				if ( update.selectorOn ) {
+					$( update.selectorOn ).attr( 'data-on', update.on );
+				}
+
+				// Check if update.selectorOff exist.
+				if ( update.selectorOff ) {
+					$( update.selectorOff ).attr( 'data-off', update.off );
+				}
 			} );
 		}
 	}
 
-	// Updates the font-size of elements except for the excluded selectors
-	function accessibilityOnetapUpdateHeadingFontSize( heading, excludedSelectors, fontSize, activeBorderValue ) {
-		$( '*' ).not( excludedSelectors ).each( function() {
-			// Get the current inline style of the element, or use an empty string if none exists
-			let currentStyle = $( this ).attr( 'style' ) || '';
+	/**
+	 * Applies translated labels to each accessibility feature box,
+	 * based on the active language and predefined localized labels.
+	 *
+	 * @param {string} activeLang - The currently active language code.
+	 */
+	function applyLanguageTranslationsToFeatures( activeLang ) {
+		// Get the localized labels and the currently active language from the global object
+		const localizedLabels = onetapAjaxObject?.localizedLabels;
+		const getActiveLang = activeLang;
 
-			if ( 0 === activeBorderValue ) {
-				// Remove the font-size if activeBorderValue is 0
-				currentStyle = currentStyle.replace( /font-size:\s*[^;]+;?/, '' );
-			} else if ( [ 1, 2, 3 ].includes( activeBorderValue ) ) {
-				// Check if the element has a style attribute and if it ends with a semicolon
-				if ( currentStyle.trim() && ! /;$/.test( currentStyle.trim() ) ) {
-					currentStyle += ';';
-				}
+		// Get the labels for the currently active language
+		const labelsForCurrentLang = localizedLabels?.[ getActiveLang ];
 
-				// Check if 'font-size' is already defined in the style
-				if ( /font-size:\s*[^;]+;?/.test( currentStyle ) ) {
-					// If it exists, replace the existing font-size with the new value
-					currentStyle = currentStyle.replace( /font-size:\s*[^;]+;?/, 'font-size: ' + fontSize );
-				} else {
-					// If font-size is not present, append it to the style attribute
-					currentStyle += ' font-size: ' + fontSize;
+		// Loop through each element with the class 'onetap-box-feature' inside accessibility settings
+		$( '.onetap-accessibility-settings .onetap-features .onetap-box-feature' ).each( function() {
+			// Get all class names applied to the current feature box
+			const allClassNames = $( this ).attr( 'class' ).split( /\s+/ );
+
+			// Filter out the base class 'onetap-box-feature' to isolate the actual feature class
+			const featureClassNames = allClassNames.filter( ( className ) => className !== 'onetap-box-feature' );
+
+			// Convert each class name into camelCase format after removing 'onetap-' prefix
+			const camelCaseFeatureKeys = featureClassNames
+				.map( ( className ) => className.replace( /^onetap-/, '' ) ) // Remove the 'onetap-' prefix
+				.map( ( className ) => className.replace( /-([a-z])/g, ( _, letter ) => letter.toUpperCase() ) ); // Convert kebab-case to camelCase
+
+			// Use the first camelCased key as the feature key for translation
+			const featureKey = camelCaseFeatureKeys[ 0 ];
+
+			// Get the translated label for the current feature key
+			const translatedLabel = labelsForCurrentLang?.[ featureKey ];
+
+			// If a valid translated label exists, update the text of the heading element inside the feature box
+			if ( translatedLabel !== undefined && translatedLabel !== null && translatedLabel !== '' ) {
+				$( '.' + featureClassNames.join( '.' ) + ' .onetap-heading' ).text( translatedLabel );
+			}
+		} );
+
+		// Apply translation to "Default" text in .onetap-info elements
+		// For bigger-text feature, use biggerTextDefault
+		if ( labelsForCurrentLang?.biggerTextDefault ) {
+			$( '.onetap-box-feature.onetap-bigger-text .onetap-info' ).text( labelsForCurrentLang.biggerTextDefault );
+		}
+
+		// For line-height feature, use lineHeightDefault
+		if ( labelsForCurrentLang?.lineHeightDefault ) {
+			$( '.onetap-box-feature.onetap-line-height .onetap-info' ).text( labelsForCurrentLang.lineHeightDefault );
+		}
+
+		// Apply translation to align-center feature
+		if ( labelsForCurrentLang?.textAlign ) {
+			$( '.onetap-box-feature.onetap-align-center .onetap-heading' ).text( labelsForCurrentLang.textAlign );
+		}
+	}
+
+	/**
+	 * Apply language translations to functional features and box titles
+	 *
+	 * @param {string} activeLang - The currently active language code.
+	 */
+	function applyLanguageTranslationsToFunctionalFeatures( activeLang ) {
+		// Get the localized labels and the currently active language from the global object
+		const localizedLabels = onetapAjaxObject?.localizedLabels;
+		const getActiveLang = activeLang;
+
+		// Get the labels for the currently active language
+		const labelsForCurrentLang = localizedLabels?.[ getActiveLang ];
+
+		// Apply translations to .onetap-site-container .onetap-site-info .onetap-statement button
+		$( '.onetap-site-container .onetap-site-info .onetap-statement button' ).each( function() {
+			// Check if labelsForCurrentLang exists and has accessibilityInformation property
+			if ( labelsForCurrentLang && labelsForCurrentLang.accessibilityInformation ) {
+				const title = labelsForCurrentLang.accessibilityInformation;
+
+				// Only update text if title has a valid value (not undefined, null, or empty)
+				if ( title !== undefined && title !== null && title !== '' ) {
+					$( this ).text( title );
 				}
 			}
+		} );
 
-			// Trim any extra spaces and ensure there's no trailing space
-			currentStyle = currentStyle.trim();
+		// Apply translations to .onetap-site-container .onetap-site-info .onetap-hide-toolbar button
+		$( '.onetap-site-container .onetap-site-info .onetap-hide-toolbar button' ).each( function() {
+			// Check if labelsForCurrentLang exists and has hideToolbar property
+			if ( labelsForCurrentLang && labelsForCurrentLang.hideToolbar ) {
+				const title = labelsForCurrentLang.hideToolbar;
 
-			// Set the updated style attribute back to the element
-			$( this ).attr( 'style', currentStyle );
+				// Only update text if title has a valid value (not undefined, null, or empty)
+				if ( title !== undefined && title !== null && title !== '' ) {
+					$( this ).text( title );
+				}
+			}
+		} );
+
+		// Apply translations to .onetap-site-container .onetap-site-info .onetap-title span
+		$( '.onetap-site-container .onetap-site-info .onetap-title span' ).each( function() {
+			// Check if labelsForCurrentLang exists and has accessibilityAdjustments property
+			if ( labelsForCurrentLang && labelsForCurrentLang.accessibilityAdjustments ) {
+				const title = labelsForCurrentLang.accessibilityAdjustments;
+
+				// Only update text if title has a valid value (not undefined, null, or empty)
+				if ( title !== undefined && title !== null && title !== '' ) {
+					$( this ).text( title );
+				}
+			}
+		} );
+
+		// Apply translations to .onetap-box-functions .onetap-box-title span
+		$( '.onetap-box-functions .onetap-box-title span' ).each( function() {
+			// Check if labelsForCurrentLang exists and has selectYourAccessibilityProfile property
+			if ( labelsForCurrentLang && labelsForCurrentLang.selectYourAccessibilityProfile ) {
+				const title = labelsForCurrentLang.selectYourAccessibilityProfile;
+
+				// Only update text if title has a valid value (not undefined, null, or empty)
+				if ( title !== undefined && title !== null && title !== '' ) {
+					$( this ).text( title );
+				}
+			}
+		} );
+
+		// Apply translations to .onetap-functional-feature .onetap-title span
+		$( '.onetap-box-functions .onetap-functional-feature' ).each( function() {
+			if ( labelsForCurrentLang ) {
+				// Get all class names applied to the current feature box
+				const allClassNames = $( this ).attr( 'class' ).split( /\s+/ );
+
+				// Filter out the base class 'onetap-functional-feature' to isolate the actual feature class
+				const featureClassNames = allClassNames.filter( ( className ) => className !== 'onetap-functional-feature' );
+
+				// Convert each class name into camelCase format after removing 'onetap-' prefix
+				const camelCaseFeatureKeys = featureClassNames
+					.map( ( className ) => className.replace( /^onetap-box/, '' ) ) // Remove the 'onetap-' prefix
+					.map( ( className ) => className.replace( /-([a-z])/g, ( _, letter ) => letter.toUpperCase() ) ) // Convert kebab-case to camelCase
+					.map( ( className ) => className.charAt( 0 ).toLowerCase() + className.slice( 1 ) ); // Make first letter lowercase
+
+				// Use the first camelCased key as the feature key for translation
+				const featureKey = camelCaseFeatureKeys[ 0 ];
+
+				// Get the translated label for the current feature key
+				const translatedLabel = labelsForCurrentLang?.[ featureKey ];
+
+				// If a valid translated label exists, update the text of the heading element inside the feature box
+				if ( translatedLabel !== undefined && translatedLabel !== null && translatedLabel !== '' ) {
+					$( '.' + featureClassNames.join( '.' ) + ' .onetap-title span' ).text( translatedLabel );
+
+					// Mapping for description translations based on feature class names
+					const descriptionMapping = {
+						'onetap-box-vision-impaired-mode': 'enhancesWebsitesVisuals',
+						'onetap-box-seizure-safe-profile-mode': 'clearFlashesReducesColor',
+						'onetap-box-adhd-friendly-mode': 'focusedBrowsingDistractionFree',
+						'onetap-box-blindness-mode': 'reducesDistractionsImprovesFocus',
+						'onetap-box-epilepsy-safe-mode': 'dimsColorsAndStopsBlinking',
+					};
+
+					// Get the description key for current feature
+					const descriptionKey = descriptionMapping[ featureClassNames[ 0 ] ];
+
+					// Apply description translation if key exists and has valid value
+					if ( descriptionKey && labelsForCurrentLang[ descriptionKey ] ) {
+						$( '.' + featureClassNames.join( '.' ) + ' .onetap-desc span' ).text( labelsForCurrentLang[ descriptionKey ] );
+					}
+				}
+			}
 		} );
 	}
 
+	// The function to apply language translations to feature boxes
+	// applyLanguageTranslationsToFeatures( getDataAccessibilityData().information.language );
+
+	// The function to apply language translations to feature boxes
+	// applyLanguageTranslationsToFeatures();
+
+	// The function to apply language translations to functional features
+	// applyLanguageTranslationsToFunctionalFeatures( getDataAccessibilityData().information.language );
+
+	// The function to apply language translations to feature boxes
+	// applyLanguageTranslationsToFunctionalFeatures();
+
+	// Clicking the left area toggles the corresponding switch (delegate on onetapAccessibility to bypass stopPropagation to document)
+	onetapAccessibility.on( 'click', '.onetap-functional-feature .onetap-left', function( event ) {
+		// Avoid interfering with other controls
+		event.stopPropagation();
+		const $feature = $( this ).closest( '.onetap-functional-feature' );
+		const $checkbox = $feature.find( '.label-mode-switch input[type="checkbox"]' );
+		if ( $checkbox.length ) {
+			$checkbox.trigger( 'click' );
+		}
+	} );
+
 	// Updates the letter-spacing of elements except for the excluded selectors
-	function accessibilityOnetapUpdateLetterSpacing( letter, excludedSelectors, letterSpacing, activeBorderValue ) {
+	function onetapUpdateLetterSpacing( letter, excludedSelectors, letterSpacing, activeBorderValue ) {
 		$( '*' ).not( excludedSelectors ).each( function() {
 			// Get the current inline style of the element, or use an empty string if none exists
 			let currentStyle = $( this ).attr( 'style' ) || '';
@@ -370,22 +1080,43 @@
 	}
 
 	// This function adjusts the text size based on the 'biggerText'
-	function accessibilityOnetapBiggerText( key, activeBorderValue ) {
-		// if value off, return.
-		if ( 'off' === accessibilityOnetapAjaxObject.showModules[ 'bigger-text' ] ) {
+	function onetapBiggerText( key, activeBorderValue, selector ) {
+		// if value off, return
+		if ( 'off' === onetapAjaxObject.showModules[ 'bigger-text' ] ) {
 			return;
 		}
 
 		// Check if the key is 'fontSize'. If it is, the function will proceed with font size adjustments.
 		if ( 'biggerText' === key ) {
+			// Map steps to 10% per step; allow negative steps down to -10 and up to 10
+			// Example: -10 => -100%, 0 => default, 10 => +100%
 			let increasePercent = 0;
+			if ( Number.isFinite( activeBorderValue ) ) {
+				increasePercent = Math.max( -10, Math.min( 10, activeBorderValue ) ) * 0.10;
+			}
 
-			if ( 1 === activeBorderValue ) {
-				increasePercent = 0.25;
-			} else if ( 2 === activeBorderValue ) {
-				increasePercent = 0.5;
-			} else if ( 3 === activeBorderValue ) {
-				increasePercent = 0.75;
+			// Resolve related .onetap-info from DOM context when available, fallback to selector string
+			let $trigger = $( selector );
+			if ( ! $trigger.length ) {
+				const selectorString = ( selector || '' );
+				const selectorClassList = selectorString.split( /\s+/ ).filter( Boolean );
+				const selectorAsCss = selectorClassList.length ? '.' + selectorClassList.join( '.' ) : '';
+				$trigger = selectorAsCss ? $( selectorAsCss ).first() : $();
+			}
+			const $featureBox = $trigger.closest( '.onetap-box-feature' );
+			const $info = $featureBox.find( '.onetap-info' );
+			if ( $info.length ) {
+				const activeLang = onetapAjaxObject.activeLanguage;
+				const allLabels = onetapAjaxObject.languages || {};
+				const defaultText = ( allLabels[ activeLang ] && allLabels[ activeLang ].global && allLabels[ activeLang ].global.default ) ||
+					( allLabels.en && allLabels.en.global && allLabels.en.global.default ) ||
+					'Default';
+				let infoText = defaultText;
+				if ( activeBorderValue !== 0 ) {
+					const clamped = Math.max( -10, Math.min( 10, activeBorderValue ) );
+					infoText = ( clamped * 10 ) + '%';
+				}
+				$info.text( infoText );
 			}
 
 			// General
@@ -408,13 +1139,28 @@
 					return;
 				}
 
-				// Skip elements in accessibilityOnetapSkipElements if needed
-				if ( $( this ).is( accessibilityOnetapSkipElements ) ) {
+				// Skip elements in onetapSkipElements if needed
+				if ( $( this ).is( onetapSkipElements ) ) {
 					return;
 				}
 
 				// Skip <li> elements that are inside another <li>.
 				if ( tag === 'li' && $( this ).parents( 'li' ).length > 0 ) {
+					return;
+				}
+
+				// Skip <li> that contains both <a> and <span> (any depth)
+				if ( tag === 'li' && $( this ).find( 'a' ).length > 0 && $( this ).find( 'span' ).length > 0 ) {
+					return;
+				}
+
+				// Skip <a> that contains any other element (child or descendant)
+				// if ( tag === 'a' && $( this ).find( '*' ).length > 0 ) {
+				// 	return;
+				// }
+
+				// Skip <span> that contains any other element (child or descendant)
+				if ( tag === 'span' && $( this ).find( '*' ).length > 0 ) {
 					return;
 				}
 
@@ -426,12 +1172,33 @@
 					el.dataset.originalFontSize = currentFontSize;
 				}
 
-				const baseFontSize = parseFloat( el.dataset.originalFontSize );
 				let newStyle = $( this ).attr( 'style' ) || '';
 
+				// Capture original inline font-size value once for proper restore (e.g., clamp()).
+				if ( ! el.dataset.originalInlineFontSize ) {
+					const match = newStyle.match( /font-size:\s*([^;]+);?/ );
+					if ( match && match[ 1 ] ) {
+						el.dataset.originalInlineFontSize = match[ 1 ].trim();
+					} else {
+						el.dataset.originalInlineFontSize = '';
+					}
+				}
+
+				const baseFontSize = parseFloat( el.dataset.originalFontSize );
+
 				if ( 0 === activeBorderValue ) {
-					// Reset to default
-					newStyle = newStyle.replace( /font-size:\s*[^;]+;?/, '' );
+					// Reset to original state: restore original inline font-size if it existed, otherwise remove override.
+					const originalInline = el.dataset.originalInlineFontSize || '';
+					if ( originalInline ) {
+						const restoreStr = `font-size: ${ originalInline };`;
+						if ( /font-size:\s*[^;]+;?/.test( newStyle ) ) {
+							newStyle = newStyle.replace( /font-size:\s*[^;]+;?/, restoreStr );
+						} else {
+							newStyle += ( newStyle.trim().endsWith( ';' ) ? ' ' : '; ' ) + restoreStr;
+						}
+					} else {
+						newStyle = newStyle.replace( /font-size:\s*[^;]+;?/, '' );
+					}
 				} else if ( baseFontSize ) {
 					const newFontSize = ( baseFontSize * ( 1 + increasePercent ) ).toFixed( 2 );
 					const fontSizeStr = `font-size: ${ newFontSize }px !important;`;
@@ -448,56 +1215,43 @@
 		}
 	}
 
-	// This function modifies the cursor size by adding and removing classes
-	function accessibilityOnetapCursor( key, activeBorderValue ) {
-		// if value off, return.
-		if ( 'off' === accessibilityOnetapAjaxObject.showModules.cursor ) {
-			return;
-		}
-
-		// Check if the key is 'Cursor'. If it is, the function will proceed with font size adjustments.
-		if ( 'cursor' === key ) {
-			if ( 1 === activeBorderValue ) {
-				// Add the class to the root <html> element
-				$( 'html' ).addClass( 'onetap-cursor-feature1' );
-				$( 'html' ).removeClass( 'onetap-cursor-feature2' );
-				$( 'html' ).removeClass( 'onetap-cursor-feature3' );
-			} else if ( 2 === activeBorderValue ) {
-				// Add the class to the root <html> element
-				$( 'html' ).removeClass( 'onetap-cursor-feature1' );
-				$( 'html' ).addClass( 'onetap-cursor-feature2' );
-				$( 'html' ).removeClass( 'onetap-cursor-feature3' );
-			} else if ( 3 === activeBorderValue ) {
-				// Add the class to the root <html> element
-				$( 'html' ).removeClass( 'onetap-cursor-feature1' );
-				$( 'html' ).removeClass( 'onetap-cursor-feature2' );
-				$( 'html' ).addClass( 'onetap-cursor-feature3' );
-			} else {
-				// Add the class to the root <html> element
-				$( 'html' ).removeClass( 'onetap-cursor-feature1' );
-				$( 'html' ).removeClass( 'onetap-cursor-feature2' );
-				$( 'html' ).removeClass( 'onetap-cursor-feature3' );
-			}
-		}
-	}
-
 	// This function adjusts the line height based on the 'lineHeight'
-	function accessibilityOnetapLineHeight( key, activeBorderValue ) {
+	function onetapLineHeight( key, activeBorderValue, selector ) {
 		// if value off, return.
-		if ( 'off' === accessibilityOnetapAjaxObject.showModules[ 'line-height' ] ) {
+		if ( 'off' === onetapAjaxObject.showModules[ 'line-height' ] ) {
 			return;
 		}
 
 		// Check if the key is 'lineHeight'. If it is, the function will proceed with line height adjustments.
 		if ( 'lineHeight' === key ) {
+			// Map steps to 10% per step; allow negative steps down to -10 and up to 10
 			let increasePercent = 0;
+			if ( Number.isFinite( activeBorderValue ) ) {
+				increasePercent = Math.max( -10, Math.min( 10, activeBorderValue ) ) * 0.10;
+			}
 
-			if ( 1 === activeBorderValue ) {
-				increasePercent = 0.25;
-			} else if ( 2 === activeBorderValue ) {
-				increasePercent = 0.5;
-			} else if ( 3 === activeBorderValue ) {
-				increasePercent = 0.75;
+			// Resolve related .onetap-info from DOM context when available, fallback to selector string
+			let $trigger = $( selector );
+			if ( ! $trigger.length ) {
+				const selectorString = ( selector || '' );
+				const selectorClassList = selectorString.split( /\s+/ ).filter( Boolean );
+				const selectorAsCss = selectorClassList.length ? '.' + selectorClassList.join( '.' ) : '';
+				$trigger = selectorAsCss ? $( selectorAsCss ).first() : $();
+			}
+			const $featureBox = $trigger.closest( '.onetap-box-feature' );
+			const $info = $featureBox.find( '.onetap-info' );
+			if ( $info.length ) {
+				const activeLang = onetapAjaxObject.activeLanguage;
+				const allLabels = onetapAjaxObject.languages || {};
+				const defaultText = ( allLabels[ activeLang ] && allLabels[ activeLang ].global && allLabels[ activeLang ].global.default ) ||
+					( allLabels.en && allLabels.en.global && allLabels.en.global.default ) ||
+					'Default';
+				let infoText = defaultText;
+				if ( activeBorderValue !== 0 ) {
+					const clamped = Math.max( -10, Math.min( 10, activeBorderValue ) );
+					infoText = ( clamped * 10 ) + '%';
+				}
+				$info.text( infoText );
 			}
 
 			// General
@@ -520,17 +1274,17 @@
 					return;
 				}
 
-				// Skip elements in accessibilityOnetapSkipElements if needed
-				if ( $( this ).is( accessibilityOnetapSkipElements ) ) {
+				// Skip elements in onetapSkipElements if needed
+				if ( $( this ).is( onetapSkipElements ) ) {
 					return;
 				}
+
+				const computedStyle = window.getComputedStyle( el );
 
 				// Skip <li> elements that are inside another <li>.
 				if ( tag === 'li' && $( this ).parents( 'li' ).length > 0 ) {
 					return;
 				}
-
-				const computedStyle = window.getComputedStyle( el );
 
 				const currentLineHeight = parseFloat( computedStyle.lineHeight );
 
@@ -541,9 +1295,29 @@
 				const baseLineHeight = parseFloat( el.dataset.originalLineHeight );
 				let newStyle = $( this ).attr( 'style' ) || '';
 
+				// Capture original inline line-height value once for proper restore.
+				if ( ! el.dataset.originalInlineLineHeight ) {
+					const match = newStyle.match( /line-height:\s*([^;]+);?/ );
+					if ( match && match[ 1 ] ) {
+						el.dataset.originalInlineLineHeight = match[ 1 ].trim();
+					} else {
+						el.dataset.originalInlineLineHeight = '';
+					}
+				}
+
 				if ( 0 === activeBorderValue ) {
-					// Reset to default
-					newStyle = newStyle.replace( /line-height:\s*[^;]+;?/, '' );
+					// Reset to original state: restore original inline line-height if it existed, otherwise remove override.
+					const originalInline = el.dataset.originalInlineLineHeight || '';
+					if ( originalInline ) {
+						const restoreStr = `line-height: ${ originalInline };`;
+						if ( /line-height:\s*[^;]+;?/.test( newStyle ) ) {
+							newStyle = newStyle.replace( /line-height:\s*[^;]+;?/, restoreStr );
+						} else {
+							newStyle += ( newStyle.trim().endsWith( ';' ) ? ' ' : '; ' ) + restoreStr;
+						}
+					} else {
+						newStyle = newStyle.replace( /line-height:\s*[^;]+;?/, '' );
+					}
 				} else if ( baseLineHeight ) {
 					const newLineHeight = ( baseLineHeight * ( 1 + increasePercent ) ).toFixed( 2 );
 					const lineHeightStr = `line-height: ${ newLineHeight }px !important;`;
@@ -560,49 +1334,79 @@
 		}
 	}
 
-	// This function adjusts the letter spacing based on the 'letterSpacing'
-	function accessibilityOnetapLetterSpacing( key, activeBorderValue ) {
+	// This function modifies the cursor size by adding and removing classes
+	function onetapCursor( key, accessibilityDataKey ) {
 		// if value off, return.
-		if ( 'off' === accessibilityOnetapAjaxObject.showModules[ 'letter-spacing' ] ) {
+		if ( 'off' === onetapAjaxObject.showModules.cursor ) {
 			return;
 		}
 
-		// Check if the key is 'letterSpacing'. If it is, the function will proceed with font size adjustments.
-		if ( 'letterSpacing' === key ) {
-			let letterSpacing = null;
-
-			// Determine letterSpacing value based on activeBorderValue
-			if ( 1 === activeBorderValue ) {
-				letterSpacing = '1px !important;';
-			} else if ( 2 === activeBorderValue ) {
-				letterSpacing = '3px !important;';
-			} else if ( 3 === activeBorderValue ) {
-				letterSpacing = '5px !important;';
-			} else {
-				letterSpacing = null;
+		// Check if the key is 'Cursor'. If it is, the function will proceed with font size adjustments.
+		if ( 'cursor' === key ) {
+			if ( ! accessibilityDataKey ) {
+				$( 'html' ).removeClass( 'onetap-cursor-feature1' );
+				$( 'html' ).removeClass( 'onetap-cursor-feature2' );
+				$( 'html' ).removeClass( 'onetap-cursor-feature3' );
+			} else if ( accessibilityDataKey ) {
+				$( 'html' ).addClass( 'onetap-cursor-feature2' );
 			}
+		}
+	}
 
-			// General
-			$( '*' ).not( accessibilityOnetapSkipElements ).each( function() {
-				// Get the current inline style of the element, or use an empty string if none exists
+	// This function adjusts the font weight based on the 'fontWeight'
+	function onetapFontWeight( key, accessibilityDataKey ) {
+		// if value off, return.
+		if ( 'off' === onetapAjaxObject.showModules[ 'font-weight' ] ) {
+			return;
+		}
+
+		// Check if the key is 'fontWeight'. If it is, the function will proceed with font weight adjustments.
+		if ( 'fontWeight' === key ) {
+			// Update style for all elements except specific ones
+			$( '*' ).not( onetapSkipElements ).each( function() {
+				const el = this;
 				let currentStyle = $( this ).attr( 'style' ) || '';
 
-				if ( 0 === activeBorderValue ) {
-					// Remove the letter-spacing if activeBorderValue is 0
-					currentStyle = currentStyle.replace( /letter-spacing:\s*[^;]+;?/, '' );
-				} else if ( 1 === activeBorderValue || 2 === activeBorderValue || 3 === activeBorderValue ) {
+				// Capture original inline font-weight value once for proper restore
+				if ( ! el.dataset.originalInlineFontWeight ) {
+					const match = currentStyle.match( /font-weight:\s*([^;]+);?/ );
+					if ( match && match[ 1 ] ) {
+						el.dataset.originalInlineFontWeight = match[ 1 ].trim();
+					} else {
+						el.dataset.originalInlineFontWeight = '';
+					}
+				}
+
+				if ( ! accessibilityDataKey ) {
+					// Reset to original state: restore original inline font-weight if it existed, otherwise remove override
+					const originalInline = el.dataset.originalInlineFontWeight || '';
+					if ( originalInline ) {
+						const restoreStr = `font-weight: ${ originalInline };`;
+						if ( /font-weight:\s*[^;]+;?/.test( currentStyle ) ) {
+							currentStyle = currentStyle.replace( /font-weight:\s*[^;]+;?/, restoreStr );
+						} else {
+							currentStyle += ( currentStyle.trim().endsWith( ';' ) ? ' ' : '; ' ) + restoreStr;
+						}
+					} else {
+						// Remove the font-weight if accessibilityDataKey is 0
+						currentStyle = currentStyle.replace( /font-weight:\s*[^;]+;?/, '' );
+					}
+				} else if ( accessibilityDataKey ) {
+					// Remove the font-weight
+					currentStyle = currentStyle.replace( /font-weight:\s*[^;]+;?/, '' );
+
 					// Check if the element has a style attribute and if it ends with a semicolon
 					if ( currentStyle.trim() && ! /;$/.test( currentStyle.trim() ) ) {
 						currentStyle += ';';
 					}
 
-					// Check if 'letter-spacing' is already defined in the style
-					if ( /letter-spacing:\s*[^;]+;?/.test( currentStyle ) ) {
-						// If it exists, replace the existing letter-spacing with the new value
-						currentStyle = currentStyle.replace( /letter-spacing:\s*[^;]+;?/, 'letter-spacing: ' + letterSpacing );
+					// Handle font-weight
+					if ( /font-weight:\s*[^;]+;?/.test( currentStyle ) ) {
+						// If it exists, replace the existing font-weight with the new value
+						currentStyle = currentStyle.replace( /font-weight:\s*[^;]+;?/, 'font-weight: 700 !important;' );
 					} else {
-						// If letter-spacing is not present, append it to the style attribute
-						currentStyle += ' letter-spacing: ' + letterSpacing;
+						// If font-weight is not present, append it to the style attribute
+						currentStyle += ' font-weight: 700 !important;';
 					}
 				}
 
@@ -612,23 +1416,86 @@
 				// Set the updated style attribute back to the element
 				$( this ).attr( 'style', currentStyle );
 			} );
+		}
+	}
 
-			// Call the function for each heading type
-			accessibilityOnetapUpdateLetterSpacing( null, accessibilityOnetapSkipElements, letterSpacing, activeBorderValue );
+	// This function adjusts the letter spacing based on the 'letterSpacing'
+	function onetapLetterSpacing( key, accessibilityDataKey ) {
+		// if value off, return.
+		if ( 'off' === onetapAjaxObject.showModules[ 'letter-spacing' ] ) {
+			return;
+		}
+
+		// Check if the key is 'letterSpacing'. If it is, the function will proceed with letter spacing adjustments.
+		if ( 'letterSpacing' === key ) {
+			// Update style for all elements except specific ones
+			$( '*' ).not( onetapSkipElements ).each( function() {
+				const el = this;
+				let currentStyle = $( this ).attr( 'style' ) || '';
+
+				// Capture original inline letter-spacing value once for proper restore
+				if ( ! el.dataset.originalInlineLetterSpacing ) {
+					const match = currentStyle.match( /letter-spacing:\s*([^;]+);?/ );
+					if ( match && match[ 1 ] ) {
+						el.dataset.originalInlineLetterSpacing = match[ 1 ].trim();
+					} else {
+						el.dataset.originalInlineLetterSpacing = '';
+					}
+				}
+
+				if ( ! accessibilityDataKey ) {
+					// Reset to original state: restore original inline letter-spacing if it existed, otherwise remove override
+					const originalInline = el.dataset.originalInlineLetterSpacing || '';
+					if ( originalInline ) {
+						const restoreStr = `letter-spacing: ${ originalInline };`;
+						if ( /letter-spacing:\s*[^;]+;?/.test( currentStyle ) ) {
+							currentStyle = currentStyle.replace( /letter-spacing:\s*[^;]+;?/, restoreStr );
+						} else {
+							currentStyle += ( currentStyle.trim().endsWith( ';' ) ? ' ' : '; ' ) + restoreStr;
+						}
+					} else {
+						// Remove the letter-spacing if accessibilityDataKey is 0
+						currentStyle = currentStyle.replace( /letter-spacing:\s*[^;]+;?/, '' );
+					}
+				} else if ( accessibilityDataKey ) {
+					// Remove the letter-spacing
+					currentStyle = currentStyle.replace( /letter-spacing:\s*[^;]+;?/, '' );
+
+					// Check if the element has a style attribute and if it ends with a semicolon
+					if ( currentStyle.trim() && ! /;$/.test( currentStyle.trim() ) ) {
+						currentStyle += ';';
+					}
+
+					// Handle letter-spacing
+					if ( /letter-spacing:\s*[^;]+;?/.test( currentStyle ) ) {
+						// If it exists, replace the existing letter-spacing with the new value
+						currentStyle = currentStyle.replace( /letter-spacing:\s*[^;]+;?/, 'letter-spacing: 2px !important;' );
+					} else {
+						// If letter-spacing is not present, append it to the style attribute
+						currentStyle += ' letter-spacing: 2px !important;';
+					}
+				}
+
+				// Trim any extra spaces and ensure there's no trailing space
+				currentStyle = currentStyle.trim();
+
+				// Set the updated style attribute back to the element
+				$( this ).attr( 'style', currentStyle );
+			} );
 		}
 	}
 
 	// This function adjusts the readablefont based on the 'readableFont'
-	function accessibilityOnetapReadableFont( key, accessibilityDataKey ) {
+	function onetapReadableFont( key, accessibilityDataKey ) {
 		// if value off, return.
-		if ( 'off' === accessibilityOnetapAjaxObject.showModules[ 'readable-font' ] ) {
+		if ( 'off' === onetapAjaxObject.showModules[ 'readable-font' ] ) {
 			return;
 		}
 
 		// Check if the key is 'readableFont'. If it is, the function will proceed with font size adjustments.
 		if ( 'readableFont' === key ) {
 			// Update style for all elements except specific ones
-			$( '*' ).not( accessibilityOnetapSkipElements ).each( function() {
+			$( '*' ).not( onetapSkipElements ).not( 'i, i *' ).each( function() {
 				let currentStyle = $( this ).attr( 'style' ) || '';
 
 				if ( ! accessibilityDataKey ) {
@@ -637,7 +1504,7 @@
 						currentStyle += ';';
 					}
 
-					if ( accessibilityOnetapGetData().dyslexicFont ) {
+					if ( getDataAccessibilityData().dyslexicFont ) {
 						currentStyle = currentStyle.replace( 'font-family: Roboto, sans-serif !important;', 'font-family: OpenDyslexic, sans-serif !important;' );
 					} else {
 						// Remove the font-family if accessibilityDataKey is 0
@@ -668,16 +1535,16 @@
 	}
 
 	// This function adjusts the dyslexicfont based on the 'dyslexicFont'
-	function accessibilityOnetapDyslexicFont( key, accessibilityDataKey ) {
+	function onetapDyslexicFont( key, accessibilityDataKey ) {
 		// if value off, return.
-		if ( 'off' === accessibilityOnetapAjaxObject.showModules[ 'dyslexic-font' ] ) {
+		if ( 'off' === onetapAjaxObject.showModules[ 'dyslexic-font' ] ) {
 			return;
 		}
 
 		// Check if the key is 'dyslexicFont'. If it is, the function will proceed with font size adjustments.
-		if ( 'dyslexicFont' === key && ! accessibilityOnetapGetData().readableFont ) {
+		if ( 'dyslexicFont' === key && ! getDataAccessibilityData().readableFont ) {
 			// Update style for all elements except specific ones
-			$( '*' ).not( accessibilityOnetapSkipElements ).each( function() {
+			$( '*' ).not( onetapSkipElements ).not( 'i, i *' ).each( function() {
 				let currentStyle = $( this ).attr( 'style' ) || '';
 
 				if ( ! accessibilityDataKey ) {
@@ -707,10 +1574,151 @@
 		}
 	}
 
-	// This function adjusts the text align based on the 'textAlign'
-	function accessibilityOnetapTextAlign( key, activeBorderValue ) {
+	// Align-left toggle: when ON forces left alignment globally (except skipped), when OFF clears it
+	function onetapAlignLeft( key, accessibilityDataKey ) {
 		// if value off, return.
-		if ( 'off' === accessibilityOnetapAjaxObject.showModules[ 'text-align' ] ) {
+		if ( 'off' === onetapAjaxObject.showModules[ 'align-left' ] ) {
+			return;
+		}
+
+		if ( 'alignLeft' !== key ) {
+			return;
+		}
+
+		// Enforce mutual exclusivity among align toggles
+		$( '.onetap-align-left' ).attr( 'aria-pressed', !! accessibilityDataKey );
+		$( '.onetap-align-center' ).attr( 'aria-pressed', false );
+		$( '.onetap-align-right' ).attr( 'aria-pressed', false );
+
+		// Ensure only this feature box is visibly active
+		if ( accessibilityDataKey ) {
+			$( '.onetap-box-feature.onetap-align-center, .onetap-box-feature.onetap-align-right' ).removeClass( 'onetap-active' );
+			$( '.onetap-box-feature.onetap-align-left' ).addClass( 'onetap-active' );
+		} else {
+			$( '.onetap-box-feature.onetap-align-left' ).removeClass( 'onetap-active' );
+		}
+
+		$( '*' ).not( onetapSkipElements ).each( function() {
+			let currentStyle = $( this ).attr( 'style' ) || '';
+
+			if ( ! accessibilityDataKey ) {
+				// Remove any text-align inline style
+				currentStyle = currentStyle.replace( /text-align:\s*[^;]+;?/, '' );
+			} else {
+				// Ensure trailing semicolon before appending/replacing
+				if ( currentStyle.trim() && ! /;$/.test( currentStyle.trim() ) ) {
+					currentStyle += ';';
+				}
+
+				if ( /text-align:\s*[^;]+;?/.test( currentStyle ) ) {
+					currentStyle = currentStyle.replace( /text-align:\s*[^;]+;?/, 'text-align: left !important;' );
+				} else {
+					currentStyle += ' text-align: left !important;';
+				}
+			}
+
+			$( this ).attr( 'style', currentStyle.trim() );
+		} );
+	}
+
+	// Align-center toggle: when ON forces center alignment globally (except skipped), when OFF clears it
+	function onetapAlignCenter( key, accessibilityDataKey ) {
+		// if value off, return.
+		if ( 'off' === onetapAjaxObject.showModules[ 'align-center' ] ) {
+			return;
+		}
+
+		if ( 'alignCenter' !== key ) {
+			return;
+		}
+
+		// Enforce mutual exclusivity among align toggles
+		$( '.onetap-align-center' ).attr( 'aria-pressed', !! accessibilityDataKey );
+		$( '.onetap-align-left' ).attr( 'aria-pressed', false );
+		$( '.onetap-align-right' ).attr( 'aria-pressed', false );
+
+		// Ensure only this feature box is visibly active
+		if ( accessibilityDataKey ) {
+			$( '.onetap-box-feature.onetap-align-left, .onetap-box-feature.onetap-align-right' ).removeClass( 'onetap-active' );
+			$( '.onetap-box-feature.onetap-align-center' ).addClass( 'onetap-active' );
+		} else {
+			$( '.onetap-box-feature.onetap-align-center' ).removeClass( 'onetap-active' );
+		}
+
+		$( '*' ).not( onetapSkipElements ).each( function() {
+			let currentStyle = $( this ).attr( 'style' ) || '';
+
+			if ( ! accessibilityDataKey ) {
+				// Remove any text-align inline style
+				currentStyle = currentStyle.replace( /text-align:\s*[^;]+;?/, '' );
+			} else {
+				// Ensure trailing semicolon before appending/replacing
+				if ( currentStyle.trim() && ! /;$/.test( currentStyle.trim() ) ) {
+					currentStyle += ';';
+				}
+
+				if ( /text-align:\s*[^;]+;?/.test( currentStyle ) ) {
+					currentStyle = currentStyle.replace( /text-align:\s*[^;]+;?/, 'text-align: center !important;' );
+				} else {
+					currentStyle += ' text-align: center !important;';
+				}
+			}
+
+			$( this ).attr( 'style', currentStyle.trim() );
+		} );
+	}
+
+	// Align-right toggle: when ON forces right alignment globally (except skipped), when OFF clears it
+	function onetapAlignRight( key, accessibilityDataKey ) {
+		// if value off, return.
+		if ( 'off' === onetapAjaxObject.showModules[ 'align-right' ] ) {
+			return;
+		}
+
+		if ( 'alignRight' !== key ) {
+			return;
+		}
+
+		// Enforce mutual exclusivity among align toggles
+		$( '.onetap-align-right' ).attr( 'aria-pressed', !! accessibilityDataKey );
+		$( '.onetap-align-left' ).attr( 'aria-pressed', false );
+		$( '.onetap-align-center' ).attr( 'aria-pressed', false );
+
+		// Ensure only this feature box is visibly active
+		if ( accessibilityDataKey ) {
+			$( '.onetap-box-feature.onetap-align-left, .onetap-box-feature.onetap-align-center' ).removeClass( 'onetap-active' );
+			$( '.onetap-box-feature.onetap-align-right' ).addClass( 'onetap-active' );
+		} else {
+			$( '.onetap-box-feature.onetap-align-right' ).removeClass( 'onetap-active' );
+		}
+
+		$( '*' ).not( onetapSkipElements ).each( function() {
+			let currentStyle = $( this ).attr( 'style' ) || '';
+
+			if ( ! accessibilityDataKey ) {
+				// Remove any text-align inline style
+				currentStyle = currentStyle.replace( /text-align:\s*[^;]+;?/, '' );
+			} else {
+				// Ensure trailing semicolon before appending/replacing
+				if ( currentStyle.trim() && ! /;$/.test( currentStyle.trim() ) ) {
+					currentStyle += ';';
+				}
+
+				if ( /text-align:\s*[^;]+;?/.test( currentStyle ) ) {
+					currentStyle = currentStyle.replace( /text-align:\s*[^;]+;?/, 'text-align: right !important;' );
+				} else {
+					currentStyle += ' text-align: right !important;';
+				}
+			}
+
+			$( this ).attr( 'style', currentStyle.trim() );
+		} );
+	}
+
+	// This function adjusts the text align based on the 'textAlign'
+	function onetapTextAlign( key, activeBorderValue ) {
+		// if value off, return.
+		if ( 'off' === onetapAjaxObject.showModules[ 'text-align' ] ) {
 			return;
 		}
 
@@ -730,7 +1738,7 @@
 			}
 
 			// Update style for all elements except specific ones
-			$( '*' ).not( accessibilityOnetapSkipElements ).each( function() {
+			$( '*' ).not( onetapSkipElements ).each( function() {
 				let currentStyle = $( this ).attr( 'style' ) || '';
 
 				if ( 0 === activeBorderValue ) {
@@ -761,9 +1769,9 @@
 	}
 
 	// This function adjusts the text magnifier based on the 'textMagnifier'
-	function accessibilityOnetapTextMagnifier( key, accessibilityDataKey ) {
+	function onetapTextMagnifier( key, accessibilityDataKey ) {
 		// if value off, return.
-		if ( 'off' === accessibilityOnetapAjaxObject.showModules[ 'text-magnifier' ] ) {
+		if ( 'off' === onetapAjaxObject.showModules[ 'text-magnifier' ] ) {
 			return;
 		}
 
@@ -835,16 +1843,16 @@
 	}
 
 	// This function adjusts the highlight links based on the 'highlightLinks'
-	function accessibilityOnetapHighlightLinks( key, accessibilityDataKey ) {
+	function onetapHighlightLinks( key, accessibilityDataKey ) {
 		// if value off, return.
-		if ( 'off' === accessibilityOnetapAjaxObject.showModules[ 'highlight-links' ] ) {
+		if ( 'off' === onetapAjaxObject.showModules[ 'highlight-links' ] ) {
 			return;
 		}
 
 		// Check if the key is 'highlightLinks'. If it is, the function will proceed with font size adjustments.
 		if ( 'highlightLinks' === key ) {
 			// Update style for all elements except specific ones
-			$( 'a' ).not( accessibilityOnetapSkipElements ).each( function() {
+			$( 'a, a *' ).not( onetapSkipElements ).each( function() {
 				let currentStyle = $( this ).attr( 'style' ) || '';
 
 				if ( ! accessibilityDataKey ) {
@@ -852,6 +1860,10 @@
 					currentStyle = currentStyle.replace( /background:\s*[^;]+;?/, '' );
 					currentStyle = currentStyle.replace( /color:\s*[^;]+;?/, '' );
 				} else if ( accessibilityDataKey ) {
+					// Remove the background and color
+					currentStyle = currentStyle.replace( /background:\s*[^;]+;?/, '' );
+					currentStyle = currentStyle.replace( /color:\s*[^;]+;?/, '' );
+
 					// Check if the element has a style attribute and if it ends with a semicolon
 					if ( currentStyle.trim() && ! /;$/.test( currentStyle.trim() ) ) {
 						currentStyle += ';';
@@ -885,10 +1897,53 @@
 		}
 	}
 
-	// This function adjusts the invert colors based on the 'invertColors'
-	function accessibilityOnetapInvertColors( key, activeBorderValue ) {
+	// This function adjusts the light contrast based on the 'lightContrast'
+	function onetapLightContrast( key, accessibilityDataKey ) {
 		// if value off, return.
-		if ( 'off' === accessibilityOnetapAjaxObject.showModules[ 'invert-colors' ] ) {
+		if ( 'off' === onetapAjaxObject.showModules[ 'light-contrast' ] ) {
+			return;
+		}
+
+		// Check if the key is 'lightContrast'. If it is, the function will proceed with contrast adjustments.
+		if ( 'lightContrast' === key ) {
+			// Ensure only this feature box is visibly active
+			if ( accessibilityDataKey ) {
+				$( '.onetap-box-feature.onetap-dark-contrast' ).removeClass( 'onetap-active' );
+				$( '.onetap-box-feature.onetap-light-contrast' ).addClass( 'onetap-active' );
+				$( 'body' ).addClass( 'onetap-light-contrast' );
+			} else {
+				$( '.onetap-box-feature.onetap-light-contrast' ).removeClass( 'onetap-active' );
+				$( 'body' ).removeClass( 'onetap-light-contrast' );
+			}
+		}
+	}
+
+	// This function adjusts the dark contrast based on the 'darkContrast'
+	function onetapDarkContrast( key, accessibilityDataKey ) {
+		// if value off, return.
+		if ( 'off' === onetapAjaxObject.showModules[ 'dark-contrast' ] ) {
+			return;
+		}
+
+		// Check if the key is 'darkContrast'. If it is, the function will proceed with contrast adjustments.
+		if ( 'darkContrast' === key ) {
+			// Ensure only this feature box is visibly active
+			if ( accessibilityDataKey ) {
+				$( '.onetap-box-feature.onetap-light-contrast' ).removeClass( 'onetap-active' );
+				$( '.onetap-box-feature.onetap-dark-contrast' ).addClass( 'onetap-active' );
+				$( 'body' ).addClass( 'onetap-dark-contrast' );
+			} else {
+				$( '.onetap-box-feature.onetap-dark-contrast' ).removeClass( 'onetap-active' );
+				$( '.wp-block-kadence-image' ).css( 'zIndex', '' );
+				$( 'body' ).removeClass( 'onetap-dark-contrast' );
+			}
+		}
+	}
+
+	// This function adjusts the invert colors based on the 'invertColors'
+	function onetapInvertColors( key, activeBorderValue ) {
+		// if value off, return.
+		if ( 'off' === onetapAjaxObject.showModules[ 'invert-colors' ] ) {
 			return;
 		}
 
@@ -908,7 +1963,7 @@
 			}
 
 			// Update style for all elements except specific ones
-			$( 'html, img' ).not( accessibilityOnetapSkipElements ).each( function() {
+			$( 'html, img' ).not( onetapSkipElements ).each( function() {
 				let currentStyle = $( this ).attr( 'style' ) || '';
 
 				if ( 0 === activeBorderValue ) {
@@ -939,9 +1994,9 @@
 	}
 
 	// This function adjusts the brightness based on the 'brightness'
-	function accessibilityOnetapBrightness( key, activeBorderValue ) {
+	function onetapBrightness( key, activeBorderValue ) {
 		// if value off, return.
-		if ( 'off' === accessibilityOnetapAjaxObject.showModules.brightness ) {
+		if ( 'off' === onetapAjaxObject.showModules.brightness ) {
 			return;
 		}
 
@@ -961,7 +2016,7 @@
 			}
 
 			// Update style for all elements except specific ones
-			$( 'html' ).not( accessibilityOnetapSkipElements ).each( function() {
+			$( 'html' ).not( onetapSkipElements ).each( function() {
 				let currentStyle = $( this ).attr( 'style' ) || '';
 
 				if ( 0 === activeBorderValue ) {
@@ -991,47 +2046,35 @@
 		}
 	}
 
-	// This function adjusts the contrast based on the 'contrast'
-	function accessibilityOnetapContrast( key, activeBorderValue ) {
+	// This function adjusts the high contrast based on the 'high contrast'
+	function onetaphighContrast( key, accessibilityDataKey ) {
 		// if value off, return.
-		if ( 'off' === accessibilityOnetapAjaxObject.showModules.contrast ) {
+		if ( 'off' === onetapAjaxObject.showModules[ 'high-contrast' ] ) {
 			return;
 		}
 
-		// Check if the key is 'contrast'. If it is, the function will proceed with font size adjustments.
-		if ( 'contrast' === key ) {
-			let contrast = null;
-
-			// Determine contrast value based on activeBorderValue
-			if ( 1 === activeBorderValue ) {
-				contrast = 'contrast(50%) !important;';
-			} else if ( 2 === activeBorderValue ) {
-				contrast = 'contrast(80%) !important;';
-			} else if ( 3 === activeBorderValue ) {
-				contrast = 'contrast(110%) !important;';
-			} else {
-				contrast = null;
-			}
-
+		// Check if the key is 'highContrast'. If it is, the function will proceed with contrast adjustments.
+		if ( 'highContrast' === key ) {
 			// Update style for all elements except specific ones
-			$( 'html' ).not( accessibilityOnetapSkipElements ).each( function() {
+			$( 'html' ).not( onetapSkipElements ).each( function() {
 				let currentStyle = $( this ).attr( 'style' ) || '';
 
-				if ( 0 === activeBorderValue ) {
-					// Remove the filter if activeBorderValue is 0
+				if ( ! accessibilityDataKey ) {
+					// Remove any existing filter
 					currentStyle = currentStyle.replace( /filter:\s*[^;]+;?/, '' );
-				} else if ( 1 === activeBorderValue || 2 === activeBorderValue || 3 === activeBorderValue ) {
-					// Check if the element has a style attribute and if it ends with a semicolon
+				} else {
+					// Ensure trailing semicolon before appending/replacing
 					if ( currentStyle.trim() && ! /;$/.test( currentStyle.trim() ) ) {
 						currentStyle += ';';
 					}
 
+					const contrastValue = 'contrast(80%) !important;';
 					if ( /filter:\s*[^;]+;?/.test( currentStyle ) ) {
 						// If it exists, replace the existing filter with the new value
-						currentStyle = currentStyle.replace( /filter:\s*[^;]+;?/, 'filter: ' + contrast );
+						currentStyle = currentStyle.replace( /filter:\s*[^;]+;?/, 'filter: ' + contrastValue );
 					} else {
 						// If filter is not present, append it to the style attribute
-						currentStyle += ' filter: ' + contrast;
+						currentStyle += ' filter: ' + contrastValue;
 					}
 				}
 
@@ -1044,47 +2087,35 @@
 		}
 	}
 
-	// This function adjusts the grayscale based on the 'grayscale'
-	function accessibilityOnetapGrayscale( key, activeBorderValue ) {
+	// This function adjusts the monochrome based on the 'monochrome'
+	function onetapMonochrome( key, accessibilityDataKey ) {
 		// if value off, return.
-		if ( 'off' === accessibilityOnetapAjaxObject.showModules.grayscale ) {
+		if ( 'off' === onetapAjaxObject.showModules.monochrome ) {
 			return;
 		}
 
-		// Check if the key is 'grayscale'. If it is, the function will proceed with font size adjustments.
-		if ( 'grayscale' === key ) {
-			let grayscale = null;
-
-			// Determine grayscale value based on activeBorderValue
-			if ( 1 === activeBorderValue ) {
-				grayscale = 'grayscale(33%) !important;';
-			} else if ( 2 === activeBorderValue ) {
-				grayscale = 'grayscale(66%) !important;';
-			} else if ( 3 === activeBorderValue ) {
-				grayscale = 'grayscale(100%) !important;';
-			} else {
-				grayscale = null;
-			}
-
+		// Check if the key is 'monochrome'. If it is, the function will proceed with monochrome adjustments.
+		if ( 'monochrome' === key ) {
 			// Update style for all elements except specific ones
-			$( 'html' ).not( accessibilityOnetapSkipElements ).each( function() {
+			$( 'html' ).not( onetapSkipElements ).each( function() {
 				let currentStyle = $( this ).attr( 'style' ) || '';
 
-				if ( 0 === activeBorderValue ) {
-					// Remove the filter if activeBorderValue is 0
+				if ( ! accessibilityDataKey ) {
+					// Remove any existing filter
 					currentStyle = currentStyle.replace( /filter:\s*[^;]+;?/, '' );
-				} else if ( 1 === activeBorderValue || 2 === activeBorderValue || 3 === activeBorderValue ) {
-					// Check if the element has a style attribute and if it ends with a semicolon
+				} else {
+					// Ensure trailing semicolon before appending/replacing
 					if ( currentStyle.trim() && ! /;$/.test( currentStyle.trim() ) ) {
 						currentStyle += ';';
 					}
 
+					const monochromeValue = 'grayscale(100%) !important;';
 					if ( /filter:\s*[^;]+;?/.test( currentStyle ) ) {
 						// If it exists, replace the existing filter with the new value
-						currentStyle = currentStyle.replace( /filter:\s*[^;]+;?/, 'filter: ' + grayscale );
+						currentStyle = currentStyle.replace( /filter:\s*[^;]+;?/, 'filter: ' + monochromeValue );
 					} else {
 						// If filter is not present, append it to the style attribute
-						currentStyle += ' filter: ' + grayscale;
+						currentStyle += ' filter: ' + monochromeValue;
 					}
 				}
 
@@ -1098,46 +2129,34 @@
 	}
 
 	// This function adjusts the saturation based on the 'saturation'
-	function accessibilityOnetapSaturation( key, activeBorderValue ) {
+	function onetapSaturation( key, accessibilityDataKey ) {
 		// if value off, return.
-		if ( 'off' === accessibilityOnetapAjaxObject.showModules.saturation ) {
+		if ( 'off' === onetapAjaxObject.showModules.saturation ) {
 			return;
 		}
 
-		// Check if the key is 'grayscale'. If it is, the function will proceed with font size adjustments.
+		// Check if the key is 'saturation'. If it is, the function will proceed with saturation adjustments.
 		if ( 'saturation' === key ) {
-			let saturation = null;
-
-			// Determine saturation value based on activeBorderValue
-			if ( 1 === activeBorderValue ) {
-				saturation = 'saturate(150%) !important;';
-			} else if ( 2 === activeBorderValue ) {
-				saturation = 'saturate(200%) !important;';
-			} else if ( 3 === activeBorderValue ) {
-				saturation = 'saturate(250%) !important;';
-			} else {
-				saturation = null;
-			}
-
 			// Update style for all elements except specific ones
-			$( 'html' ).not( accessibilityOnetapSkipElements ).each( function() {
+			$( 'html' ).not( onetapSkipElements ).each( function() {
 				let currentStyle = $( this ).attr( 'style' ) || '';
 
-				if ( 0 === activeBorderValue ) {
-					// Remove the filter if activeBorderValue is 0
+				if ( ! accessibilityDataKey ) {
+					// Remove any existing filter
 					currentStyle = currentStyle.replace( /filter:\s*[^;]+;?/, '' );
-				} else if ( 1 === activeBorderValue || 2 === activeBorderValue || 3 === activeBorderValue ) {
-					// Check if the element has a style attribute and if it ends with a semicolon
+				} else {
+					// Ensure trailing semicolon before appending/replacing
 					if ( currentStyle.trim() && ! /;$/.test( currentStyle.trim() ) ) {
 						currentStyle += ';';
 					}
 
+					const saturationValue = 'saturate(200%) !important;';
 					if ( /filter:\s*[^;]+;?/.test( currentStyle ) ) {
 						// If it exists, replace the existing filter with the new value
-						currentStyle = currentStyle.replace( /filter:\s*[^;]+;?/, 'filter: ' + saturation );
+						currentStyle = currentStyle.replace( /filter:\s*[^;]+;?/, 'filter: ' + saturationValue );
 					} else {
 						// If filter is not present, append it to the style attribute
-						currentStyle += ' filter: ' + saturation;
+						currentStyle += ' filter: ' + saturationValue;
 					}
 				}
 
@@ -1151,9 +2170,9 @@
 	}
 
 	// This function adjusts the reading line based on the 'readingLine'
-	function accessibilityOnetapReadingLine( key, accessibilityDataKey ) {
+	function onetapReadingLine( key, accessibilityDataKey ) {
 		// if value off, return.
-		if ( 'off' === accessibilityOnetapAjaxObject.showModules[ 'reading-line' ] ) {
+		if ( 'off' === onetapAjaxObject.showModules[ 'reading-line' ] ) {
 			return;
 		}
 
@@ -1176,9 +2195,9 @@
 	}
 
 	// This function adjusts the keyboard navigation based on the 'keyboardNavigation'
-	function accessibilityOnetapKeyboardNavigation( key, accessibilityDataKey ) {
+	function onetapKeyboardNavigation( key, accessibilityDataKey ) {
 		// if value off, return.
-		if ( 'off' === accessibilityOnetapAjaxObject.showModules[ 'keyboard-navigation' ] ) {
+		if ( 'off' === onetapAjaxObject.showModules[ 'keyboard-navigation' ] ) {
 			return;
 		}
 
@@ -1219,9 +2238,9 @@
 				const keyPressed = e.keyCode || e.charCode || e.which;
 
 				/** Spacebar pressed. */
-				if ( keyPressed === 32 ) {
-					spacePressed( e );
-				}
+				// if ( keyPressed === 32 ) {
+				// 	spacePressed( e );
+				// }
 			};
 		}
 
@@ -1321,9 +2340,9 @@
 	}
 
 	// This function adjusts the highlight titles based on the 'highlightTitles'
-	function accessibilityOnetapHighlightTitles( key, accessibilityDataKey ) {
+	function onetapHighlightTitles( key, accessibilityDataKey ) {
 		// if value off, return.
-		if ( 'off' === accessibilityOnetapAjaxObject.showModules[ 'highlight-titles' ] ) {
+		if ( 'off' === onetapAjaxObject.showModules[ 'highlight-titles' ] ) {
 			return;
 		}
 
@@ -1339,9 +2358,9 @@
 	}
 
 	// This function adjusts the reading mask based on the 'readingmask'
-	function accessibilityOnetapReadingMask( key, accessibilityDataKey ) {
+	function onetapReadingMask( key, accessibilityDataKey ) {
 		// if value off, return.
-		if ( 'off' === accessibilityOnetapAjaxObject.showModules[ 'reading-mask' ] ) {
+		if ( 'off' === onetapAjaxObject.showModules[ 'reading-mask' ] ) {
 			return;
 		}
 
@@ -1377,16 +2396,16 @@
 	}
 
 	// This function adjusts the hide images based on the 'hideImages'
-	function accessibilityOnetapHideImages( key, accessibilityDataKey ) {
+	function onetapHideImages( key, accessibilityDataKey ) {
 		// if value off, return.
-		if ( 'off' === accessibilityOnetapAjaxObject.showModules[ 'hide-images' ] ) {
+		if ( 'off' === onetapAjaxObject.showModules[ 'hide-images' ] ) {
 			return;
 		}
 
 		// Check if the key is 'hideImages'. If it is, the function will proceed with font size adjustments.
 		if ( 'hideImages' === key ) {
 			// Update style for all elements except specific ones
-			$( 'img' ).not( accessibilityOnetapSkipElements ).each( function() {
+			$( 'img' ).not( onetapSkipElements ).each( function() {
 				let currentStyle = $( this ).attr( 'style' ) || '';
 				if ( ! accessibilityDataKey ) {
 					// Remove the visibility if accessibilityDataKey is 0
@@ -1414,7 +2433,7 @@
 			} );
 
 			// Update style for all elements except specific ones
-			$( '*' ).not( accessibilityOnetapSkipElements ).each( function() {
+			$( '*' ).not( onetapSkipElements ).each( function() {
 				let currentStyle = $( this ).attr( 'style' ) || '';
 				if ( ! accessibilityDataKey ) {
 					// Remove the background-size if accessibilityDataKey is 0
@@ -1444,9 +2463,9 @@
 	}
 
 	// This function adjusts the highlight all based on the 'highlightAll'
-	function accessibilityOnetapHighlightAll( key, accessibilityDataKey ) {
+	function onetapHighlightAll( key, accessibilityDataKey ) {
 		// if value off, return.
-		if ( 'off' === accessibilityOnetapAjaxObject.showModules[ 'highlight-all' ] ) {
+		if ( 'off' === onetapAjaxObject.showModules[ 'highlight-all' ] ) {
 			return;
 		}
 
@@ -1461,39 +2480,99 @@
 		}
 	}
 
+	// Check if Text-to-Speech is supported
+	if ( ! ( 'speechSynthesis' in window && 'SpeechSynthesisUtterance' in window ) ) {
+		$( '.onetap-read-page' ).addClass( 'unsupported-message' );
+		$( '.onetap-read-page' ).removeClass( 'onetap-active' );
+	}
+
+	$( document ).on( 'mouseleave', '.unsupported-message', function() {
+		const $el = $( this );
+
+		// Clear any existing timeout to prevent overlap on repeated hovers
+		clearTimeout( $el.data( 'hover-timeout' ) );
+
+		// Add the 'active' class on hover
+		$el.addClass( 'active' );
+
+		// Remove the 'active' class after 400 milliseconds
+		const timeoutId = setTimeout( function() {
+			$el.removeClass( 'active' );
+		}, 400 );
+
+		// Store the timeout ID to clear it later if needed
+		$el.data( 'hover-timeout', timeoutId );
+	} );
+
 	// This function adjusts the read page based on the 'readPage'
-	function accessibilityOnetapReadPage( key, accessibilityDataKey ) {
+	function onetapReadPage( key, accessibilityDataKey ) {
 		// if value off, return.
-		if ( 'off' === accessibilityOnetapAjaxObject.showModules[ 'read-page' ] ) {
+		if ( 'off' === onetapAjaxObject.showModules[ 'read-page' ] ) {
 			return;
+		}
+
+		// Check if Text-to-Speech is supported
+		if ( ! ( 'speechSynthesis' in window && 'SpeechSynthesisUtterance' in window ) ) {
+			$( '.onetap-read-page' ).addClass( 'unsupported-message' );
+			$( '.onetap-read-page' ).removeClass( 'onetap-active' );
+			return; // stop further execution.
 		}
 
 		// Check if the key is 'readPage'. If it is, the function will proceed with font size adjustments.
 		if ( 'readPage' === key ) {
-			// Update style for all elements except specific ones
+			// Update style for all elements except some form elements
 			if ( accessibilityDataKey ) {
 				let currentlySpeakingElement = null; // To track the currently highlighted element
 
 				// Event delegation to capture clicks on any element except some form elements
-				$( document ).on( 'click', '*', function( event ) {
-					// Prevent bubbling to avoid selecting the whole page's text
-					event.stopPropagation();
+				// Use namespace 'readPage' so we can remove it later
+				$( document ).on( 'click.readPage', '*', function( event ) {
+					const $clickedElement = $( event.target );
 
-					if ( ! accessibilityOnetapGetData()[ key ] ) {
+					// Ignore clicks on toggle button - allow it to work normally
+					if ( $clickedElement.closest( '.onetap-toggle' ).length > 0 || $clickedElement.is( '.onetap-toggle' ) ) {
+						return; // Let the toggle button handler work normally
+					}
+
+					const isClickInsideAccessibility = $( event.target ).closest( '.onetap-accessibility' ).length > 0;
+					const isClickInsideLanguages = $( event.target ).closest( '.onetap-languages, .onetap-list-of-languages' ).length > 0;
+
+					// If clicking outside the accessibility panel, close accessibility
+					if ( ! isClickInsideAccessibility ) {
+						onetapAccessibility.removeClass( 'onetap-toggle-open' ).addClass( 'onetap-toggle-close' );
+						onetapToggleClose.hide( 100 );
+					}
+
+					// If clicking outside the language list, close the language list
+					if ( ! isClickInsideLanguages ) {
+						onetapLanguageList.fadeOut( 350 );
+						onetapToggleLanguages.removeClass( 'onetap-active' );
+					}
+
+					if ( ! getDataAccessibilityData()[ key ] ) {
 						return;
 					}
 
 					// Ignore input, textarea, and select elements
-					if ( $( this ).is( 'input, textarea, select, .onetap-plugin-onetap, .onetap-plugin-onetap *, .onetap-toggle, .onetap-toggle *' ) ) {
+					if ( $( this ).is( 'input, textarea, select' ) ) {
 						return;
 					}
 
+					// Ignore clicks inside onetap plugin elements (panel accessibility and toggle button)
+					// Ignore panel accessibility
+					if ( $clickedElement.closest( 'nav.onetap-accessibility-plugin, .onetap-plugin-onetap' ).length > 0 ) {
+						return;
+					}
+					// Ignore toggle button container and everything inside it
+					if ( $clickedElement.closest( '.onetap-container-toggle' ).length > 0 ) {
+						return;
+					}
+
+					// Now we will handle reading; stop propagation to avoid interfering with other handlers
+					event.stopPropagation();
+
 					// Get only the direct text from the clicked element
-					const textToSpeak = $( this ).clone() // Clone the element to manipulate
-						.children() // Remove the children elements
-						.remove() // Remove child elements
-						.end() // Go back to the original element
-						.text().trim(); // Get the text and trim any spaces
+					const textToSpeak = $( this ).text().trim();
 
 					// Check if the text is not empty
 					if ( textToSpeak.length > 0 ) {
@@ -1524,14 +2603,21 @@
 					// 	event.preventDefault();
 					// }
 				} );
+			} else {
+				// When readPage is disabled, remove the event handler and stop any ongoing speech
+				$( document ).off( 'click.readPage', '*' );
+				window.speechSynthesis.cancel();
+
+				// Remove highlight from any currently speaking element
+				$( '.onetap-highlight' ).removeClass( 'onetap-highlight' );
 			}
 		}
 	}
 
 	// This function adjusts the mute sounds based on the 'muteSounds'
-	function accessibilityOnetapMuteSounds( key, accessibilityDataKey ) {
+	function onetapMuteSounds( key, accessibilityDataKey ) {
 		// if value off, return.
-		if ( 'off' === accessibilityOnetapAjaxObject.showModules[ 'mute-sounds' ] ) {
+		if ( 'off' === onetapAjaxObject.showModules[ 'mute-sounds' ] ) {
 			return;
 		}
 
@@ -1539,7 +2625,7 @@
 		if ( 'muteSounds' === key ) {
 			if ( ! accessibilityDataKey ) {
 				// Unmute all video and audio
-				$( 'audio, video' ).not( accessibilityOnetapSkipElements ).each( function() {
+				$( 'audio, video' ).not( onetapSkipElements ).each( function() {
 					$( this ).prop( 'muted', false );
 				} );
 
@@ -1552,7 +2638,7 @@
 				} );
 			} else if ( accessibilityDataKey ) {
 				// Mute all video and audio
-				$( 'audio, video' ).not( accessibilityOnetapSkipElements ).each( function() {
+				$( 'audio, video' ).not( onetapSkipElements ).each( function() {
 					$( this ).prop( 'muted', true );
 				} );
 
@@ -1568,16 +2654,16 @@
 	}
 
 	// This function adjusts the stop animations based on the 'stopAnimations'
-	function accessibilityOnetapStopAnimations( key, accessibilityDataKey ) {
+	function onetapStopAnimations( key, accessibilityDataKey ) {
 		// if value off, return.
-		if ( 'off' === accessibilityOnetapAjaxObject.showModules[ 'stop-animations' ] ) {
+		if ( 'off' === onetapAjaxObject.showModules[ 'stop-animations' ] ) {
 			return;
 		}
 
 		// Check if the key is 'stopAnimations'. If it is, the function will proceed with font size adjustments.
 		if ( 'stopAnimations' === key ) {
 			// Update style for all elements except specific ones
-			$( '*' ).not( accessibilityOnetapSkipElements ).each( function() {
+			$( '*' ).not( onetapSkipElements ).each( function() {
 				// Transition.
 				let currentStyle1 = $( this ).attr( 'style' ) || '';
 				if ( ! accessibilityDataKey ) {
@@ -1633,35 +2719,38 @@
 		}
 	}
 
-	// List of accessibilityOnetapGetTlements and their keys
-	const accessibilityOnetapGetTlements = [
-		{ selector: '.onetap-bigger-text', key: 'biggerText' },
-		{ selector: '.onetap-cursor', key: 'cursor' },
-		{ selector: '.onetap-line-height', key: 'lineHeight' },
-		{ selector: '.onetap-letter-spacing', key: 'letterSpacing' },
-		{ selector: '.onetap-readable-font', key: 'readableFont' },
-		{ selector: '.onetap-dyslexic-font', key: 'dyslexicFont' },
-		{ selector: '.onetap-text-align', key: 'textAlign' },
-		{ selector: '.onetap-text-magnifier', key: 'textMagnifier' },
+	// List of onetapGetTlements and their keys
+	const onetapGetTlements = [
+		{ selector: '.onetap-bigger-text .onetap-btn', key: 'biggerText' },
 		{ selector: '.onetap-highlight-links', key: 'highlightLinks' },
-		{ selector: '.onetap-invert-colors', key: 'invertColors' },
-		{ selector: '.onetap-brightness', key: 'brightness' },
-		{ selector: '.onetap-contrast', key: 'contrast' },
-		{ selector: '.onetap-grayscale', key: 'grayscale' },
+		{ selector: '.onetap-line-height .onetap-btn', key: 'lineHeight' },
+		{ selector: '.onetap-readable-font', key: 'readableFont' },
+		{ selector: '.onetap-cursor', key: 'cursor' },
+		{ selector: '.onetap-text-magnifier', key: 'textMagnifier' },
+		{ selector: '.onetap-dyslexic-font', key: 'dyslexicFont' },
+		{ selector: '.onetap-align-left', key: 'alignLeft' },
+		{ selector: '.onetap-align-center', key: 'alignCenter' },
+		{ selector: '.onetap-align-right', key: 'alignRight' },
+		{ selector: '.onetap-letter-spacing', key: 'letterSpacing' },
+		{ selector: '.onetap-font-weight', key: 'fontWeight' },
+		{ selector: '.onetap-dark-contrast', key: 'darkContrast' },
+		{ selector: '.onetap-light-contrast', key: 'lightContrast' },
+		{ selector: '.onetap-high-contrast', key: 'highContrast' },
+		{ selector: '.onetap-monochrome', key: 'monochrome' },
 		{ selector: '.onetap-saturation', key: 'saturation' },
 		{ selector: '.onetap-reading-line', key: 'readingLine' },
-		{ selector: '.onetap-keyboard-navigation', key: 'keyboardNavigation' },
-		{ selector: '.onetap-highlight-titles', key: 'highlightTitles' },
 		{ selector: '.onetap-reading-mask', key: 'readingMask' },
-		{ selector: '.onetap-hide-images', key: 'hideImages' },
-		{ selector: '.onetap-highlight-all', key: 'highlightAll' },
 		{ selector: '.onetap-read-page', key: 'readPage' },
+		{ selector: '.onetap-keyboard-navigation', key: 'keyboardNavigation' },
+		{ selector: '.onetap-hide-images', key: 'hideImages' },
 		{ selector: '.onetap-mute-sounds', key: 'muteSounds' },
+		{ selector: '.onetap-highlight-titles', key: 'highlightTitles' },
+		{ selector: '.onetap-highlight-all', key: 'highlightAll' },
 		{ selector: '.onetap-stop-animations', key: 'stopAnimations' },
 	];
 
 	// Utility function to update class based on current value
-	function accessibilityOnetapToggleLevelClass( $element, currentValue ) {
+	function onetapToggleLevelClass( $element, currentValue ) {
 		const levels = [ 'onetap-lv1', 'onetap-lv2', 'onetap-lv3' ];
 		$element.removeClass( levels.join( ' ' ) );
 
@@ -1671,144 +2760,299 @@
 	}
 
 	// Toggles the 'onetap-active' class on the provided element
-	function toggleActiveClass( $element ) {
+	function onetapToggleActiveClass( $element ) {
 		$element.toggleClass( 'onetap-active ' );
 	}
 
 	// Utility function to handle click events
 	let activeStagedValue = 0;
-	function accessibilityOnetapHandleClick( $element, key, accessibilityData, useActiveBorder ) {
+	function onetapHandleClick( $element, key, accessibilityData, useActiveBorder ) {
 		$element.on( 'click', function() {
-			accessibilityData = accessibilityOnetapGetData();
-			if ( useActiveBorder ) {
-				activeStagedValue = accessibilityData.activeBorders[ key ] = ( accessibilityData.activeBorders[ key ] + 1 ) % 4;
-				accessibilityData[ key ] = activeStagedValue !== 0;
+			accessibilityData = getDataAccessibilityData();
 
-				accessibilityOnetapToggleLevelClass( $element, activeStagedValue );
-				accessibilityOnetapBiggerText( key, activeStagedValue );
-				accessibilityOnetapCursor( key, activeStagedValue );
-				accessibilityOnetapLineHeight( key, activeStagedValue );
-				accessibilityOnetapLetterSpacing( key, activeStagedValue );
-				accessibilityOnetapTextAlign( key, activeStagedValue );
-				accessibilityOnetapInvertColors( key, activeStagedValue );
-				accessibilityOnetapBrightness( key, activeStagedValue );
-				accessibilityOnetapContrast( key, activeStagedValue );
-				accessibilityOnetapGrayscale( key, activeStagedValue );
-				accessibilityOnetapSaturation( key, activeStagedValue );
-			} else {
-				accessibilityData[ key ] = ! accessibilityData[ key ];
-				toggleActiveClass( $element, accessibilityData[ key ] );
-				accessibilityOnetapReadableFont( key, accessibilityData[ key ] );
-				accessibilityOnetapDyslexicFont( key, accessibilityData[ key ] );
-				accessibilityOnetapTextMagnifier( key, accessibilityData[ key ] );
-				accessibilityOnetapHighlightLinks( key, accessibilityData[ key ] );
-				accessibilityOnetapReadingLine( key, accessibilityData[ key ] );
-				accessibilityOnetapKeyboardNavigation( key, accessibilityData[ key ] );
-				accessibilityOnetapHighlightTitles( key, accessibilityData[ key ] );
-				accessibilityOnetapReadingMask( key, accessibilityData[ key ] );
-				accessibilityOnetapHideImages( key, accessibilityData[ key ] );
-				accessibilityOnetapHighlightAll( key, accessibilityData[ key ] );
-				accessibilityOnetapReadPage( key, accessibilityData[ key ] );
-				accessibilityOnetapMuteSounds( key, accessibilityData[ key ] );
-				accessibilityOnetapStopAnimations( key, accessibilityData[ key ] );
+			// Check if accessibilityData is null or undefined
+			if ( ! accessibilityData ) {
+				console.warn( 'Accessibility data is null or undefined. Initializing with default data.' );
+				accessibilityData = onetapAccessibilityDefault;
+				localStorage.setItem( onetapLocalStorage, JSON.stringify( accessibilityData ) );
 			}
 
-			localStorage.setItem( accessibilityOnetapLocalStorage, JSON.stringify( accessibilityData ) );
+			const kebabKey = key.replace( /([a-z])([A-Z])/g, '$1-$2' ).toLowerCase();
+			const elementClassName = this.className || '';
+			const selector = elementClassName;
+
+			// Toggle inactive state based on current active class presence
+			if ( selector.split( /\s+/ ).includes( 'onetap-active' ) ) {
+				$( this ).addClass( 'onetap-inactive' );
+			} else {
+				$( this ).removeClass( 'onetap-inactive' );
+			}
+
+			// Determine button type and level from class list
+			const classListArray = selector.split( /\s+/ ).filter( Boolean );
+			const hasIncreaseClass = classListArray.includes( 'onetap-btn-increase' );
+			const hasDecreaseClass = classListArray.includes( 'onetap-btn-decrease' );
+			const levelMatch = selector.match( /\bonetap-lv(\d)\b/ );
+
+			if ( useActiveBorder ) {
+				// Ensure activeBorders exists
+				if ( ! accessibilityData.activeBorders ) {
+					accessibilityData.activeBorders = {};
+				}
+				const previousLevel = accessibilityData.activeBorders[ key ] || 0;
+				let nextLevel = previousLevel;
+				const maxStep = ( key === 'biggerText' || key === 'lineHeight' ) ? 10 : 3;
+				const minStep = ( key === 'biggerText' || key === 'lineHeight' ) ? -10 : 0;
+				if ( hasIncreaseClass ) {
+					nextLevel = Math.min( previousLevel + 1, maxStep );
+				} else if ( hasDecreaseClass ) {
+					nextLevel = Math.max( previousLevel - 1, minStep );
+				}
+
+				activeStagedValue = accessibilityData.activeBorders[ key ] = nextLevel;
+				accessibilityData[ key ] = nextLevel !== 0;
+
+				onetapToggleLevelClass( $element, nextLevel );
+
+				if ( hasIncreaseClass || hasDecreaseClass ) {
+					if ( key === 'biggerText' ) {
+						onetapBiggerText( key, nextLevel, this );
+					} else if ( key === 'lineHeight' ) {
+						onetapLineHeight( key, nextLevel, this );
+					} else if ( key === 'invertColors' ) {
+						onetapInvertColors( key, nextLevel );
+					} else if ( key === 'brightness' ) {
+						onetapBrightness( key, nextLevel );
+					} else if ( key === 'saturation' ) {
+						onetapSaturation( key, nextLevel );
+					} else if ( key === 'textAlign' ) {
+						onetapTextAlign( key, nextLevel );
+					}
+				} else {
+					return;
+				}
+
+				// Changes attr aria pressed
+				if ( 0 !== activeStagedValue ) {
+					$( '.onetap-' + kebabKey ).attr( 'aria-pressed', true );
+				} else {
+					$( '.onetap-' + kebabKey ).attr( 'aria-pressed', false );
+				}
+			} else {
+				accessibilityData[ key ] = ! accessibilityData[ key ];
+				if ( 'alignLeft' === key ) {
+					accessibilityData.alignCenter = false;
+					accessibilityData.alignRight = false;
+				} else if ( 'alignCenter' === key ) {
+					accessibilityData.alignLeft = false;
+					accessibilityData.alignRight = false;
+				} else if ( 'alignRight' === key ) {
+					accessibilityData.alignLeft = false;
+					accessibilityData.alignCenter = false;
+				} else if ( 'darkContrast' === key ) {
+					// If dark contrast is activated, deactivate light contrast
+					accessibilityData.lightContrast = false;
+					$( 'body' ).removeClass( 'onetap-light-contrast' );
+				} else if ( 'lightContrast' === key ) {
+					// If light contrast is activated, deactivate dark contrast
+					accessibilityData.darkContrast = false;
+					$( 'body' ).removeClass( 'onetap-dark-contrast' );
+				} else {
+					accessibilityData.darkContrast = false;
+					accessibilityData.lightContrast = false;
+				}
+
+				onetapToggleActiveClass( $element, accessibilityData[ key ] );
+				onetapHighlightLinks( key, accessibilityData[ key ] );
+				onetapReadableFont( key, accessibilityData[ key ] );
+				onetapCursor( key, accessibilityData[ key ] );
+				onetapTextMagnifier( key, accessibilityData[ key ] );
+				onetapDyslexicFont( key, accessibilityData[ key ] );
+				onetapAlignLeft( key, accessibilityData[ key ] );
+				onetapAlignCenter( key, accessibilityData[ key ] );
+				onetapAlignRight( key, accessibilityData[ key ] );
+				onetapLetterSpacing( key, accessibilityData[ key ] );
+				onetapFontWeight( key, accessibilityData[ key ] );
+				onetapDarkContrast( key, accessibilityData[ key ] );
+				onetapLightContrast( key, accessibilityData[ key ] );
+				onetaphighContrast( key, accessibilityData[ key ] );
+				onetapMonochrome( key, accessibilityData[ key ] );
+				onetapSaturation( key, accessibilityData[ key ] );
+				onetapReadingLine( key, accessibilityData[ key ] );
+				onetapReadingMask( key, accessibilityData[ key ] );
+				onetapReadPage( key, accessibilityData[ key ] );
+				onetapKeyboardNavigation( key, accessibilityData[ key ] );
+				onetapHideImages( key, accessibilityData[ key ] );
+				onetapMuteSounds( key, accessibilityData[ key ] );
+				onetapHighlightTitles( key, accessibilityData[ key ] );
+				onetapHighlightAll( key, accessibilityData[ key ] );
+				onetapStopAnimations( key, accessibilityData[ key ] );
+
+				// Changes attr aria pressed
+				if ( accessibilityData[ key ] ) {
+					$( '.onetap-' + kebabKey ).attr( 'aria-pressed', true );
+				} else {
+					$( '.onetap-' + kebabKey ).attr( 'aria-pressed', false );
+				}
+			}
+
+			localStorage.setItem( onetapLocalStorage, JSON.stringify( accessibilityData ) );
 		} );
 	}
 
-	// Initialize functionality for multiple accessibilityOnetapGetTlements
-	function accessibilityOnetapInitAccessibilityHandlers( accessibilityData ) {
-		accessibilityOnetapGetTlements.forEach( ( { selector, key } ) => {
+	// Initialize functionality for multiple onetapGetTlements
+	function onetapInitAccessibilityHandlers( accessibilityData ) {
+		onetapGetTlements.forEach( ( { selector, key } ) => {
 			const $element = $( `nav.onetap-accessibility.onetap-plugin-onetap .onetap-accessibility-settings ${ selector }` );
 			if ( $element.length ) {
 				// Use activeBorder for some keys, otherwise, just toggle true/false
 				const useActiveBorder = ! [
-					'readableFont',
-					'dyslexicFont',
-					'textMagnifier',
 					'highlightLinks',
+					'readableFont',
+					'cursor',
+					'textMagnifier',
+					'dyslexicFont',
+					'alignLeft',
+					'alignCenter',
+					'alignRight',
+					'letterSpacing',
+					'fontWeight',
+					'darkContrast',
+					'lightContrast',
+					'highContrast',
+					'monochrome',
+					'saturation',
 					'readingLine',
-					'keyboardNavigation',
-					'highlightTitles',
 					'readingMask',
-					'hideImages',
-					'highlightAll',
 					'readPage',
+					'keyboardNavigation',
+					'hideImages',
 					'muteSounds',
+					'highlightTitles',
+					'highlightAll',
 					'stopAnimations',
 				].includes( key );
 
-				accessibilityOnetapHandleClick( $element, key, accessibilityData, useActiveBorder );
+				onetapHandleClick( $element, key, accessibilityData, useActiveBorder );
 			}
 		} );
 	}
 
 	// Handles the application of accessibility features on elements based on user settings
 	function handleAccessibilityFeatures() {
-		accessibilityOnetapGetTlements.forEach( ( { selector, key } ) => {
+		const accessibilityData = getDataAccessibilityData();
+
+		// Check if accessibilityData is null or undefined
+		if ( ! accessibilityData ) {
+			console.warn( 'Accessibility data is null or undefined in handleAccessibilityFeatures. Initializing with default data.' );
+			const defaultData = onetapAccessibilityDefault;
+			localStorage.setItem( onetapLocalStorage, JSON.stringify( defaultData ) );
+			return; // Exit early if no valid data
+		}
+
+		onetapGetTlements.forEach( ( { selector, key } ) => {
 			const $element = $( `nav.onetap-accessibility.onetap-plugin-onetap .onetap-accessibility-settings ${ selector }` );
-			if ( $element.length && accessibilityOnetapGetData()[ key ] !== undefined ) {
+			const kebabKey = key.replace( /([a-z])([A-Z])/g, '$1-$2' ).toLowerCase();
+			if ( $element.length && accessibilityData[ key ] !== undefined ) {
 				const useActiveBorder = ! [
-					'readableFont',
-					'dyslexicFont',
-					'textMagnifier',
 					'highlightLinks',
+					'readableFont',
+					'cursor',
+					'textMagnifier',
+					'dyslexicFont',
+					'alignLeft',
+					'alignCenter',
+					'alignRight',
+					'letterSpacing',
+					'fontWeight',
+					'darkContrast',
+					'lightContrast',
+					'highContrast',
+					'monochrome',
+					'saturation',
 					'readingLine',
-					'keyboardNavigation',
-					'highlightTitles',
 					'readingMask',
-					'hideImages',
-					'highlightAll',
 					'readPage',
+					'keyboardNavigation',
+					'hideImages',
 					'muteSounds',
+					'highlightTitles',
+					'highlightAll',
 					'stopAnimations',
 				].includes( key );
 
 				if ( useActiveBorder ) {
-					if ( accessibilityOnetapGetData().activeBorders[ key ] !== undefined ) {
-						accessibilityOnetapToggleLevelClass( $element, accessibilityOnetapGetData().activeBorders[ key ] );
-						if ( 0 !== accessibilityOnetapGetData().activeBorders[ key ] ) {
-							accessibilityOnetapBiggerText( key, accessibilityOnetapGetData().activeBorders[ key ] );
-							accessibilityOnetapCursor( key, accessibilityOnetapGetData().activeBorders[ key ] );
-							accessibilityOnetapLineHeight( key, accessibilityOnetapGetData().activeBorders[ key ] );
-							accessibilityOnetapLetterSpacing( key, accessibilityOnetapGetData().activeBorders[ key ] );
-							accessibilityOnetapInvertColors( key, accessibilityOnetapGetData().activeBorders[ key ] );
-							accessibilityOnetapBrightness( key, accessibilityOnetapGetData().activeBorders[ key ] );
-							accessibilityOnetapContrast( key, accessibilityOnetapGetData().activeBorders[ key ] );
-							accessibilityOnetapGrayscale( key, accessibilityOnetapGetData().activeBorders[ key ] );
-							accessibilityOnetapSaturation( key, accessibilityOnetapGetData().activeBorders[ key ] );
-							accessibilityOnetapTextAlign( key, accessibilityOnetapGetData().activeBorders[ key ] );
+					// Ensure activeBorders exists
+					if ( ! accessibilityData.activeBorders ) {
+						accessibilityData.activeBorders = {};
+					}
+					if ( accessibilityData.activeBorders[ key ] !== undefined ) {
+						onetapToggleLevelClass( $element, accessibilityData.activeBorders[ key ] );
+						if ( 0 !== accessibilityData.activeBorders[ key ] ) {
+							onetapBiggerText( key, accessibilityData.activeBorders[ key ], selector );
+							onetapLineHeight( key, accessibilityData.activeBorders[ key ], selector );
+							onetapInvertColors( key, accessibilityData.activeBorders[ key ] );
+							onetapBrightness( key, accessibilityData.activeBorders[ key ] );
+							onetapSaturation( key, accessibilityData.activeBorders[ key ] );
+							onetapTextAlign( key, accessibilityData.activeBorders[ key ] );
+
+							// Changes attr aria pressed
+							if ( accessibilityData.activeBorders[ key ] ) {
+								$( '.onetap-' + kebabKey ).attr( 'aria-pressed', true );
+							} else {
+								$( '.onetap-' + kebabKey ).attr( 'aria-pressed', false );
+							}
 						}
 					}
-				} else if ( accessibilityOnetapGetData()[ key ] !== undefined ) {
-					if ( accessibilityOnetapGetData()[ key ] !== undefined && accessibilityOnetapGetData()[ key ] ) {
-						toggleActiveClass( $element, accessibilityOnetapGetData()[ key ] );
-						accessibilityOnetapHideImages( key, accessibilityOnetapGetData()[ key ] );
-						accessibilityOnetapReadableFont( key, accessibilityOnetapGetData()[ key ] );
-						accessibilityOnetapDyslexicFont( key, accessibilityOnetapGetData()[ key ] );
-						accessibilityOnetapHighlightTitles( key, accessibilityOnetapGetData()[ key ] );
-						accessibilityOnetapHighlightAll( key, accessibilityOnetapGetData()[ key ] );
-						accessibilityOnetapReadingLine( key, accessibilityOnetapGetData()[ key ] );
-						accessibilityOnetapTextMagnifier( key, accessibilityOnetapGetData()[ key ] );
-						accessibilityOnetapHighlightLinks( key, accessibilityOnetapGetData()[ key ] );
-						accessibilityOnetapStopAnimations( key, accessibilityOnetapGetData()[ key ] );
-						accessibilityOnetapReadPage( key, accessibilityOnetapGetData()[ key ] );
-						accessibilityOnetapReadingMask( key, accessibilityOnetapGetData()[ key ] );
-						accessibilityOnetapKeyboardNavigation( key, accessibilityOnetapGetData()[ key ] );
-						accessibilityOnetapMuteSounds( key, accessibilityOnetapGetData()[ key ] );
+				} else if ( accessibilityData[ key ] !== undefined ) {
+					if ( accessibilityData[ key ] !== undefined && accessibilityData[ key ] ) {
+						onetapToggleActiveClass( $element, accessibilityData[ key ] );
+						onetapHighlightLinks( key, accessibilityData[ key ] );
+						onetapReadableFont( key, accessibilityData[ key ] );
+						onetapCursor( key, accessibilityData[ key ] );
+						onetapTextMagnifier( key, accessibilityData[ key ] );
+						onetapDyslexicFont( key, accessibilityData[ key ] );
+						onetapAlignLeft( key, accessibilityData[ key ] );
+						onetapAlignCenter( key, accessibilityData[ key ] );
+						onetapAlignRight( key, accessibilityData[ key ] );
+						onetapLetterSpacing( key, accessibilityData[ key ] );
+						onetapFontWeight( key, accessibilityData[ key ] );
+						onetapDarkContrast( key, accessibilityData[ key ] );
+						onetapLightContrast( key, accessibilityData[ key ] );
+						onetaphighContrast( key, accessibilityData[ key ] );
+						onetapMonochrome( key, accessibilityData[ key ] );
+						onetapSaturation( key, accessibilityData[ key ] );
+						onetapReadingLine( key, accessibilityData[ key ] );
+						onetapReadingMask( key, accessibilityData[ key ] );
+						onetapReadPage( key, accessibilityData[ key ] );
+						onetapKeyboardNavigation( key, accessibilityData[ key ] );
+						onetapHideImages( key, accessibilityData[ key ] );
+						onetapMuteSounds( key, accessibilityData[ key ] );
+						onetapHighlightTitles( key, accessibilityData[ key ] );
+						onetapHighlightAll( key, accessibilityData[ key ] );
+						onetapStopAnimations( key, accessibilityData[ key ] );
+
+						// Changes attr aria pressed
+						if ( accessibilityData[ key ] ) {
+							$( '.onetap-' + kebabKey ).attr( 'aria-pressed', true );
+						} else {
+							$( '.onetap-' + kebabKey ).attr( 'aria-pressed', false );
+						}
 					}
 				}
 			}
 		} );
 
 		// Initialize handlers
-		accessibilityOnetapInitAccessibilityHandlers( accessibilityOnetapGetData() );
+		onetapInitAccessibilityHandlers( accessibilityData );
 	}
 	handleAccessibilityFeatures();
 
+	// Updates the 'data-on' and 'data-off' attributes
+	updateLabelModeSwitch();
+
 	// Reset settings
-	$( document ).on( 'click', 'nav.onetap-accessibility.onetap-plugin-onetap .onetap-reset-settings span', function( event ) {
+	$( document ).on( 'click', 'nav.onetap-accessibility.onetap-plugin-onetap .onetap-reset-settings button', function( event ) {
 		event.stopPropagation(); // Ensure this doesn't trigger auto-close
 
 		// Select all elements with the class .onetap-box-feature
@@ -1818,9 +3062,9 @@
 		} );
 
 		// Check if the localStorage item exists
-		if ( localStorage.getItem( accessibilityOnetapLocalStorage ) ) {
+		if ( localStorage.getItem( onetapLocalStorage ) ) {
 			// Parse the existing localStorage item
-			const currentSettings = JSON.parse( localStorage.getItem( accessibilityOnetapLocalStorage ) );
+			const currentSettings = JSON.parse( localStorage.getItem( onetapLocalStorage ) );
 
 			// Check if any of the specified values are true
 			const hasActiveSettings =
@@ -1830,27 +3074,30 @@
 				currentSettings.dynamicFeatureSet.blindnessMode ||
 				currentSettings.dynamicFeatureSet.epilepsySafeMode ||
 				currentSettings.biggerText ||
-				currentSettings.cursor ||
-				currentSettings.lineHeight ||
-				currentSettings.letterSpacing ||
-				currentSettings.readableFont ||
-				currentSettings.dyslexicFont ||
-				currentSettings.textAlign ||
-				currentSettings.textMagnifier ||
 				currentSettings.highlightLinks ||
-				currentSettings.invertColors ||
-				currentSettings.brightness ||
-				currentSettings.contrast ||
-				currentSettings.grayscale ||
+				currentSettings.lineHeight ||
+				currentSettings.readableFont ||
+				currentSettings.cursor ||
+				currentSettings.textMagnifier ||
+				currentSettings.dyslexicFont ||
+				currentSettings.alignLeft ||
+				currentSettings.alignCenter ||
+				currentSettings.alignRight ||
+				currentSettings.letterSpacing ||
+				currentSettings.fontWeight ||
+				currentSettings.darkContrast ||
+				currentSettings.lightContrast ||
+				currentSettings.highContrast ||
+				currentSettings.monochrome ||
 				currentSettings.saturation ||
 				currentSettings.readingLine ||
-				currentSettings.keyboardNavigation ||
-				currentSettings.highlightTitles ||
 				currentSettings.readingMask ||
-				currentSettings.hideImages ||
-				currentSettings.highlightAll ||
 				currentSettings.readPage ||
+				currentSettings.keyboardNavigation ||
+				currentSettings.hideImages ||
 				currentSettings.muteSounds ||
+				currentSettings.highlightTitles ||
+				currentSettings.highlightAll ||
 				currentSettings.stopAnimations ||
 				currentSettings.information.language;
 
@@ -1869,16 +3116,20 @@
 				$( 'nav.onetap-accessibility .onetap-accessibility-settings .onetap-languages .onetap-icon img' ).removeClass( 'onetap-active' );
 
 				// Add the 'onetap-active' class to the image with the alt attribute matching the selected language
-				$( 'nav.onetap-accessibility .onetap-accessibility-settings .onetap-languages .onetap-icon img[alt="' + accessibilityOnetapAjaxObject.getSettings.language + '"]' ).addClass( 'onetap-active' );
+				$( 'nav.onetap-accessibility .onetap-accessibility-settings .onetap-languages .onetap-icon img[alt="' + onetapAjaxObject.getSettings.language + '"]' ).addClass( 'onetap-active' );
 
 				// Reset language
-				accessibilityOnetapUpdateContentBasedOnLanguage( accessibilityOnetapAjaxObject.getSettings.language );
+				onetapUpdateContentBasedOnLanguage( onetapAjaxObject.getSettings.language );
+
+				// The function to apply language translations to feature boxes
+				applyLanguageTranslationsToFeatures( onetapAjaxObject.getSettings.language );
+				applyLanguageTranslationsToFunctionalFeatures( onetapAjaxObject.getSettings.language );
 
 				// Remove localStorage item if any value is true
-				localStorage.removeItem( accessibilityOnetapLocalStorage );
+				localStorage.removeItem( onetapLocalStorage );
 
 				// Create a new localStorage item with default values
-				localStorage.setItem( accessibilityOnetapLocalStorage, JSON.stringify( accessibilityOnetapDefault ) );
+				localStorage.setItem( onetapLocalStorage, JSON.stringify( onetapAccessibilityDefault ) );
 
 				// Reset Mode Preset Toggle.
 				const checkboxPresetToggle = [
@@ -1893,6 +3144,7 @@
 					const checkbox = document.querySelector( id );
 					if ( checkbox ) {
 						checkbox.checked = false;
+						$( id ).attr( 'aria-checked', false );
 					}
 				} );
 
@@ -1900,17 +3152,100 @@
 				$( 'nav.onetap-accessibility.onetap-plugin-onetap .onetap-functional-feature' ).removeClass( 'onetap-active' );
 
 				// Remove style inline
-				$( '*' ).not( accessibilityOnetapSkipElements ).each( function() {
+				$( '*' ).not( onetapSkipElements ).each( function() {
 					let currentStyle = $( this ).attr( 'style' ) || '';
 
-					// Reset (Bigger Text)
-					currentStyle = currentStyle.replace( /font-size:\s*[^;]+;?/, '' );
+					// Reset (Bigger Text): restore original inline font-size if available, otherwise remove only plugin-added font-size
+					const originalInlineFontSize = this.dataset && this.dataset.originalInlineFontSize ? this.dataset.originalInlineFontSize : '';
+					if ( originalInlineFontSize ) {
+						const restoreFontSize = `font-size: ${ originalInlineFontSize };`;
+						if ( /font-size:\s*[^;]+;?/.test( currentStyle ) ) {
+							currentStyle = currentStyle.replace( /font-size:\s*[^;]+;?/, restoreFontSize );
+						} else {
+							currentStyle += ( currentStyle.trim().endsWith( ';' ) ? ' ' : '; ' ) + restoreFontSize;
+						}
+					} else {
+						// Only remove font-size if it was added by the plugin (has !important)
+						// Preserve original font-size values like clamp() that don't have !important
+						const fontSizeMatch = currentStyle.match( /font-size:\s*([^;]+);?/ );
+						if ( fontSizeMatch && fontSizeMatch[ 1 ] ) {
+							const fontSizeValue = fontSizeMatch[ 1 ].trim();
+							// If font-size has !important, it was added by the plugin, so remove it
+							if ( fontSizeValue.includes( '!important' ) ) {
+								currentStyle = currentStyle.replace( /font-size:\s*[^;]+;?/, '' );
+							}
+							// If font-size doesn't have !important, it's likely original, so preserve it (do nothing)
+						}
+					}
 
-					// Reset (Line Height)
-					currentStyle = currentStyle.replace( /line-height:\s*[^;]+;?/, '' );
+					// Reset (Line Height): restore original inline line-height if available, otherwise remove only plugin-added line-height
+					const originalInlineLineHeight = this.dataset && this.dataset.originalInlineLineHeight ? this.dataset.originalInlineLineHeight : '';
+					if ( originalInlineLineHeight ) {
+						const restoreLineHeight = `line-height: ${ originalInlineLineHeight };`;
+						if ( /line-height:\s*[^;]+;?/.test( currentStyle ) ) {
+							currentStyle = currentStyle.replace( /line-height:\s*[^;]+;?/, restoreLineHeight );
+						} else {
+							currentStyle += ( currentStyle.trim().endsWith( ';' ) ? ' ' : '; ' ) + restoreLineHeight;
+						}
+					} else {
+						// Only remove line-height if it was added by the plugin (has !important)
+						// Preserve original line-height values that don't have !important
+						const lineHeightMatch = currentStyle.match( /line-height:\s*([^;]+);?/ );
+						if ( lineHeightMatch && lineHeightMatch[ 1 ] ) {
+							const lineHeightValue = lineHeightMatch[ 1 ].trim();
+							// If line-height has !important, it was added by the plugin, so remove it
+							if ( lineHeightValue.includes( '!important' ) ) {
+								currentStyle = currentStyle.replace( /line-height:\s*[^;]+;?/, '' );
+							}
+							// If line-height doesn't have !important, it's likely original, so preserve it (do nothing)
+						}
+					}
 
-					// Reset (Letter Spacing)
-					currentStyle = currentStyle.replace( /letter-spacing:\s*[^;]+;?/, '' );
+					// Reset (Letter Spacing): restore original inline letter-spacing if available, otherwise remove only plugin-added letter-spacing
+					const originalInlineLetterSpacing = this.dataset && this.dataset.originalInlineLetterSpacing ? this.dataset.originalInlineLetterSpacing : '';
+					if ( originalInlineLetterSpacing ) {
+						const restoreLetterSpacing = `letter-spacing: ${ originalInlineLetterSpacing };`;
+						if ( /letter-spacing:\s*[^;]+;?/.test( currentStyle ) ) {
+							currentStyle = currentStyle.replace( /letter-spacing:\s*[^;]+;?/, restoreLetterSpacing );
+						} else {
+							currentStyle += ( currentStyle.trim().endsWith( ';' ) ? ' ' : '; ' ) + restoreLetterSpacing;
+						}
+					} else {
+						// Only remove letter-spacing if it was added by the plugin (has !important)
+						// Preserve original letter-spacing values that don't have !important
+						const letterSpacingMatch = currentStyle.match( /letter-spacing:\s*([^;]+);?/ );
+						if ( letterSpacingMatch && letterSpacingMatch[ 1 ] ) {
+							const letterSpacingValue = letterSpacingMatch[ 1 ].trim();
+							// If letter-spacing has !important, it was added by the plugin, so remove it
+							if ( letterSpacingValue.includes( '!important' ) ) {
+								currentStyle = currentStyle.replace( /letter-spacing:\s*[^;]+;?/, '' );
+							}
+							// If letter-spacing doesn't have !important, it's likely original, so preserve it (do nothing)
+						}
+					}
+
+					// Reset (Font Weight): restore original inline font-weight if available, otherwise remove only plugin-added font-weight
+					const originalInlineFontWeight = this.dataset && this.dataset.originalInlineFontWeight ? this.dataset.originalInlineFontWeight : '';
+					if ( originalInlineFontWeight ) {
+						const restoreFontWeight = `font-weight: ${ originalInlineFontWeight };`;
+						if ( /font-weight:\s*[^;]+;?/.test( currentStyle ) ) {
+							currentStyle = currentStyle.replace( /font-weight:\s*[^;]+;?/, restoreFontWeight );
+						} else {
+							currentStyle += ( currentStyle.trim().endsWith( ';' ) ? ' ' : '; ' ) + restoreFontWeight;
+						}
+					} else {
+						// Only remove font-weight if it was added by the plugin (has !important)
+						// Preserve original font-weight values that don't have !important
+						const fontWeightMatch = currentStyle.match( /font-weight:\s*([^;]+);?/ );
+						if ( fontWeightMatch && fontWeightMatch[ 1 ] ) {
+							const fontWeightValue = fontWeightMatch[ 1 ].trim();
+							// If font-weight has !important, it was added by the plugin, so remove it
+							if ( fontWeightValue.includes( '!important' ) ) {
+								currentStyle = currentStyle.replace( /font-weight:\s*[^;]+;?/, '' );
+							}
+							// If font-weight doesn't have !important, it's likely original, so preserve it (do nothing)
+						}
+					}
 
 					// Reset (Text Align)
 					currentStyle = currentStyle.replace( /text-align:\s*[^;]+;?/, '' );
@@ -1934,7 +3269,7 @@
 				} );
 
 				// Remove style inline
-				$( 'a' ).not( accessibilityOnetapSkipElements ).each( function() {
+				$( 'a, a *' ).not( onetapSkipElements ).each( function() {
 					let currentStyle = $( this ).attr( 'style' ) || '';
 
 					// Reset (Highlight Links)
@@ -1949,7 +3284,7 @@
 				} );
 
 				// Remove style inline
-				$( 'img' ).not( accessibilityOnetapSkipElements ).each( function() {
+				$( 'img' ).not( onetapSkipElements ).each( function() {
 					let currentStyle = $( this ).attr( 'style' ) || '';
 
 					// Reset (Hide Images)
@@ -1969,6 +3304,10 @@
 				$( 'html' ).removeClass( 'onetap-cursor-feature2' );
 				$( 'html' ).removeClass( 'onetap-cursor-feature3' );
 
+				// Dark/Ligh Contrast
+				$( 'body' ).removeClass( 'onetap-dark-contrast' );
+				$( 'body' ).removeClass( 'onetap-light-contrast' );
+
 				// Reset (Highlight titles)
 				$( 'body' ).removeClass( 'onetap-highlight-titles' );
 
@@ -1982,10 +3321,10 @@
 
 				// ============= Colors =============
 
-				$( 'html, img' ).not( accessibilityOnetapSkipElements ).each( function() {
+				$( 'html, img' ).not( onetapSkipElements ).each( function() {
 					let currentStyle = $( this ).attr( 'style' ) || '';
 
-					// Remove the filter if activeBorderValue is 0
+					// Remove the filter if activeBorderValue is 0 (Colors)
 					currentStyle = currentStyle.replace( /filter:\s*[^;]+;?/, '' );
 
 					// Trim any extra spaces and ensure there's no trailing space
@@ -2009,7 +3348,7 @@
 				// ============= Orientation bottom =============
 
 				// Unmute all video and audio
-				$( 'audio, video' ).not( accessibilityOnetapSkipElements ).each( function() {
+				$( 'audio, video' ).not( onetapSkipElements ).each( function() {
 					$( this ).prop( 'muted', false );
 				} );
 
@@ -2023,7 +3362,78 @@
 			}
 		} else {
 			// Create localStorage item if it does not exist
-			localStorage.setItem( accessibilityOnetapLocalStorage, JSON.stringify( accessibilityOnetapDefault ) );
+			localStorage.setItem( onetapLocalStorage, JSON.stringify( onetapAccessibilityDefault ) );
+		}
+	} );
+
+	// When the "Hide Toolbar" button is clicked
+	$( '.hide-toolbar' ).on( 'click', function() {
+		// Get the ID of the selected radio button
+		const selected = $( 'input[name="hide_toolbar_duration"]:checked' ).attr( 'id' );
+
+		// If no option is selected, alert and stop
+		if ( ! selected ) {
+			alert( 'Please select a duration!' );
+			return;
+		}
+
+		// Define prefix and key name for storage
+		const prefix = 'onetap_free_';
+		const key = prefix + 'toolbar_hidden_until';
+		let expireAt;
+
+		if ( selected === 'only-for-this-session' ) {
+			// Hide the toolbar and save flag in sessionStorage (clears on browser close)
+			$( '.onetap-container-toggle' ).hide();
+			$( '.onetap-accessibility' ).hide();
+			sessionStorage.setItem( key, 'session' );
+		} else {
+			const now = new Date();
+			if ( selected === 'only-for-24-hours' ) {
+				// Set expiration to 24 hours from now
+				expireAt = now.getTime() + ( 24 * 60 * 60 * 1000 );
+			} else if ( selected === 'only-for-a-week' ) {
+				// Set expiration to 7 days from now
+				expireAt = now.getTime() + ( 7 * 24 * 60 * 60 * 1000 );
+			}
+
+			// Save the expiration time in localStorage and hide the toolbar
+			localStorage.setItem( key, expireAt );
+			$( '.onetap-container-toggle' ).hide();
+			$( '.onetap-accessibility' ).hide();
+		}
+	} );
+
+	// On page load, check if toolbar should be hidden
+	const key = 'onetap_pro_toolbar_hidden_until';
+	const sessionFlag = sessionStorage.getItem( key );
+	const storedTime = localStorage.getItem( key );
+
+	if ( sessionFlag === 'session' ) {
+		// If sessionStorage has the flag, hide the toolbar
+		$( '.onetap-container-toggle' ).hide();
+	} else if ( storedTime ) {
+		const now = new Date().getTime();
+		if ( parseInt( storedTime, 10 ) > now ) {
+			// If current time is before expiration, hide the toolbar
+			$( '.onetap-container-toggle' ).hide();
+		} else {
+			// If expired, remove the flag
+			localStorage.removeItem( key );
+		}
+	} else {
+		$( '.onetap-container-toggle' ).show();
+	}
+
+	// This script enhances the accessibility of the "Hide Toolbar Duration" options.
+	$( '.toolbar-duration-option' ).on( 'keydown', function( e ) {
+		if ( e.key === 'Enter' || e.code === 'Space' || e.keyCode === 32 ) {
+			e.preventDefault();
+			// Uncheck all radios
+			$( '.toolbar-duration-option' ).attr( 'aria-checked', 'false' ).find( 'input[type="radio"]' ).prop( 'checked', false );
+
+			// Check the current one
+			$( this ).attr( 'aria-checked', 'true' ).find( 'input[type="radio"]' ).prop( 'checked', true );
 		}
 	} );
 }( jQuery ) );

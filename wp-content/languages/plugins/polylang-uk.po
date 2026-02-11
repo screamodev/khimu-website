@@ -2,12 +2,12 @@
 # This file is distributed under the same license as the Plugins - Polylang - Stable (latest release) package.
 msgid ""
 msgstr ""
-"PO-Revision-Date: 2025-04-22 07:36:56+0000\n"
+"PO-Revision-Date: 2025-11-10 09:36:35+0000\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=(n % 10 == 1 && n % 100 != 11) ? 0 : ((n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 12 || n % 100 > 14)) ? 1 : 2);\n"
-"X-Generator: GlotPress/4.0.1\n"
+"X-Generator: GlotPress/4.0.3\n"
 "Language: uk_UA\n"
 "Project-Id-Version: Plugins - Polylang - Stable (latest release)\n"
 
@@ -750,7 +750,7 @@ msgstr "Для коректної роботи сайту необхідно п�
 msgid "Content without language"
 msgstr "Контент без мови"
 
-#: include/license.php:286
+#: include/license.php:293
 msgid "Your license key has been disabled."
 msgstr "Ваш ліцензійний ключ відключено."
 
@@ -774,7 +774,7 @@ msgid "North Macedonia"
 msgstr "Північна Македонія"
 
 #. translators: %1$s is a date, %2$s is link start tag, %3$s is link end tag.
-#: include/license.php:334
+#: include/license.php:341
 msgid "Your license key will expire soon! Precisely, it will expire on %1$s. %2$sRenew your license key today!%3$s"
 msgstr "Дія вашого ліцензійного ключа незабаром закінчиться. Це станеться %1$s. %2$sОновіть ваш ліцензійний ключ сьогодні!%3$s."
 
@@ -822,16 +822,16 @@ msgstr "WP SYNTEX"
 msgid "Dismiss this notice."
 msgstr "Пропустити це сповіщення."
 
-#: include/filters.php:432
+#: include/filters.php:435
 msgid "User"
 msgstr "Користувача"
 
 #. translators: %s is a language native name
-#: include/filters.php:423
+#: include/filters.php:426
 msgid "User description - %s"
 msgstr "Опис користувача - %s"
 
-#: include/filters.php:399
+#: include/filters.php:402
 msgid "Translated user descriptions"
 msgstr "Перекладені описи користувача"
 
@@ -855,37 +855,37 @@ msgid "Upgrade now."
 msgstr "Оновити зараз."
 
 #. translators: %s is a date
-#: include/license.php:342
+#: include/license.php:349
 msgid "Your license key expires on %s."
 msgstr "Термін дії ліцензійного ключа завершується %s."
 
-#: include/license.php:329
+#: include/license.php:336
 msgid "The license key never expires."
 msgstr "Ліцензійний ключ вічний."
 
 #. translators: %1$s is link start tag, %2$s is link end tag
-#: include/license.php:317
+#: include/license.php:324
 msgid "Your license key has reached its activation limit. %1$sView possible upgrades%2$s now."
 msgstr "Ліцензійний ключ досяг ліміту активацій. %1$sПерегляньте можливі оновлення%2$s зараз."
 
 #. translators: %s is a product name
-#: include/license.php:311
+#: include/license.php:318
 msgid "This is not a %s license key."
 msgstr "Це не ліцензійний ключ %s."
 
 #. translators: %1$s is a product name, %2$s is link start tag, %3$s is link
 #. end tag.
-#: include/license.php:302
+#: include/license.php:309
 msgid "Your %1$s license key is not active for this URL. Please %2$svisit your account page%3$s to manage your license key URLs."
 msgstr "Ваш ліцензійний ключ не активовано для URL %1$s. Будь ласка, %2$sвідвідайте сторінку облікового запису%3$s для керування вашими URL."
 
 #. translators: %1$s is link start tag, %2$s is link end tag.
-#: include/license.php:292
+#: include/license.php:299
 msgid "Invalid license. Please %1$svisit your account page%2$s and verify it."
 msgstr "Невірна ліцензія. Будь ласка, %1$sвідвідайте сторінку облікового запису%2$s і перевірте її."
 
 #. translators: %1$s is a date, %2$s is link start tag, %3$s is link end tag.
-#: include/license.php:277
+#: include/license.php:284
 msgid "Your license key expired on %1$s. Please %2$srenew your license key%3$s."
 msgstr "Ваш ліцензійний ключ закінчився %1$s. Будь ласка, %2$sоновіть ваш ліцензійний ключ%3$s."
 
@@ -913,11 +913,11 @@ msgstr "Дозволяє розділяти ті самі частини пос�
 msgid "Share slugs"
 msgstr "Розділяти частини посилань"
 
-#: install/plugin-updater.php:573
+#: install/plugin-updater.php:574
 msgid "Error"
 msgstr "Помилка"
 
-#: install/plugin-updater.php:573
+#: install/plugin-updater.php:574
 msgid "You do not have permission to install plugin updates"
 msgstr "У вас недостатньо повноважень для оновлення плагінів"
 
@@ -1010,7 +1010,7 @@ msgstr "Дезактивовано"
 msgid "Activate this module"
 msgstr "Активувати цей модуль"
 
-#: include/license.php:326 settings/settings-module.php:156
+#: include/license.php:333 settings/settings-module.php:156
 msgid "Deactivate"
 msgstr "Деактивуйте"
 
@@ -2031,7 +2031,7 @@ msgstr "Сторінка записів"
 msgid "Front Page"
 msgstr "Головна сторінка"
 
-#: admin/admin-nav-menu.php:82
+#: admin/admin-nav-menu.php:90
 msgid "Add to Menu"
 msgstr "Додати до меню"
 
@@ -2425,11 +2425,11 @@ msgstr "Про Polylang"
 msgid "The language was created, but the WordPress language file was not downloaded. Please install it manually."
 msgstr "Мова була створена, але файл мовний файл WordPress не був завантажений. Будь ласка, встановіть його вручну."
 
-#: admin/admin-base.php:457 admin/admin-base.php:475
+#: admin/admin-base.php:461 admin/admin-base.php:479
 msgid "Filters content by language"
 msgstr "Фільтрує вміст за мовою"
 
-#: admin/admin-base.php:448
+#: admin/admin-base.php:452
 msgid "Show all languages"
 msgstr "Показати всі мови"
 
@@ -2446,7 +2446,7 @@ msgstr "Текст віджету"
 msgid "Widget title"
 msgstr "Назва віджету"
 
-#: admin/admin-nav-menu.php:49 include/nav-menu.php:74
+#: admin/admin-nav-menu.php:59 include/nav-menu.php:74
 #: include/widget-languages.php:32
 msgid "Language switcher"
 msgstr "Перемикач мов"
@@ -2508,8 +2508,8 @@ msgid "(no parent)"
 msgstr "(без предка)"
 
 #: admin/admin-base.php:124 admin/admin-base.php:148
-#: admin/admin-classic-editor.php:77 admin/admin-nav-menu.php:72
-#: admin/admin-nav-menu.php:75 admin/admin-nav-menu.php:108
+#: admin/admin-classic-editor.php:77 admin/admin-nav-menu.php:80
+#: admin/admin-nav-menu.php:83 admin/admin-nav-menu.php:116
 #: admin/admin-notices.php:114 admin/admin-notices.php:187
 #: include/nav-menu.php:73 modules/wizard/view-wizard-step-languages.php:28
 #: modules/wizard/wizard.php:510 settings/settings.php:129
