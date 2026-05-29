@@ -1,0 +1,31 @@
+qqservices:
+  wordpress:
+    image: wordpress:latest
+    restart: always
+    ports:
+    - 8080:80
+    environment:
+      WORDPRESS_DB_HOST: db
+      WORDPRESS_DB_USER: wpuser
+      WORDPRESS_DB_PASSWORD: ${WORDPRESS_DB_PASSWORD}
+      WORDPRESS_DB_NAME: wpdb
+    volumes:
+    - wordpress_data:/var/www/html
+    - ./php.ini:/usr/local/etc/php/conf.d/custom-php.ini
+    - ./wp-content:/var/www/html/wp-content
+    depends_on:
+    - db
+  db:
+    image: mariadb:10.5
+    restart: always
+    environment:
+      MARIADB_DATABASE: wpdb
+      MARIADB_USER: wpuser
+      MARIADB_PASSWORD: ${MARIADB_PASSWORD}
+      MARIADB_ROOT_PASSWORD: ${MARIADB_ROOT_PASSWORD}
+    volumes:
+    - db_data:/var/lib/mysql
+    - ./database/dump.sql:/docker-entrypoint-initdb.d/dump.sql:ro
+volumes:
+  wordpress_data: null
+  db_data: null

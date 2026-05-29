@@ -1,0 +1,572 @@
+# Translation of Plugins - Ally &#8211; Web Accessibility &amp; Usability - Stable (latest release) in Ukrainian
+# This file is distributed under the same license as the Plugins - Ally &#8211; Web Accessibility &amp; Usability - Stable (latest release) package.
+msgid ""
+msgstr ""
+"PO-Revision-Date: 2024-02-28 08:35:57+0000\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=3; plural=(n % 10 == 1 && n % 100 != 11) ? 0 : ((n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 12 || n % 100 > 14)) ? 1 : 2);\n"
+"X-Generator: GlotPress/4.0.3\n"
+"Language: uk_UA\n"
+"Project-Id-Version: Plugins - Ally &#8211; Web Accessibility &amp; Usability - Stable (latest release)\n"
+
+#: modules/legacy/components/settings.php:666
+msgid "Set Accessibility Toolbar Settings"
+msgstr "Налаштування Панелі Доступності"
+
+#: modules/legacy/components/settings.php:664
+msgid "Set Accessibility settings"
+msgstr "Налаштування Доступності"
+
+#: modules/legacy/components/settings.php:655
+#: modules/legacy/components/settings.php:656
+#: modules/legacy/components/settings.php:669
+msgid "Customize"
+msgstr "Налаштувати"
+
+#: modules/legacy/components/settings.php:648
+#: modules/legacy/components/settings.php:667
+msgid "Toolbar"
+msgstr "Панель інструментів"
+
+#: modules/legacy/components/settings.php:668
+msgid "Customize Toolbar"
+msgstr "Налаштувати Панель Інструментів"
+
+#: modules/core/module.php:36 modules/legacy/components/settings.php:640
+#: modules/legacy/components/settings.php:665
+msgid "Settings"
+msgstr "Налаштування"
+
+#: modules/legacy/components/settings.php:398
+msgid "Define how long your toolbar settings will be remembered"
+msgstr "Визначте, як довго зберігати налаштування панелі інструментів"
+
+#: modules/legacy/components/settings.php:372
+msgid "This option will add <code>role=\"link\"</code> to all links on the page."
+msgstr "Ця опція додасть <code>role=\"link\"</code> на всі посилання на сторінці."
+
+#: modules/legacy/components/settings.php:336
+msgid "Add skip to content link when using keyboard."
+msgstr "Додайте перехід до посилання на вміст під час використання клавіатури."
+
+#: modules/legacy/components/customizer.php:173
+#: modules/legacy/components/settings.php:647
+msgid "Accessibility Toolbar"
+msgstr "Панель Доступності"
+
+#: modules/legacy/components/customizer.php:172
+msgid "Additional Toolbar settings can be configured at the %s page."
+msgstr "Додаткові параметри панелі інструментів можна налаштувати на сторінці %s."
+
+#: modules/legacy/components/customizer.php:171
+msgid "Use the control below to customize the appearance and layout of the Accessibility Toolbar"
+msgstr "Налаштувати зовнішній вигляд і макет панелі доступності за допомогою керування нижче"
+
+#: modules/legacy/components/customizer.php:162
+msgid "Set Focus outline color"
+msgstr "Установити Фокус начерки кольору"
+
+#: modules/legacy/components/customizer.php:154
+msgid "Set Focus outline width"
+msgstr "Установити Фокус начерки ширини"
+
+#: modules/legacy/components/customizer.php:134
+msgid "Set Focus outline style"
+msgstr "Установити Фокус начерки стиль"
+
+#: modules/legacy/components/customizer.php:116
+msgid "Set Toolbar active text color"
+msgstr "Встановлює колір активного тексту Панелі Доступності"
+
+#: modules/legacy/components/customizer.php:111
+msgid "Active Color"
+msgstr "Активний колір"
+
+#: modules/legacy/components/customizer.php:106
+msgid "Set Toolbar active background color"
+msgstr "Встановити Панелі Доступності активний фоновий колір"
+
+#: modules/legacy/components/customizer.php:101
+msgid "Active Background"
+msgstr "Активний фон"
+
+#: modules/legacy/components/customizer.php:96
+msgid "Set Toolbar toggle button icon color"
+msgstr "Панелі Доступності переключити кнопки значок кольору"
+
+#: modules/legacy/components/customizer.php:86
+msgid "Set Toolbar toggle button background color"
+msgstr "Панелі Доступності переключити кнопки Колір фону"
+
+#: modules/legacy/components/customizer.php:78
+msgid "Set Toolbar text color"
+msgstr "Встановити колір тексту Панелі Доступності"
+
+#: modules/legacy/components/customizer.php:73
+msgid "Toolbar Color"
+msgstr "Колір Панелі Доступності"
+
+#: modules/legacy/components/customizer.php:68
+msgid "Set Toolbar background color"
+msgstr "Встановити фоновий колір Панелі Доступності"
+
+#: modules/legacy/components/customizer.php:63
+msgid "Toolbar Background"
+msgstr "Фон Панелі Доступності"
+
+#: modules/legacy/components/customizer.php:58
+msgid "Set Toolbar top offset (Mobile)"
+msgstr "Панелі Доступності інструментів зверху зсув (мобільний)"
+
+#: modules/legacy/components/customizer.php:55
+msgid "Offset from Top (Mobile)"
+msgstr "Зсув зверху (Мобільний)"
+
+#: modules/legacy/components/customizer.php:47
+msgid "Offset from Top (Desktop)"
+msgstr "Зсув зверху (ПК)"
+
+#: modules/legacy/components/customizer.php:35
+msgid "Toolbar Position"
+msgstr "Панель Інструментів позиції"
+
+#: modules/legacy/components/customizer.php:30
+msgid "Set Toolbar Icon"
+msgstr "Панелі Доступності піктограма"
+
+#: modules/legacy/components/customizer.php:25
+msgid "One Click"
+msgstr "Один Клик"
+
+#: modules/legacy/components/customizer.php:26
+msgid "Wheelchair"
+msgstr "Інвалідний візок"
+
+#: modules/legacy/components/customizer.php:22
+msgid "Toolbar Icon"
+msgstr "Панель інструментів"
+
+#: modules/legacy/components/admin.php:161
+#: modules/legacy/components/settings.php:715
+#: modules/legacy/components/settings.php:716
+msgid "One Click Accessibility"
+msgstr "Один Клік Доступності"
+
+#. translators: 1: One Click Accessibility, 2: Link to plugin review
+#: modules/legacy/components/admin.php:160
+msgid "Enjoyed %1$s? Please leave us a %2$s rating. We really appreciate your support!"
+msgstr "Сподобалось %1$s? Будь ласка, залиште нам %2$s рейтингу. Ми дуже цінуємо вашу підтримку!"
+
+#: modules/legacy/components/admin.php:135
+msgid "Install Now For Free!"
+msgstr "Встановити зараз безкоштовно!"
+
+#: modules/legacy/components/admin.php:131
+msgid "Learn more about Elementor"
+msgstr "Дізнайтеся більше про Elementor"
+
+#: modules/legacy/components/admin.php:130
+msgid "Create high-end, pixel perfect websites at record speeds. Any theme, any page, any design. The most advanced frontend drag & drop page builder."
+msgstr "Створити High-End, піксель ідеальний веб-сайти, на рекорд швидкості. Будь-які теми, будь-якій сторінці, будь-який дизайн. Найбільш передові інтерфейс перетягніть & падіння Побудовник сторінок."
+
+#: modules/legacy/components/admin.php:129
+msgid "Do You Like One Click Accessibility? You'll Love Elementor!"
+msgstr "Чи подобається вам One Click Accessibility? Ви полюбите Elementor!"
+
+#: modules/legacy/components/customizer.php:50
+msgid "Set Toolbar top offset (Desktop)"
+msgstr "Панель Доступності зверху зсуву (ПК)"
+
+#: modules/legacy/components/customizer.php:42
+msgid "Set Toolbar Position"
+msgstr "Панель Доступності позиції"
+
+#: modules/legacy/components/settings.php:407
+msgid "1 Month"
+msgstr "1 Місяць"
+
+#: modules/legacy/components/settings.php:405
+msgid "3 Days"
+msgstr "3 дні"
+
+#: modules/legacy/components/settings.php:406
+msgid "1 Week"
+msgstr "1 тиждень"
+
+#: modules/legacy/components/settings.php:404
+msgid "2 Days"
+msgstr "2 Дні"
+
+#: modules/legacy/components/settings.php:403
+msgid "1 Day"
+msgstr "1 День"
+
+#: modules/legacy/components/settings.php:402
+msgid "12 Hours"
+msgstr "12 Годин"
+
+#: modules/legacy/components/settings.php:401
+msgid "6 Hours"
+msgstr "6 Годин"
+
+#: modules/legacy/components/settings.php:400
+msgid "1 Hour"
+msgstr "1 Година"
+
+#: modules/legacy/components/settings.php:396
+msgid "Remember user for"
+msgstr "Запам'ятайте для користувача"
+
+#: modules/legacy/components/settings.php:384
+msgid "Consistent accessibility throughout your site visit. Site remembers you and stays accessible."
+msgstr "Відвідайте послідовне доступності протягом всього вашого сайту. Сайт вас запам'ятовує і залишається доступним."
+
+#: modules/legacy/components/settings.php:383
+msgid "Sitewide Accessibility"
+msgstr "Спеціальні можливості по всьому сайту"
+
+#: modules/legacy/components/settings.php:416
+msgid "General Settings"
+msgstr "Загальні Налаштування"
+
+#: modules/legacy/components/settings.php:280 assets/build/admin.js:524
+#: assets/build/chunk-page-accessibility-statement.js:365
+#: assets/build/chunk-page-capabilities.js:362
+#: assets/build/chunk-page-design.js:365
+#: modules/settings/assets/js/helpers/accessibility-statement.js:27
+msgid "Feedback"
+msgstr "Відгуки"
+
+#: modules/legacy/components/settings.php:240 assets/build/admin.js:399
+#: assets/build/chunk-page-accessibility-scans.js:67
+#: assets/build/chunk-page-accessibility-statement.js:240
+#: assets/build/chunk-page-analytics.js:67
+#: assets/build/chunk-page-capabilities.js:237
+#: assets/build/chunk-page-design.js:240
+#: modules/settings/assets/js/constants/index.js:83
+#: modules/settings/assets/js/constants/index.js:84
+msgid "Sitemap"
+msgstr "Карта сайту"
+
+#: modules/legacy/components/settings.php:54
+#: modules/legacy/components/settings.php:79
+#: modules/legacy/components/settings.php:110
+#: modules/legacy/components/settings.php:132
+#: modules/legacy/components/settings.php:154
+#: modules/legacy/components/settings.php:176
+#: modules/legacy/components/settings.php:198
+#: modules/legacy/components/settings.php:220
+#: modules/legacy/components/settings.php:326
+#: modules/legacy/components/settings.php:339
+#: modules/legacy/components/settings.php:362
+#: modules/legacy/components/settings.php:375
+#: modules/legacy/components/settings.php:388
+msgid "Disable"
+msgstr "Відключити"
+
+#: modules/core/components/skip-link.php:49
+#: modules/legacy/components/frontend.php:81
+msgid "Skip to content"
+msgstr "Перейти до вмісту"
+
+#: pojo-accessibility.php:43 pojo-accessibility.php:53
+msgid "Cheatin&#8217; huh?"
+msgstr "Хакер чи що?"
+
+#: modules/legacy/components/settings.php:639
+msgid "Accessibility Settings"
+msgstr "Налаштування Accessibility"
+
+#: modules/legacy/components/settings.php:307
+msgid "For style settings of accessibility tools go to > Customize > <a href=\"%s\">Accessibility</a>."
+msgstr "Стиль параметри доступності Знаряддя перейдіть на > Установки > <a href=\"%s\">Доступності</a>."
+
+#: modules/legacy/components/settings.php:306
+msgid "Style Settings"
+msgstr "Параметри стилю"
+
+#: modules/legacy/components/settings.php:370
+msgid "Add landmark roles to all links"
+msgstr "Додати Орієнтир ролі до всіх посиланнях"
+
+#: modules/legacy/components/settings.php:358
+msgid "This option will reset all your target links to open in the same window or tab."
+msgstr "Ця опція буде скинути всі ваші цілі посилання відкрити в тому ж вікні або вкладці."
+
+#: modules/legacy/components/settings.php:356
+msgid "Remove target attribute from links"
+msgstr "Видалення кінцевого атрибута з посиланнями"
+
+#: modules/legacy/components/settings.php:334
+msgid "Skip to Content link"
+msgstr "Перейти до вмісту"
+
+#: modules/legacy/components/settings.php:323
+msgid "Add outline to elements on keyboard focus."
+msgstr "Додавання структури до елементів на точку вводу."
+
+#: modules/legacy/components/settings.php:321
+msgid "Add Outline Focus"
+msgstr "Додати фокус начерки"
+
+#: modules/legacy/components/settings.php:298
+msgid "Toolbar Settings"
+msgstr "Параметри панелей"
+
+#: modules/legacy/components/settings.php:289
+msgid "Link for feedback page in your website. Leave blank to disable."
+msgstr "Посилання на сторінку зворотного зв'язку в ваш сайт. Залиште аргумент пустим, щоб відключити."
+
+#: modules/legacy/components/settings.php:286
+msgid "Feedback Link"
+msgstr "Посилання Відгуки"
+
+#: modules/legacy/components/settings.php:277
+msgid "Feedback Title"
+msgstr "Зворотній зв'язок заголовок"
+
+#: modules/legacy/components/settings.php:269
+msgid "Link for help page in your website. Leave blank to disable."
+msgstr "Посилання на сторінку довідки у ваш сайт. Залиште аргумент пустим, щоб відключити."
+
+#: modules/legacy/components/settings.php:266
+msgid "Help Link"
+msgstr "Посилання на Довідку"
+
+#: modules/legacy/components/settings.php:260
+#: modules/settings/assets/js/components/help-menu/index.js:33
+#: modules/settings/assets/js/components/help-menu/index.js:50
+msgid "Help"
+msgstr "Допомога"
+
+#: modules/legacy/components/settings.php:257
+msgid "Help Title"
+msgstr "Заголовок Довідки"
+
+#: modules/legacy/components/settings.php:249
+msgid "Link for sitemap page in your website. Leave blank to disable."
+msgstr "Посилання на сторінку карта сайту на веб-сайт. Залиште аргумент пустим, щоб відключити."
+
+#: modules/legacy/components/settings.php:246
+msgid "Sitemap Link"
+msgstr "Карта сайту посилання"
+
+#: modules/legacy/components/settings.php:237
+msgid "Sitemap Title"
+msgstr "Карта сайту заголовок"
+
+#: modules/legacy/components/settings.php:228
+msgid "Readable Font Title"
+msgstr "Для читання шрифт Заголовка"
+
+#: modules/legacy/components/settings.php:215
+#: modules/legacy/components/settings.php:231
+msgid "Readable Font"
+msgstr "Для читання шрифт"
+
+#: modules/legacy/components/settings.php:206
+msgid "Links Underline Title"
+msgstr "Підкреслювати посилання Заголовок"
+
+#: modules/legacy/components/settings.php:193
+#: modules/legacy/components/settings.php:209
+msgid "Links Underline"
+msgstr "Посилання підкреслення"
+
+#: modules/legacy/components/settings.php:184
+msgid "Light Background Title"
+msgstr "Світлий фон Заголовок"
+
+#: modules/legacy/components/settings.php:171
+#: modules/legacy/components/settings.php:187
+msgid "Light Background"
+msgstr "Світлий фон"
+
+#: modules/legacy/components/settings.php:162
+msgid "Negative Contrast Title"
+msgstr "Негативний контраст Заголовок"
+
+#: modules/legacy/components/settings.php:149
+#: modules/legacy/components/settings.php:165
+msgid "Negative Contrast"
+msgstr "Негативний контраст"
+
+#: modules/legacy/components/settings.php:140
+msgid "High Contrast Title"
+msgstr "Висока контрастність Заголовка"
+
+#: modules/legacy/components/settings.php:127
+#: modules/legacy/components/settings.php:143
+msgid "High Contrast"
+msgstr "Високий контраст"
+
+#: modules/legacy/components/settings.php:118
+msgid "Grayscale Title"
+msgstr "Відтінки сірого Заголовок"
+
+#: modules/legacy/components/settings.php:105
+#: modules/legacy/components/settings.php:121
+msgid "Grayscale"
+msgstr "Відтінки сірого"
+
+#: modules/legacy/components/settings.php:96
+#: modules/legacy/components/settings.php:99
+msgid "Decrease Text"
+msgstr "Зменшити розмір тексту"
+
+#: modules/legacy/components/settings.php:87
+#: modules/legacy/components/settings.php:90
+msgid "Increase Text"
+msgstr "Збільшити розмір тексту"
+
+#: modules/legacy/components/settings.php:74
+msgid "Resize Font"
+msgstr "Розміру Шрифту"
+
+#: modules/legacy/components/settings.php:68
+msgid "Accessibility Tools"
+msgstr "Інструмент Доступності"
+
+#: modules/legacy/components/settings.php:66
+msgid "Title top of the toolbar (recommended)."
+msgstr "Заголовок верхньої частини панелі інструментів (рекомендовано)."
+
+#: modules/legacy/components/settings.php:53
+msgid "Hidden Phone"
+msgstr "Приховати телефон"
+
+#: modules/legacy/components/settings.php:52
+msgid "Hidden Tablet"
+msgstr "Приховати Планшет"
+
+#: modules/legacy/components/settings.php:51
+msgid "Hidden Desktop"
+msgstr "Приховати ПК"
+
+#: modules/legacy/components/settings.php:50
+msgid "Visible Phone"
+msgstr "Показати Телефон"
+
+#: modules/legacy/components/settings.php:49
+msgid "Visible Tablet"
+msgstr "Показати Планшет"
+
+#: modules/legacy/components/settings.php:48
+msgid "Visible Desktop"
+msgstr "Показати ПК"
+
+#: modules/legacy/components/settings.php:47
+msgid "Show on all devices"
+msgstr "Показати на всіх пристроях"
+
+#: modules/legacy/components/settings.php:44
+msgid "Display Toolbar"
+msgstr "Показувати Панель інструментів"
+
+#: modules/legacy/components/frontend.php:120
+msgid "Open toolbar"
+msgstr "Відкрити Панель інструментів"
+
+#: modules/dashboard/widgets/ally-dashboard-widget.php:104
+#: modules/legacy/components/customizer.php:27
+#: modules/legacy/components/customizer.php:177
+#: modules/legacy/components/settings.php:630
+#: modules/legacy/components/settings.php:631
+#: modules/legacy/components/upgrade.php:594 modules/settings/module.php:65
+#: assets/build/admin.js:433 assets/build/chunk-modal-get-started.js:1
+#: assets/build/chunk-page-accessibility-statement.js:274
+#: assets/build/chunk-page-capabilities.js:271
+#: assets/build/chunk-page-design.js:274
+#: modules/settings/assets/js/components/help-menu/get-started-modal.js:70
+#: modules/settings/assets/js/components/sidebar-heading/index.js:18
+msgid "Accessibility"
+msgstr "Доступність"
+
+#: modules/legacy/components/customizer.php:159
+msgid "Focus Outline Color"
+msgstr "Колір контуру Фокус"
+
+#: modules/legacy/components/customizer.php:139
+msgid "Focus Outline Width"
+msgstr "Фокус Внутрішньої ширина"
+
+#: modules/legacy/components/customizer.php:131
+msgid "Initial"
+msgstr "Початковий"
+
+#: modules/legacy/components/customizer.php:130
+msgid "Outset"
+msgstr "Накладна"
+
+#: modules/legacy/components/customizer.php:129
+msgid "Ridge"
+msgstr "Ребриста"
+
+#: modules/legacy/components/customizer.php:128
+msgid "Groove"
+msgstr "Паз"
+
+#: modules/legacy/components/customizer.php:127
+msgid "Double"
+msgstr "Подвійний"
+
+#: modules/legacy/components/customizer.php:126
+msgid "Dashed"
+msgstr "Пунктир"
+
+#: modules/legacy/components/customizer.php:125
+msgid "Dotted"
+msgstr "Точковий пунктир"
+
+#: modules/legacy/components/customizer.php:121
+msgid "Focus Outline Style"
+msgstr "Фокусування тип контуру"
+
+#: modules/legacy/components/customizer.php:91
+msgid "Toggle Button Color"
+msgstr "Переключити кнопку Колір"
+
+#: modules/legacy/components/customizer.php:83
+msgid "Toggle Button Background"
+msgstr "Переключити кнопку Фону"
+
+#: modules/legacy/components/customizer.php:38
+msgid "Left"
+msgstr "Зліва"
+
+#: modules/legacy/components/settings.php:64
+msgid "Title"
+msgstr "Заголовок"
+
+#: modules/legacy/components/frontend.php:198
+#: modules/legacy/components/frontend.php:199 assets/build/scanner.js:875
+#: assets/build/scanner.js:879
+#: modules/scanner/assets/js/components/color-contrast-form/color-set-disabled.js:77
+#: modules/scanner/assets/js/components/color-contrast-form/color-set.js:115
+msgid "Reset"
+msgstr "Скинути"
+
+#: modules/legacy/components/customizer.php:124
+msgid "Solid"
+msgstr "Суцільний"
+
+#: modules/legacy/components/customizer.php:39
+msgid "Right"
+msgstr "Праворуч"
+
+#: modules/legacy/components/settings.php:78
+#: modules/legacy/components/settings.php:109
+#: modules/legacy/components/settings.php:131
+#: modules/legacy/components/settings.php:153
+#: modules/legacy/components/settings.php:175
+#: modules/legacy/components/settings.php:197
+#: modules/legacy/components/settings.php:219
+#: modules/legacy/components/settings.php:325
+#: modules/legacy/components/settings.php:338
+#: modules/legacy/components/settings.php:361
+#: modules/legacy/components/settings.php:374
+#: modules/legacy/components/settings.php:387
+msgid "Enable"
+msgstr "Ввімкнути"

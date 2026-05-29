@@ -2,7 +2,7 @@
 # This file is distributed under the same license as the Plugins - Better Search Replace - Stable (latest release) package.
 msgid ""
 msgstr ""
-"PO-Revision-Date: 2025-11-03 09:10:08+0000\n"
+"PO-Revision-Date: 2026-05-08 17:03:05+0000\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -180,7 +180,7 @@ msgstr "Обработка таблицы %d из %d: %s"
 
 #: includes/class-bsr-admin.php:303
 msgid "Upgrade to Pro"
-msgstr "Улучшить до профи версии"
+msgstr "Обновиться до Pro"
 
 #: includes/class-bsr-admin.php:256
 msgid " seconds"
